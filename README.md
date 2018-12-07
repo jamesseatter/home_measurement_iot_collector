@@ -1,23 +1,20 @@
-# home_heating_iot_client
-Home Heating IOT Client written in Java
+# home_heating_iot_collector
+Home Heating IOT Collector
 
-The project is focused on building a system to monitor the heat of the water entering the house that provides the hot water for taps and the heating system
-The hot water is provided by a central system for a number of houses and it fails to often. Whats more the system has no monitoring so everyone finds out when the shower in the morning :(
+The project is focused on building a system to monitor the temperature of the water entering the house from a shared common heating source. That hot water is then distributed to taps and the underfloor heating system. The project will collect temperatures from strategic points to monitor water temperature and record the data for viewing within a web based front end.
 
-This cocde covers the end point that measures the temperature and sends it to the Edge.
+The driver for this project is to monitor the hot water for system faults and provide an alarm when there are issues that need intervention. There is a history of system failures over the years that have taken hours and days to be corrected due to various factors.
 
-Project Components
 
-End Point (Client)
-  Raspberry Pi Zero W with a DS18B20 temperature probe.
-  
-Edge Device
-  Raspberry Pi 3 B+.
-  
-Storage
-  NAS based MySQL DB
-  
-Web
-  One of
-    Angular 6
-    Java Thymeleaf
+This code covers the end point that measures the temperature and sends it to the Edge.
+
+**Code Goals**
+   * Collect data from 1 or more sensors
+   * Send data to an Edge controller/device
+   * Use authentication and roles
+   * Update collector configuration remotely via Edge
+   * Store data localy if Edge is not accessible and replay
+
+**Code/hardware Components**
+   * Raspberry Pi Zero W with a DS18B20 temperature probe.
+   * Java 8 code base
