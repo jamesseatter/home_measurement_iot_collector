@@ -11,9 +11,10 @@ import java.time.LocalDateTime;
 
 public class DataRecord {
     private String SensorID;
+    private SensorMeasurementSource sensorMeasurementSource;
     private SensorType sensorType;
     private LocalDateTime measureTime;
-    private int Data;
+    private Double value;
 
     public String getSensorID() {
         return SensorID;
@@ -21,6 +22,14 @@ public class DataRecord {
 
     public void setSensorID(String sensorID) {
         SensorID = sensorID;
+    }
+
+    public SensorMeasurementSource getSensorMeasurementSource() {
+        return sensorMeasurementSource;
+    }
+
+    public void setSensorMeasurementSource(SensorMeasurementSource sensorMeasurementSource) {
+        this.sensorMeasurementSource = sensorMeasurementSource;
     }
 
     public SensorType getSensorType() {
@@ -39,11 +48,11 @@ public class DataRecord {
         this.measureTime = measureTime;
     }
 
-    public int getData() {
-        return Data;
+    public Double getValue() {
+        return value;
     }
 
-    public void setData(int data) {
-        Data = data;
+    public void setValue(Double value) {
+        this.value = value;
     }
 }

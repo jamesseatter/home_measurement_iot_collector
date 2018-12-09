@@ -3,9 +3,9 @@ package eu.seatter.homeheating.collector.Domain;
 /**
  * Created by IntelliJ IDEA.
  * User: jas
- * Date: 09/12/2018
- * Time: 15:05
+ * Date: 07/12/2018
+ * Time: 13:21
  */
-public enum SensorType {
-    ANALOGUE, ONEWIRE
+public enum SensorMeasurementSource {
+    TEMPERATURE, HUMIDITY
 }

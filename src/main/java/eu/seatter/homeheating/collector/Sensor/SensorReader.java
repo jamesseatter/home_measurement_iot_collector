@@ -8,5 +8,5 @@ package eu.seatter.homeheating.collector.Sensor;
  */
 public interface SensorReader {
 
-    int readSensorData(int sensorID);
+    Double readSensorData(String sensorID);
 }
