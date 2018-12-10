@@ -6,7 +6,7 @@ package eu.seatter.homeheating.collector.Sensor;
  * Date: 07/12/2018
  * Time: 13:25
  */
-public interface SensorReader {
+public interface Sensor {
 
-    Double readSensorData(String sensorID);
+    Double readSensorData();
 }

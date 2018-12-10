@@ -1,8 +1,9 @@
 package eu.seatter.homeheating.collector.Services;
 
 import eu.seatter.homeheating.collector.Domain.DataRecord;
+import eu.seatter.homeheating.collector.Domain.SensorMeasurementSource;
 import eu.seatter.homeheating.collector.Domain.SensorType;
-import eu.seatter.homeheating.collector.Sensor.SensorOneWirePi4J;
+import eu.seatter.homeheating.collector.Sensor.OneWirePi4JSensor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -17,38 +18,40 @@ import static org.mockito.Mockito.*;
  * Date: 09/12/2018
  * Time: 15:25
  */
-class SensorServiceImplTest {
+class SensorImplTest {
 
     private SensorService sensorService;
 
     @Mock
-    private SensorOneWirePi4J sensorOneWirePi4J;
+    private OneWirePi4JSensor oneWirePi4JSensor;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        sensorService = new SensorServiceImpl(sensorOneWirePi4J);
+        sensorService = new SensorServiceImpl(oneWirePi4JSensor);
+        oneWirePi4JSensor.setSensorID("0000000000000000");
     }
 
     @Test
     void readSensorData() {
         //given
         SensorType sensorType = SensorType.ONEWIRE;
-        String sensorId = "GPIO_1";
+        String sensorId = "9999999999999999";
         Double sensorValue = 20D;
 
         DataRecord mockData = new DataRecord();
         mockData.setSensorID(sensorId);
         mockData.setValue(sensorValue);
+        mockData.setSensorType(SensorType.ONEWIRE);
+        mockData.setSensorMeasurementSource(SensorMeasurementSource.TEMPERATURE);
 
-        when(sensorOneWirePi4J.readSensorData(anyString())).thenReturn(sensorValue);
+        when(oneWirePi4JSensor.readSensorData()).thenReturn(sensorValue);
 
         //then
         DataRecord data = sensorService.readSensorData(mockData);
 
         //when
         assertEquals(sensorValue,data.getValue());
-        verify(sensorOneWirePi4J,times(1)).readSensorData(anyString());
+        verify(oneWirePi4JSensor,times(1)).readSensorData();
     }
 }

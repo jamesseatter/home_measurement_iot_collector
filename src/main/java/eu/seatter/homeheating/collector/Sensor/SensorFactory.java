@@ -9,12 +9,12 @@ import eu.seatter.homeheating.collector.Domain.SensorType;
  * Time: 19:14
  */
 public class SensorFactory {
-    public SensorReader getSensor(SensorType sensorType) {
+    public Sensor getSensor(SensorType sensorType) {
         if(sensorType == SensorType.ONEWIRE) {
-            return new SensorOneWirePi4J();
+            return new OneWirePi4JSensor();
         }
         if(sensorType == SensorType.ANALOGUE) {
-            return new SensorOneWirePi4J();
+            return new OneWirePi4JSensor();
         }
 
         return null;
