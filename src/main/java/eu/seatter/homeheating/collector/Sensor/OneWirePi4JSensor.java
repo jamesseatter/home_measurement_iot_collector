@@ -4,6 +4,7 @@ import com.pi4j.component.temperature.TemperatureSensor;
 import com.pi4j.component.temperature.impl.TmpDS18B20DeviceType;
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
+import eu.seatter.homeheating.collector.Domain.SensorRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,20 +22,17 @@ public class OneWirePi4JSensor implements Sensor {
     private Double value=0D;
     private String sensorID;
 
-    private W1Master master = new W1Master();
+    private W1Master w1master = new W1Master();
 
     private Logger logger = LoggerFactory.getLogger(OneWirePi4JSensor.class);
 
-    public String getSensorID() {
-        return sensorID;
-    }
-
-    public void setSensorID(String sensorID) {
-        this.sensorID = sensorID;
-    }
-
     @Override
-    public Double readSensorData() {
+    public Double readSensorData(SensorRecord sensorRecord) {
+
+        if(sensorRecord.getSensorID().isEmpty()) {
+            throw new RuntimeException("Sensor ID now set");
+        }
+        sensorID = sensorRecord.getSensorID();
 
         Optional<W1Device> w1device = getTmpDS18B20();
 
@@ -47,12 +45,14 @@ public class OneWirePi4JSensor implements Sensor {
                 throw new RuntimeException("Unable to get temperature from sensor ID : " + sensorID);
             }
             return temperature;
+
+        } else {
+            throw new RuntimeException("No sensor found for id : " + sensorID);
         }
-        throw new RuntimeException("No temperature returned for sensor ID : " + sensorID);
     }
 
     public Optional<W1Device> getTmpDS18B20() {
-        Optional<W1Device> w1device = master.getDevices(TmpDS18B20DeviceType.FAMILY_CODE)
+        Optional<W1Device> w1device = w1master.getDevices(TmpDS18B20DeviceType.FAMILY_CODE)
                 .stream()
                 .filter(sensor -> sensor.getId().equals(sensorID))
                 .findFirst();

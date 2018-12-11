@@ -6,6 +6,6 @@ package eu.seatter.homeheating.collector.Domain;
  * Date: 07/12/2018
  * Time: 13:21
  */
-public enum SensorMeasurementSource {
+public enum SensorMeasurementType {
     TEMPERATURE, HUMIDITY
 }

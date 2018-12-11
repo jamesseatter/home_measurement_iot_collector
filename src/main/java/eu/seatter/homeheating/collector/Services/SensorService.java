@@ -1,6 +1,6 @@
 package eu.seatter.homeheating.collector.Services;
 
-import eu.seatter.homeheating.collector.Domain.DataRecord;
+import eu.seatter.homeheating.collector.Domain.SensorRecord;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,5 +9,5 @@ import eu.seatter.homeheating.collector.Domain.DataRecord;
  * Time: 15:15
  */
 public interface SensorService {
-    DataRecord readSensorData(DataRecord sensorRecord);
+    SensorRecord readSensorData(SensorRecord sensorRecord);
 }

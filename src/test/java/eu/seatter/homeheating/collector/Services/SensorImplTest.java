@@ -1,7 +1,7 @@
 package eu.seatter.homeheating.collector.Services;
 
-import eu.seatter.homeheating.collector.Domain.DataRecord;
-import eu.seatter.homeheating.collector.Domain.SensorMeasurementSource;
+import eu.seatter.homeheating.collector.Domain.SensorMeasurementType;
+import eu.seatter.homeheating.collector.Domain.SensorRecord;
 import eu.seatter.homeheating.collector.Domain.SensorType;
 import eu.seatter.homeheating.collector.Sensor.OneWirePi4JSensor;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,29 +29,27 @@ class SensorImplTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         sensorService = new SensorServiceImpl(oneWirePi4JSensor);
-        oneWirePi4JSensor.setSensorID("0000000000000000");
     }
 
     @Test
     void readSensorData() {
         //given
-        SensorType sensorType = SensorType.ONEWIRE;
         String sensorId = "9999999999999999";
         Double sensorValue = 20D;
 
-        DataRecord mockData = new DataRecord();
+        SensorRecord mockData = new SensorRecord();
         mockData.setSensorID(sensorId);
         mockData.setValue(sensorValue);
         mockData.setSensorType(SensorType.ONEWIRE);
-        mockData.setSensorMeasurementSource(SensorMeasurementSource.TEMPERATURE);
+        mockData.setMeasurementType(SensorMeasurementType.TEMPERATURE);
 
-        when(oneWirePi4JSensor.readSensorData()).thenReturn(sensorValue);
+        when(oneWirePi4JSensor.readSensorData(any(SensorRecord.class))).thenReturn(sensorValue);
 
         //then
-        DataRecord data = sensorService.readSensorData(mockData);
+        SensorRecord data = sensorService.readSensorData(mockData);
 
         //when
         assertEquals(sensorValue,data.getValue());
-        verify(oneWirePi4JSensor,times(1)).readSensorData();
+        verify(oneWirePi4JSensor,times(1)).readSensorData(any(SensorRecord.class));
     }
 }

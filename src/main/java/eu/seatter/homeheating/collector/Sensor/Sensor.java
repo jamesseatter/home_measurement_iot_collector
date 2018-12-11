@@ -1,5 +1,7 @@
 package eu.seatter.homeheating.collector.Sensor;
 
+import eu.seatter.homeheating.collector.Domain.SensorRecord;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jas
@@ -8,5 +10,5 @@ package eu.seatter.homeheating.collector.Sensor;
  */
 public interface Sensor {
 
-    Double readSensorData();
+    Double readSensorData(SensorRecord sensorRecord);
 }

@@ -1,6 +1,6 @@
 package eu.seatter.homeheating.collector.Services;
 
-import eu.seatter.homeheating.collector.Domain.DataRecord;
+import eu.seatter.homeheating.collector.Domain.SensorRecord;
 import eu.seatter.homeheating.collector.Sensor.Sensor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +27,15 @@ public class SensorServiceImpl implements eu.seatter.homeheating.collector.Servi
     }
 
     @Override
-    public DataRecord readSensorData(DataRecord sensorRecord) {
+    public SensorRecord readSensorData(SensorRecord sensorRecord) {
 
         try {
-            sensorRecord.setValue(sensor.readSensorData());
+            sensorRecord.setValue(sensor.readSensorData(sensorRecord));
             sensorRecord.setMeasureTime(LocalDateTime.now(ZoneOffset.UTC));
         }
-        catch (Exception e) {
-            logger.error("Caught error : " + e.getMessage());
+        catch (RuntimeException e) {
+            logger.error(e.getMessage());
+            throw e;
         }
 
         return sensorRecord;
