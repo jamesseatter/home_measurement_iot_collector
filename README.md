@@ -1,4 +1,4 @@
-# home_heating_iot_device
+# home_heating_iot_collector
 
 [![CircleCI](https://circleci.com/gh/jamesseatter/home_heating_iot_collector.svg?style=svg)](https://circleci.com/gh/jamesseatter/home_heating_iot_collector)
 
