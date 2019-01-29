@@ -1,10 +1,11 @@
-package eu.seatter.homeheating.collector.Sensor;
+package eu.seatter.homeheating.collector.sensor;
 
 import com.pi4j.component.temperature.TemperatureSensor;
 import com.pi4j.component.temperature.impl.TmpDS18B20DeviceType;
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
-import eu.seatter.homeheating.collector.Domain.SensorRecord;
+import eu.seatter.homeheating.collector.domain.SensorRecord;
+import eu.seatter.homeheating.collector.exception.SensorNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,7 @@ public class OneWirePi4JSensor implements Sensor {
 
     @Override
     public Double readSensorData(SensorRecord sensorRecord) {
-        sensorDescription = "Sensor [" + sensorRecord.getSensorID() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyId() + "]";
+        sensorDescription = "sensor [" + sensorRecord.getSensorID() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyId() + "]";
 
         if(sensorRecord.getSensorID().isEmpty()) {
             throw new RuntimeException(sensorDescription + " : ID not set");
@@ -49,7 +50,8 @@ public class OneWirePi4JSensor implements Sensor {
             return temperature;
 
         } else {
-            throw new RuntimeException(sensorDescription + " : Not found/connected to system");
+            throw new SensorNotFoundException("Sensor no longer connected : " + sensorDescription,
+                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
         }
     }
 

@@ -1,8 +1,8 @@
-package eu.seatter.homeheating.collector.Services;
+package eu.seatter.homeheating.collector.services;
 
-import eu.seatter.homeheating.collector.Domain.SensorRecord;
-import eu.seatter.homeheating.collector.Domain.SensorType;
-import eu.seatter.homeheating.collector.Sensor.SensorListManager;
+import eu.seatter.homeheating.collector.domain.SensorRecord;
+import eu.seatter.homeheating.collector.domain.SensorType;
+import eu.seatter.homeheating.collector.sensor.SensorListManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

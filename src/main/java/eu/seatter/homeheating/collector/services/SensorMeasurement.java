@@ -1,8 +1,8 @@
-package eu.seatter.homeheating.collector.Services;
+package eu.seatter.homeheating.collector.services;
 
-import eu.seatter.homeheating.collector.Domain.SensorRecord;
-import eu.seatter.homeheating.collector.Sensor.Sensor;
-import eu.seatter.homeheating.collector.Sensor.SensorFactory;
+import eu.seatter.homeheating.collector.domain.SensorRecord;
+import eu.seatter.homeheating.collector.sensor.Sensor;
+import eu.seatter.homeheating.collector.sensor.SensorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class SensorMeasurement {
         log.info("Start measurement processing");
         for (SensorRecord sensorRecord : sensorList) {
             SensorRecord srWithMeasurement;
-            sensorDescription = "Sensor [" + sensorRecord.getSensorID() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyId() + "]";
+            sensorDescription = "sensor [" + sensorRecord.getSensorID() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyId() + "]";
             log.info(sensorDescription);
             try {
                 srWithMeasurement = readSensorValue(sensorRecord);
@@ -35,7 +35,7 @@ public class SensorMeasurement {
             } catch (Exception ex) {
                 log.error("Error reading sensor with ID: " + sensorRecord.getSensorID() + ". " + ex.getMessage());
             }
-            //todo Send to edge
+            //todo Send measurement to edge
         }
         log.info("Completed measurement processing");
     }

@@ -9,13 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 public class CollectorApplication implements CommandLineRunner {
 	public static void main(String... args) {
-		SpringApplication.run(CollectorApplication.class, args);
+		SpringApplication.run(CollectorApplication.class, args).close();
 	}
 
 	@Override
 	public void run(String... strings) {
-		log.info("Loading data...");
-
 	}
 
 //	@Override

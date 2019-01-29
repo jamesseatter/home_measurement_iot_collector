@@ -1,4 +1,4 @@
-package eu.seatter.homeheating.collector.Domain;
+package eu.seatter.homeheating.collector.domain;
 
 /**
  * Created by IntelliJ IDEA.

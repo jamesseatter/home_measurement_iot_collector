@@ -1,12 +1,12 @@
-package eu.seatter.homeheating.collector.Services;
+package eu.seatter.homeheating.collector.services;
 
-import eu.seatter.homeheating.collector.Domain.SensorRecord;
-import eu.seatter.homeheating.collector.Sensor.SensorListManager;
+import eu.seatter.homeheating.collector.domain.SensorRecord;
+import eu.seatter.homeheating.collector.exception.SensorNotFoundException;
+import eu.seatter.homeheating.collector.sensor.SensorListManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,18 +30,20 @@ public class IOTService implements CommandLineRunner {
 
     @Override
     public void run(String... strings) {
-        List<SensorRecord> sensorList = new ArrayList<>();
+        List<SensorRecord> sensorList;
         boolean running = false;
         try {
             sensorList = sensorListManager.getSensors();
-            log.info("Loaded list of sensors. Count : " + sensorList.size());
             //todo Send sensor list to the Edge
         } catch (RuntimeException ex) {
-            //todo add new Exception, SensorsNotFoundException.
+            throw new SensorNotFoundException("No sensors found",
+                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
         }
 
         if(sensorList.size() > 0) {
             running = true;
+        } else {
+            log.info("No sensors connected to device. Exiting.");
         }
 
         while(running) {
@@ -52,10 +54,10 @@ public class IOTService implements CommandLineRunner {
                 Thread.sleep(readIntervalSeconds * 1000);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
+                log.error(ex.getLocalizedMessage());
+                running = false;
             }
         }
         log.info("Execution stopping");
     }
-
-
 }
