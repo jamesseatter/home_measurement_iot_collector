@@ -1,9 +1,7 @@
 [
   {
-    "id":1,
     "name":"SourceHotWater",
-    "sensorID":"000000000",
-    "sensorType":"ONEWIRE",
-    "measurementType":"TEMPERATURE"
+    "sensorID":"100000002",
+    "sensorType":"ONEWIRE"
   }
 ]

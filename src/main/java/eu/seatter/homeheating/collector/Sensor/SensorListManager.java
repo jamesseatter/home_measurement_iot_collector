@@ -2,15 +2,14 @@ package eu.seatter.homeheating.collector.Sensor;
 
 import eu.seatter.homeheating.collector.Domain.SensorRecord;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jas
- * Date: 07/12/2018
- * Time: 13:25
+ * Date: 29/01/2019
+ * Time: 12:34
  */
-public interface Sensor {
-
-    String sensorDescription="";
-
-    Double readSensorData(SensorRecord sensorRecord);
+public interface SensorListManager {
+    List<SensorRecord> getSensors();
 }

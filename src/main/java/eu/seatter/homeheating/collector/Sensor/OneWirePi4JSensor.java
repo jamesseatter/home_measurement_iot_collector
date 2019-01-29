@@ -21,6 +21,7 @@ import java.util.Optional;
 public class OneWirePi4JSensor implements Sensor {
     private Double value=0D;
     private String sensorID;
+    private String sensorDescription;
 
     private W1Master w1master = new W1Master();
 
@@ -28,9 +29,10 @@ public class OneWirePi4JSensor implements Sensor {
 
     @Override
     public Double readSensorData(SensorRecord sensorRecord) {
+        sensorDescription = "Sensor [" + sensorRecord.getSensorID() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyId() + "]";
 
         if(sensorRecord.getSensorID().isEmpty()) {
-            throw new RuntimeException("Sensor ID now set");
+            throw new RuntimeException(sensorDescription + " : ID not set");
         }
         sensorID = sensorRecord.getSensorID();
 
@@ -38,25 +40,24 @@ public class OneWirePi4JSensor implements Sensor {
 
         if(w1device.isPresent()) {
             Double temperature;
-            logger.debug("Sensor ID: " + sensorID + " - Temperature : " + ((TemperatureSensor) w1device.get()).getTemperature());
+            logger.debug(sensorDescription + " : Temperature - " + ((TemperatureSensor) w1device.get()).getTemperature());
             try {
                 temperature = ((TemperatureSensor) w1device.get()).getTemperature();
             } catch (Exception e) {
-                throw new RuntimeException("Unable to get temperature from sensor ID : " + sensorID);
+                throw new RuntimeException(sensorDescription + " : Unable to get temperature from sensor");
             }
             return temperature;
 
         } else {
-            throw new RuntimeException("No sensor found for id : " + sensorID);
+            throw new RuntimeException(sensorDescription + " : Not found/connected to system");
         }
     }
 
-    public Optional<W1Device> getTmpDS18B20() {
-        Optional<W1Device> w1device = w1master.getDevices(TmpDS18B20DeviceType.FAMILY_CODE)
+    private Optional<W1Device> getTmpDS18B20() {
+        return w1master.getDevices(TmpDS18B20DeviceType.FAMILY_CODE)
                 .stream()
                 .filter(sensor -> sensor.getId().equals(sensorID))
                 .findFirst();
-        return w1device;
     }
 
 }
