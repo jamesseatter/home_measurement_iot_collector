@@ -2,8 +2,7 @@ package eu.seatter.homeheating.collector.Services;
 
 import eu.seatter.homeheating.collector.Domain.SensorRecord;
 import eu.seatter.homeheating.collector.Sensor.SensorListManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +16,8 @@ import java.util.List;
  * Time: 15:15
  */
 @Service
+@Slf4j
 public class IOTService implements CommandLineRunner {
-    private Logger logger = LoggerFactory.getLogger(IOTService.class);
     private int readIntervalSeconds = 10;
 
     private SensorMeasurement sensorMeasurement;
@@ -35,7 +34,7 @@ public class IOTService implements CommandLineRunner {
         boolean running = false;
         try {
             sensorList = sensorListManager.getSensors();
-            logger.info("Loaded list of sensors. Count : " + sensorList.size());
+            log.info("Loaded list of sensors. Count : " + sensorList.size());
             //todo Send sensor list to the Edge
         } catch (RuntimeException ex) {
             //todo add new Exception, SensorsNotFoundException.
@@ -55,7 +54,7 @@ public class IOTService implements CommandLineRunner {
                 ex.printStackTrace();
             }
         }
-        logger.info("Execution stopping");
+        log.info("Execution stopping");
     }
 
 
