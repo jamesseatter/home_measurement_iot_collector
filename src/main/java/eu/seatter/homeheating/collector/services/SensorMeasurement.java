@@ -1,6 +1,6 @@
 package eu.seatter.homeheating.collector.services;
 
-import eu.seatter.homeheating.collector.domain.SensorRecord;
+import eu.seatter.homeheating.collector.model.SensorRecord;
 import eu.seatter.homeheating.collector.sensor.Sensor;
 import eu.seatter.homeheating.collector.sensor.SensorFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +49,8 @@ public class SensorMeasurement {
             log.debug(sensorDescription + " : Returned value - " + sensorRecord.getValue());
         }
         catch (RuntimeException ex) {
+            //todo improve exception handling
+            log.error(ex.getLocalizedMessage());
             throw ex;
         }
         return sensorRecord;

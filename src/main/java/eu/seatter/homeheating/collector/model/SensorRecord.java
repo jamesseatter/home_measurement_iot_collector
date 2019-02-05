@@ -1,7 +1,6 @@
-package eu.seatter.homeheating.collector.domain;
+package eu.seatter.homeheating.collector.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +12,9 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class SensorRecord {
     private String sensorID;
     private int familyId;

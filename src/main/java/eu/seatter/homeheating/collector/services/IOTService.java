@@ -1,7 +1,7 @@
 package eu.seatter.homeheating.collector.services;
 
-import eu.seatter.homeheating.collector.domain.SensorRecord;
 import eu.seatter.homeheating.collector.exception.SensorNotFoundException;
+import eu.seatter.homeheating.collector.model.SensorRecord;
 import eu.seatter.homeheating.collector.sensor.SensorListManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -22,14 +22,20 @@ public class IOTService implements CommandLineRunner {
 
     private SensorMeasurement sensorMeasurement;
     private SensorListManager sensorListManager;
+    private DeviceService deviceService;
 
-    public IOTService(SensorMeasurement sensorMeasurement, SensorListManager sensorListManager) {
+    public IOTService(SensorMeasurement sensorMeasurement, SensorListManager sensorListManager, DeviceService deviceService) {
         this.sensorMeasurement = sensorMeasurement;
         this.sensorListManager = sensorListManager;
+        this.deviceService = deviceService;
     }
 
     @Override
     public void run(String... strings) {
+        deviceService.registerDevice();
+
+
+
         List<SensorRecord> sensorList;
         boolean running = false;
         try {

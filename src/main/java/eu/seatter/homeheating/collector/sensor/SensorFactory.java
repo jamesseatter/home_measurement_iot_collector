@@ -1,6 +1,6 @@
 package eu.seatter.homeheating.collector.sensor;
 
-import eu.seatter.homeheating.collector.domain.SensorType;
+import eu.seatter.homeheating.collector.model.SensorType;
 
 /**
  * Created by IntelliJ IDEA.

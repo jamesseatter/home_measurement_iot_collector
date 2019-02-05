@@ -1,6 +1,6 @@
 package eu.seatter.homeheating.collector.sensor;
 
-import eu.seatter.homeheating.collector.domain.SensorRecord;
+import eu.seatter.homeheating.collector.model.SensorRecord;
 
 import java.util.List;
 

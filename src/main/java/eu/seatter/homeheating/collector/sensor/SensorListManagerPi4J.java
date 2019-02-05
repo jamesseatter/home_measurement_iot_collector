@@ -2,8 +2,8 @@ package eu.seatter.homeheating.collector.sensor;
 
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
-import eu.seatter.homeheating.collector.domain.SensorRecord;
-import eu.seatter.homeheating.collector.domain.SensorType;
+import eu.seatter.homeheating.collector.model.SensorRecord;
+import eu.seatter.homeheating.collector.model.SensorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -28,13 +28,13 @@ public class SensorListManagerPi4J implements SensorListManager {
         W1Master w1Master = new W1Master();
         List<W1Device> w1Devicelist = w1Master.getDevices();
 
-        SensorRecord sensorRecord = new SensorRecord();
         for (W1Device w1d : w1Devicelist) {
-            sensorRecord.setSensorID(w1d.getId());
-            sensorRecord.setFamilyId(w1d.getFamilyId());
-            sensorRecord.setSensorType(SensorType.ONEWIRE);
-            sensorRecords.add(sensorRecord);
-            log.info("  Found sensor : " + sensorRecord.toString());
+            SensorRecord sensor = new SensorRecord();
+            sensor.setSensorID(w1d.getId());
+            sensor.setFamilyId(w1d.getFamilyId());
+            sensor.setSensorType(SensorType.ONEWIRE);
+            sensorRecords.add(sensor);
+            log.info("  Found sensor : " + sensor.toString());
         }
         log.info("1-Wire sensor scan finished. Found " + sensorRecords.size() + " sensors");
         return sensorRecords;
