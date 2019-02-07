@@ -10,6 +10,6 @@ import java.util.List;
  * Date: 29/01/2019
  * Time: 12:34
  */
-public interface SensorListManager {
+public interface SensorList {
     List<SensorRecord> getSensors();
 }

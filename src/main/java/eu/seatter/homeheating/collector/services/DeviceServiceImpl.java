@@ -42,11 +42,14 @@ public class DeviceServiceImpl implements DeviceService {
 
         log.info("Register device with edge");
         RegistrationCommand deviceRegistration = new RegistrationCommand();
+
         try {
-            deviceRegistration = restClientService.isRegistered(device.getUniqueId());
+            //deviceRegistration = restClientService.isCollectorRegistered(device.getUniqueId());
         } catch (Exception ex) {
             log.error("ERROR in RestService: " + ex.getLocalizedMessage());
+            throw new RuntimeException(ex.getLocalizedMessage());
         }
+
         if(deviceRegistration.getUniqueId() != null && (deviceRegistration.getUniqueId().equals(device.getUniqueId()))) {
             log.info("Device was previously registered. Current registration status : " + deviceRegistration.getRegistrationStatus());
             device.setRegistrationStatus(deviceRegistration.getRegistrationStatus());

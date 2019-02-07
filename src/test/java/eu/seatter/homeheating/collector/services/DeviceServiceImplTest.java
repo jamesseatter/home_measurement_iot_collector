@@ -63,7 +63,7 @@ public class DeviceServiceImplTest {
     @Test
     public void whenDeviceExists_ShouldReturnDeviceAPPROVED() {
         //given
-        when(restClientServiceMock.isRegistered(anyString())).thenReturn(returnedRegistrationCommand);
+        when(restClientServiceMock.isCollectorRegistered(anyString())).thenReturn(returnedRegistrationCommand);
         when(encryptionServiceMock.encrypteString(anyString())).thenReturn(uniqueId);
 
         //when
@@ -72,7 +72,7 @@ public class DeviceServiceImplTest {
         //then
         assertEquals(res.getUniqueId(),uniqueId);
         assertEquals(res.getRegistrationStatus(),RegistrationStatus.APPROVED);
-        verify(restClientServiceMock).isRegistered(anyString());
+        verify(restClientServiceMock).isCollectorRegistered(anyString());
         verify(restClientServiceMock, never()).registerCollector(any(Device.class));
     }
 
@@ -80,7 +80,7 @@ public class DeviceServiceImplTest {
     public void whenDeviceNotRegistered_ShouldReturnDevicePendingApproval() {
         //given
         returnedRegistrationCommand.setRegistrationStatus(RegistrationStatus.PENDINGAPPROVAL);
-        when(restClientServiceMock.isRegistered(anyString())).thenReturn(new RegistrationCommand());
+        when(restClientServiceMock.isCollectorRegistered(anyString())).thenReturn(new RegistrationCommand());
         when(restClientServiceMock.registerCollector(any(Device.class))).thenReturn(returnedRegistrationCommand);
         when(encryptionServiceMock.encrypteString(anyString())).thenReturn(uniqueId);
 
@@ -90,7 +90,7 @@ public class DeviceServiceImplTest {
         //then
         assertEquals(res.getUniqueId(),uniqueId);
         assertEquals(res.getRegistrationStatus(),RegistrationStatus.PENDINGAPPROVAL);
-        verify(restClientServiceMock).isRegistered(anyString());
+        verify(restClientServiceMock).isCollectorRegistered(anyString());
         verify(restClientServiceMock).registerCollector(any(Device.class));
     }
 }

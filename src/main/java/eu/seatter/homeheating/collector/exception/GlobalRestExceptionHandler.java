@@ -23,7 +23,7 @@
 // */
 //@ControllerAdvice
 //@Slf4j
-//public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
+//public class GlobalRestExceptionHandler extends WebExceptionHandler  {
 //
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)
 //    @ExceptionHandler(Exception.class)

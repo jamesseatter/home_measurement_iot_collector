@@ -18,17 +18,17 @@ import java.util.List;
  */
 @Component
 @Slf4j
-public class SensorListManagerPi4J implements SensorListManager {
+public class SensorListManagerPi4J implements SensorList {
 
     @Override
     public List<SensorRecord> getSensors() {
-        log.info("1-Wire sensor scan started");
+        log.info("Start 1-Wire sensor scan");
         List<SensorRecord> sensorRecords = new ArrayList<>();
 
         W1Master w1Master = new W1Master();
-        List<W1Device> w1Devicelist = w1Master.getDevices();
+        List<W1Device> w1DeviceList = w1Master.getDevices();
 
-        for (W1Device w1d : w1Devicelist) {
+        for (W1Device w1d : w1DeviceList) {
             SensorRecord sensor = new SensorRecord();
             sensor.setSensorID(w1d.getId());
             sensor.setFamilyId(w1d.getFamilyId());
@@ -36,7 +36,7 @@ public class SensorListManagerPi4J implements SensorListManager {
             sensorRecords.add(sensor);
             log.info("  Found sensor : " + sensor.toString());
         }
-        log.info("1-Wire sensor scan finished. Found " + sensorRecords.size() + " sensors");
+        log.info("Completed 1-Wire sensor scan finished. Found " + sensorRecords.size() + " sensors");
         return sensorRecords;
     }
 }

@@ -26,7 +26,7 @@ public class RESTClientService {
     @Value("${app.edge.uri}")
     private String edgeURI;
 
-    private String baseRegistrationURI = "api/v1/registration";
+    private String baseRegistrationURI = "/api/v1/registration";
 
     private DeviceCommand deviceCommand;
     private DeviceToDeviceCommand converterDeviceToDeviceCommand;
@@ -54,16 +54,22 @@ public class RESTClientService {
         return result.block();
     }
 
-    public RegistrationCommand isRegistered(String uniqueid) {
-        final WebClient client = WebClient.builder().baseUrl(edgeURI).build();
+    public RegistrationCommand isCollectorRegistered(String uniqueid) {
+        final WebClient webClient = WebClient.builder().build();
 
-        Mono<RegistrationCommand> result = client
-                .post()
-                .uri(baseRegistrationURI + "/device")
-                .body(BodyInserters.fromObject(uniqueid))
-                .accept(APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(RegistrationCommand.class);
+
+        Mono<RegistrationCommand> result = webClient.get()
+                                            .uri(uriBuilder -> uriBuilder.path(baseRegistrationURI + "/device")
+                                                    .queryParam("uniqueid", uniqueid)
+                                                    .build())
+                                            .accept(APPLICATION_JSON)
+                                            .retrieve()
+//                                            .onStatus(HttpStatus::is4xxClientError, clientResponse -> Mono.error(new MyCustomException()))
+//                                            .onStatus(HttpStatus::is5xxServerError, clientResponse -> Mono.error(new MyCustomException()))
+                                            .bodyToMono(RegistrationCommand.class)
+                                            .retry(5);
+
+        RegistrationCommand registeredDevice = new RegistrationCommand();
 
         return result.block();
     }

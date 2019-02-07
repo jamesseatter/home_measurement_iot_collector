@@ -1,7 +1,6 @@
 package eu.seatter.homeheating.collector.services;
 
 import eu.seatter.homeheating.collector.model.SensorRecord;
-import eu.seatter.homeheating.collector.sensor.SensorListManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +19,7 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class IOTServiceImplTest {
     @Mock
-    private SensorListManager sensorListManager;
+    private SensorListService sensorListService;
 
     @Mock
     private SensorMeasurement sensorMeasurement;
@@ -28,7 +27,7 @@ public class IOTServiceImplTest {
     @Mock
     private DeviceService deviceService;
 
-    private IOTService iotService;
+    private CollectorService iotService;
 
     private List<SensorRecord> sensorList = new ArrayList<>();
     private SensorRecord mockData;
@@ -36,7 +35,7 @@ public class IOTServiceImplTest {
 
     @Before
     void setUp() {
-        iotService = new IOTService(sensorMeasurement,sensorListManager,deviceService);
+        iotService = new CollectorService(sensorMeasurement,sensorListService,deviceService);
     }
 
     @Test
