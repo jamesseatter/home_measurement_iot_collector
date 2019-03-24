@@ -8,12 +8,12 @@
 		<version>2.1.1.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>eu.seatter.homeheating</groupId>
+	<groupId>eu.seatter.homemeasurement</groupId>
 	<artifactId>collector</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>collector</name>
-	<description>Home Heating IOT End Point Collector</description>
+	<description>Home Measurement IOT End Point Collector</description>
 
 	<properties>
 		<java.version>1.8</java.version>

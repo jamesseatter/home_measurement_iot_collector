@@ -1,8 +1,8 @@
-# home_heating_iot_collector
+# home_measurement_iot_collector
 
 [![CircleCI](https://circleci.com/gh/jamesseatter/home_heating_iot_collector.svg?style=svg)](https://circleci.com/gh/jamesseatter/home_heating_iot_collector)
 
-Home Heating IOT Device
+Home Measurement IOT Collector
 
 The project is focused on building a system to monitor the temperature of the water entering the house from a shared common heating source as its base and will be extended to other measurements over time. That hot water is then distributed to taps and the underfloor heating system. The project will collect temperatures from strategic points to monitor water temperature and record the data for viewing within a web based front end.
 
@@ -16,7 +16,7 @@ This code covers the end point that measures the temperature and sends it to the
    * Send data to an Edge controller
    * Use authentication and roles
    * Update device configuration remotely via Edge
-   * Store data localy if Edge is not accessible and replay
+   * Store data locally if Edge is not accessible and replay
 
 **Code/hardware Components**
    * Raspberry Pi Zero W with a DS18B20 temperature probe.
