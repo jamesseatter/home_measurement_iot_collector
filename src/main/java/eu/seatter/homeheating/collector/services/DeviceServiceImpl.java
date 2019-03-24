@@ -38,13 +38,13 @@ public class DeviceServiceImpl implements DeviceService {
         device.setName(di.getHostName());
         device.setOperatingSystem(di.getOs());
         device.setManufacturer(di.getManufacturer());
-        device.setUniqueId(encryptionService.encrypteString(di.getMacAddress()));
+        device.setUniqueId(encryptionService.encryptString(di.getMacAddress()));
 
         log.info("Register device with edge");
         RegistrationCommand deviceRegistration = new RegistrationCommand();
 
         try {
-            //deviceRegistration = restClientService.isCollectorRegistered(device.getUniqueId());
+            deviceRegistration = restClientService.isCollectorRegistered(device.getUniqueId());
         } catch (Exception ex) {
             log.error("ERROR in RestService: " + ex.getLocalizedMessage());
             throw new RuntimeException(ex.getLocalizedMessage());

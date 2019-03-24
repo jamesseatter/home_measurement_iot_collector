@@ -1,11 +1,11 @@
 package eu.seatter.homeheating.collector.services;
 
-import eu.seatter.homeheating.collector.exception.SensorNotFoundException;
 import eu.seatter.homeheating.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,29 +20,34 @@ public class CollectorService implements CommandLineRunner {
     private int readIntervalSeconds = 10;
 
     private SensorMeasurement sensorMeasurement;
-    private SensorListService sensorListManager;
+    private SensorListService sensorListService;
     private DeviceService deviceService;
 
-    public CollectorService(SensorMeasurement sensorMeasurement, SensorListService sensorListManager, DeviceService deviceService) {
+    public CollectorService(SensorMeasurement sensorMeasurement, SensorListService sensorListService, DeviceService deviceService) {
         this.sensorMeasurement = sensorMeasurement;
-        this.sensorListManager = sensorListManager;
+        this.sensorListService = sensorListService;
         this.deviceService = deviceService;
     }
 
     @Override
     public void run(String... strings) {
-        deviceService.registerDevice();
-
-
-
-        List<SensorRecord> sensorList;
         boolean running = false;
+//        try {
+//            deviceService.registerDevice();
+//        } catch (RuntimeException ex) {
+//
+//        }
+
+
+        List<SensorRecord> sensorList = Collections.EMPTY_LIST;
         try {
-            sensorList = sensorListManager.getSensors();
+            sensorList = sensorListService.getSensors();
             //todo Send sensor list to the Edge
         } catch (RuntimeException ex) {
-            throw new SensorNotFoundException("No sensors found",
-                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
+            log.warn("No sensors were connected to the system. Shutting down");
+            //throw new SensorNotFoundException("No sensors found",
+//                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
+            running = false;
         }
 
         if(sensorList.size() > 0) {

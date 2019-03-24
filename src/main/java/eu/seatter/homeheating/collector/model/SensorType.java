@@ -7,5 +7,5 @@ package eu.seatter.homeheating.collector.model;
  * Time: 15:05
  */
 public enum SensorType {
-    ANALOGUE, ONEWIRE
+    ANALOGUE, DIGITAL, ONEWIRE
 }

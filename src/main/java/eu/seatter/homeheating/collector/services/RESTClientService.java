@@ -2,14 +2,20 @@ package eu.seatter.homeheating.collector.services;
 
 import eu.seatter.homeheating.collector.commands.DeviceCommand;
 import eu.seatter.homeheating.collector.commands.RegistrationCommand;
+import eu.seatter.homeheating.collector.commands.SensorCommand;
 import eu.seatter.homeheating.collector.converters.DeviceToDeviceCommand;
+import eu.seatter.homeheating.collector.converters.SensorRecordToSensorCommand;
 import eu.seatter.homeheating.collector.model.Device;
+import eu.seatter.homeheating.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -30,10 +36,12 @@ public class RESTClientService {
 
     private DeviceCommand deviceCommand;
     private DeviceToDeviceCommand converterDeviceToDeviceCommand;
+    private SensorRecordToSensorCommand converterSensorRecordToSensorCommand;
 
-    public RESTClientService(DeviceCommand deviceCommand, DeviceToDeviceCommand converterDeviceToDeviceCommand) {
+    public RESTClientService(DeviceCommand deviceCommand, DeviceToDeviceCommand converterDeviceToDeviceCommand, SensorRecordToSensorCommand converterSensorRecordToSensorCommand) {
         this.deviceCommand = deviceCommand;
         this.converterDeviceToDeviceCommand = converterDeviceToDeviceCommand;
+        this.converterSensorRecordToSensorCommand = converterSensorRecordToSensorCommand;
     }
 
     public RegistrationCommand registerCollector(Device device) {
@@ -59,7 +67,7 @@ public class RESTClientService {
 
 
         Mono<RegistrationCommand> result = webClient.get()
-                                            .uri(uriBuilder -> uriBuilder.path(baseRegistrationURI + "/device")
+                                            .uri(uriBuilder -> uriBuilder.path(edgeURI + " / " + baseRegistrationURI + "/device")
                                                     .queryParam("uniqueid", uniqueid)
                                                     .build())
                                             .accept(APPLICATION_JSON)
@@ -70,6 +78,27 @@ public class RESTClientService {
                                             .retry(5);
 
         RegistrationCommand registeredDevice = new RegistrationCommand();
+
+        return result.block();
+    }
+
+    public SensorCommand registerSensors(List<SensorRecord> sensorRecordList) {
+
+        final WebClient client = WebClient.builder().baseUrl(edgeURI).build();
+
+        List<SensorCommand> sensorCommandList = new ArrayList<>();
+        for(SensorRecord sr : sensorRecordList) {
+            sensorCommandList.add(converterSensorRecordToSensorCommand.convert(sr));
+        }
+
+        Mono<SensorCommand> result = client
+                .post()
+                .uri(baseRegistrationURI + "/sensors/new")
+                .body(BodyInserters.fromObject(sensorCommandList))
+                .accept(APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(SensorCommand.class)
+                .onErrorReturn(new SensorCommand());
 
         return result.block();
     }

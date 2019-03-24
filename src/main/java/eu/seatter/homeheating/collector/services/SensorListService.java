@@ -1,6 +1,7 @@
 package eu.seatter.homeheating.collector.services;
 
 import eu.seatter.homeheating.collector.model.SensorRecord;
+import eu.seatter.homeheating.collector.sensor.SensorList;
 import eu.seatter.homeheating.collector.sensor.SensorListManagerJSON;
 import eu.seatter.homeheating.collector.sensor.SensorListManagerPi4J;
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +30,17 @@ public class SensorListService {
     public List<SensorRecord> getSensors() {
         log.info("Getting sensor list");
         List<SensorRecord> sensorRecordList = new ArrayList<>();
-
-        sensorRecordList.addAll(jsonFile.getSensors());
+        try {
+            sensorRecordList.addAll(jsonFile.getSensors());
+        } catch (Exception ex) {}
+        try {
         sensorRecordList.addAll(pi4j.getSensors());
+        } catch (Exception ex) {}
         log.info("Completed sensor list");
         return sensorRecordList;
+    }
+
+    private void registerSensors(List<SensorList> sensorList) {
+
     }
 }

@@ -22,16 +22,14 @@ import java.util.Optional;
 public class OneWirePi4JSensor implements Sensor {
     private Double value=0D;
     private String sensorID;
-    private String sensorDescription;
 
     private W1Master w1master = new W1Master();
 
     @Override
     public Double readSensorData(SensorRecord sensorRecord) {
-        sensorDescription = "sensor [" + sensorRecord.getSensorID() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyId() + "]";
-
+        log.info("Processing : " + sensorRecord.loggerFormat());
         if(sensorRecord.getSensorID().isEmpty()) {
-            throw new RuntimeException(sensorDescription + " : ID not set");
+            throw new RuntimeException(sensorRecord.loggerFormat() + " : ID not set");
         }
         sensorID = sensorRecord.getSensorID();
 
@@ -39,16 +37,16 @@ public class OneWirePi4JSensor implements Sensor {
 
         if(w1device.isPresent()) {
             Double measurement;
-            log.debug(sensorDescription + " : Measurement - " + ((TemperatureSensor) w1device.get()).getTemperature());
+            log.debug(sensorRecord.loggerFormat() + " : Measurement - " + ((TemperatureSensor) w1device.get()).getTemperature());
             try {
                 measurement = ((TemperatureSensor) w1device.get()).getTemperature();
             } catch (Exception e) {
-                throw new RuntimeException(sensorDescription + " : Unable to get measurement from sensor");
+                throw new RuntimeException(sensorRecord.loggerFormat() + " : Unable to get measurement from sensor");
             }
             return measurement;
 
         } else {
-            throw new SensorNotFoundException("Sensor no longer connected : " + sensorDescription,
+            throw new SensorNotFoundException("Sensor no longer connected : " + sensorRecord.loggerFormat(),
                     "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
         }
     }

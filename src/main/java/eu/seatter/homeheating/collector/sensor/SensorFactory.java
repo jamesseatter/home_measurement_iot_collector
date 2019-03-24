@@ -14,7 +14,10 @@ public class SensorFactory {
             return new OneWirePi4JSensor();
         }
         if(sensorType == SensorType.ANALOGUE) {
-            return new OneWirePi4JSensor();
+            return new AnalogueSensor();
+        }
+        if(sensorType == SensorType.DIGITAL) {
+            return new DigitalSensor();
         }
 
         return null;

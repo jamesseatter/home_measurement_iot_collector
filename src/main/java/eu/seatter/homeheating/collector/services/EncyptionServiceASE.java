@@ -21,7 +21,7 @@ public class EncyptionServiceASE implements EncryptionService {
     private static final String initVector = "452~][:86y5s{lk9";
 
     @Override
-    public String encrypteString(String unencrypted) {
+    public String encryptString(String unencrypted) {
         if(unencrypted.length() <= 100) {
             try {
                 IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));

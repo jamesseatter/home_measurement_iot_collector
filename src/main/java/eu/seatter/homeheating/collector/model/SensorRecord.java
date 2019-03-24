@@ -22,6 +22,10 @@ public class SensorRecord {
     private LocalDateTime measureTime;
     private Double value;
 
+    public String loggerFormat() {
+        return "[" + sensorID + "/" + sensorType + "/" + getFamilyId() + "]";
+    }
+
     @Override
     public String toString() {
         return "SensorRecord{" +

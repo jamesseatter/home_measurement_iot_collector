@@ -21,19 +21,19 @@ import java.util.List;
 public class SensorMeasurement {
 
     private Sensor sensorReader;
-    private String sensorDescription;
 
     public void collect(List<SensorRecord> sensorList) {
         log.info("Start measurement processing");
         for (SensorRecord sensorRecord : sensorList) {
+            if(sensorRecord.getSensorID() == null) {
+                continue;
+            }
             SensorRecord srWithMeasurement;
-            sensorDescription = "sensor [" + sensorRecord.getSensorID() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyId() + "]";
-            log.info(sensorDescription);
             try {
                 srWithMeasurement = readSensorValue(sensorRecord);
-                log.debug(sensorDescription + " : Value returned - " + srWithMeasurement.getValue());
+                log.debug(sensorRecord.loggerFormat() + " : Value returned - " + srWithMeasurement.getValue());
             } catch (Exception ex) {
-                log.error("Error reading sensor with ID: " + sensorRecord.getSensorID() + ". " + ex.getMessage());
+                log.error(sensorRecord.loggerFormat() + " : Error reading sensor. " + ex.getMessage());
             }
             //todo Send measurement to edge
         }
@@ -42,17 +42,16 @@ public class SensorMeasurement {
 
     private SensorRecord readSensorValue(SensorRecord sensorRecord) {
         sensorReader = SensorFactory.getSensor(sensorRecord.getSensorType());
-        log.debug(sensorDescription + " : Reading value");
-        try {
+//        try {
             sensorRecord.setValue(sensorReader.readSensorData(sensorRecord));
             sensorRecord.setMeasureTime(LocalDateTime.now(ZoneOffset.UTC));
-            log.debug(sensorDescription + " : Returned value - " + sensorRecord.getValue());
-        }
-        catch (RuntimeException ex) {
-            //todo improve exception handling
-            log.error(ex.getLocalizedMessage());
-            throw ex;
-        }
+            log.debug(sensorRecord.loggerFormat() + " : Returned value - " + sensorRecord.getValue());
+//        }
+//        catch (RuntimeException ex) {
+//            //todo improve exception handling
+//            log.error(sensorRecord.loggerFormat() + " : " + ex.getLocalizedMessage());
+//            throw ex;
+//        }
         return sensorRecord;
     }
 }

@@ -7,6 +7,6 @@ package eu.seatter.homeheating.collector.services;
  * Time: 08:55
  */
 public interface EncryptionService {
-    String encrypteString(String jsonString);
+    String encryptString(String jsonString);
     String decrypteString(String base64String);
 }

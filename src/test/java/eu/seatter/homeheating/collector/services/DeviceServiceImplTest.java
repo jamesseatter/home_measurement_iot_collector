@@ -48,7 +48,7 @@ public class DeviceServiceImplTest {
     public void setUp() {
         //MockitoAnnotations.initMocks(this);
         EncryptionService encryptionService2 = new EncyptionServiceASE();
-        uniqueId = encryptionService2.encrypteString(macAddress);
+        uniqueId = encryptionService2.encryptString(macAddress);
 
         returnedRegistrationCommand.setId(1L);
         returnedRegistrationCommand.setName("TESTDevice");
@@ -64,7 +64,7 @@ public class DeviceServiceImplTest {
     public void whenDeviceExists_ShouldReturnDeviceAPPROVED() {
         //given
         when(restClientServiceMock.isCollectorRegistered(anyString())).thenReturn(returnedRegistrationCommand);
-        when(encryptionServiceMock.encrypteString(anyString())).thenReturn(uniqueId);
+        when(encryptionServiceMock.encryptString(anyString())).thenReturn(uniqueId);
 
         //when
         RegistrationCommand res = deviceService.registerDevice();
@@ -82,7 +82,7 @@ public class DeviceServiceImplTest {
         returnedRegistrationCommand.setRegistrationStatus(RegistrationStatus.PENDINGAPPROVAL);
         when(restClientServiceMock.isCollectorRegistered(anyString())).thenReturn(new RegistrationCommand());
         when(restClientServiceMock.registerCollector(any(Device.class))).thenReturn(returnedRegistrationCommand);
-        when(encryptionServiceMock.encrypteString(anyString())).thenReturn(uniqueId);
+        when(encryptionServiceMock.encryptString(anyString())).thenReturn(uniqueId);
 
         //when
         RegistrationCommand res = deviceService.registerDevice();
