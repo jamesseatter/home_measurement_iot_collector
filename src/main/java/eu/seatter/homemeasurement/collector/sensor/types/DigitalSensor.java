@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.sensor;
+package eu.seatter.homemeasurement.collector.sensor.types;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;

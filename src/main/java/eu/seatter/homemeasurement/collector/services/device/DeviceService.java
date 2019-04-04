@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.services;
+package eu.seatter.homemeasurement.collector.services.device;
 
 import eu.seatter.homemeasurement.collector.commands.RegistrationCommand;
 

@@ -6,6 +6,9 @@ import eu.seatter.homemeasurement.collector.converters.DeviceToDeviceCommand;
 import eu.seatter.homemeasurement.collector.model.Device;
 import eu.seatter.homemeasurement.collector.model.DeviceIdentification;
 import eu.seatter.homemeasurement.collector.model.RegistrationStatus;
+import eu.seatter.homemeasurement.collector.services.device.DeviceServiceImpl;
+import eu.seatter.homemeasurement.collector.services.encryption.EncryptionService;
+import eu.seatter.homemeasurement.collector.services.encryption.EncyptionServiceASE;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +30,7 @@ import static org.mockito.Mockito.*;
 public class DeviceServiceImplTest {
 
     @Mock
-    private RESTClientService restClientServiceMock;
+    private RegistrationService restClientServiceMock;
     @Mock
     private DeviceToDeviceCommand converterDeviceToDeviceCommandMock;
     @Mock

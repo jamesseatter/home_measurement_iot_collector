@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.sensor;
+package eu.seatter.homemeasurement.collector.sensor.listmanagers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;

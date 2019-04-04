@@ -1,9 +1,9 @@
-package eu.seatter.homemeasurement.collector.services;
+package eu.seatter.homemeasurement.collector.services.sensor;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.sensor.SensorList;
-import eu.seatter.homemeasurement.collector.sensor.SensorListManagerJSON;
-import eu.seatter.homemeasurement.collector.sensor.SensorListManagerPi4J;
+import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorList;
+import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerJSON;
+import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerPi4J;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +30,17 @@ public class SensorListService {
     public List<SensorRecord> getSensors() {
         log.info("Getting sensor list");
         List<SensorRecord> sensorRecordList = new ArrayList<>();
+
         try {
             sensorRecordList.addAll(jsonFile.getSensors());
         } catch (Exception ex) {}
+
         try {
         sensorRecordList.addAll(pi4j.getSensors());
         } catch (Exception ex) {}
+
         log.info("Completed sensor list");
+
         return sensorRecordList;
     }
 

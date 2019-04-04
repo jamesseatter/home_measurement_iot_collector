@@ -27,18 +27,19 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
  */
 @Service
 @Slf4j
-public class RESTClientService {
+public class RegistrationService {
 
-    @Value("${app.edge.uri}")
+    @Value("${rest.edge.uri.base:http://127.0.0.1}")
     private String edgeURI;
 
-    private String baseRegistrationURI = "/api/v1/registration";
+    @Value("${rest.edge.uri.api.registration:/api/v1/registration}")
+    private String baseRegistrationURI;
 
     private DeviceCommand deviceCommand;
     private DeviceToDeviceCommand converterDeviceToDeviceCommand;
     private SensorRecordToSensorCommand converterSensorRecordToSensorCommand;
 
-    public RESTClientService(DeviceCommand deviceCommand, DeviceToDeviceCommand converterDeviceToDeviceCommand, SensorRecordToSensorCommand converterSensorRecordToSensorCommand) {
+    public RegistrationService(DeviceCommand deviceCommand, DeviceToDeviceCommand converterDeviceToDeviceCommand, SensorRecordToSensorCommand converterSensorRecordToSensorCommand) {
         this.deviceCommand = deviceCommand;
         this.converterDeviceToDeviceCommand = converterDeviceToDeviceCommand;
         this.converterSensorRecordToSensorCommand = converterSensorRecordToSensorCommand;

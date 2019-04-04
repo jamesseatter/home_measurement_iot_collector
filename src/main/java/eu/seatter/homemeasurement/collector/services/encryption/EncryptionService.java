@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.services;
+package eu.seatter.homemeasurement.collector.services.encryption;
 
 /**
  * Created by IntelliJ IDEA.

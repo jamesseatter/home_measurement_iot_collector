@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.sensor;
+package eu.seatter.homemeasurement.collector.sensor.types;
 
 import com.pi4j.component.temperature.TemperatureSensor;
 import com.pi4j.component.temperature.impl.TmpDS18B20DeviceType;
@@ -9,6 +9,7 @@ import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,14 +33,23 @@ public class OneWirePi4JSensor implements Sensor {
             throw new RuntimeException(sensorRecord.loggerFormat() + " : ID not set");
         }
         sensorID = sensorRecord.getSensorID();
+        Optional<W1Device> w1device = Optional.empty();
 
-        Optional<W1Device> w1device = getTmpDS18B20();
+        if(sensorRecord.getFamilyId() == TmpDS18B20DeviceType.FAMILY_CODE) {
+            log.debug("Sensor Family - DS18B20");
+            w1device = getTmpDS18B20(sensorID);
+        } else {
+            log.warn("Sensor Family " + sensorRecord.getFamilyId() + " NOT SUPPORTED");
+            return 0.0D;
+            //todo convert to a throw
+        }
 
         if(w1device.isPresent()) {
             Double measurement;
-            log.debug(sensorRecord.loggerFormat() + " : Measurement - " + ((TemperatureSensor) w1device.get()).getTemperature());
+
             try {
                 measurement = ((TemperatureSensor) w1device.get()).getTemperature();
+                log.debug(sensorRecord.loggerFormat() + " : Measurement - " + measurement);
             } catch (Exception e) {
                 throw new RuntimeException(sensorRecord.loggerFormat() + " : Unable to get measurement from sensor");
             }
@@ -51,11 +61,20 @@ public class OneWirePi4JSensor implements Sensor {
         }
     }
 
-    private Optional<W1Device> getTmpDS18B20() {
-        return w1master.getDevices(TmpDS18B20DeviceType.FAMILY_CODE)
-                .stream()
-                .filter(sensor -> sensor.getId().equals(sensorID))
-                .findFirst();
-    }
+    private Optional<W1Device> getTmpDS18B20(String sensorID) {
+        log.debug("Looking for ID : '" + sensorID + "'");
 
+        List<W1Device> device = w1master.getDevices(TmpDS18B20DeviceType.FAMILY_CODE);
+        log.debug("1Wire device Count : " + device.size());
+
+        for (W1Device w1d : device){
+            String devID = w1d.getId().trim();
+            log.debug("Validating sensor : '" + devID + "'");
+            if(devID.equals(sensorID)) {
+                log.debug("Found 1WireDevice name : " + w1d.getName().trim() + " with ID : " + devID);
+                return Optional.of(w1d);
+            }
+        }
+        return Optional.empty();
+    }
 }

@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.sensor;
+package eu.seatter.homemeasurement.collector.sensor.listmanagers;
 
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
@@ -29,7 +29,7 @@ public class SensorListManagerPi4J implements SensorList {
         List<W1Device> w1DeviceList = w1Master.getDevices();
         log.info("Found : " + w1DeviceList.size());
         for (W1Device w1d : w1DeviceList) {
-            log.debug("1 wire Device : " + w1d.getName());
+            log.debug("1 wire device : " + w1d.getName());
             SensorRecord sensor = new SensorRecord();
             sensor.setSensorID(w1d.getId().trim());
             sensor.setFamilyId(w1d.getFamilyId());

@@ -1,10 +1,12 @@
-package eu.seatter.homemeasurement.collector.services;
+package eu.seatter.homemeasurement.collector.services.device;
 
 import eu.seatter.homemeasurement.collector.commands.RegistrationCommand;
 import eu.seatter.homemeasurement.collector.converters.DeviceCommandToDevice;
 import eu.seatter.homemeasurement.collector.converters.DeviceToDeviceCommand;
 import eu.seatter.homemeasurement.collector.model.Device;
 import eu.seatter.homemeasurement.collector.model.DeviceIdentification;
+import eu.seatter.homemeasurement.collector.services.RegistrationService;
+import eu.seatter.homemeasurement.collector.services.encryption.EncryptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +20,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class DeviceServiceImpl implements DeviceService {
 
-    private final RESTClientService restClientService;
+    private final RegistrationService restClientService;
     private final DeviceToDeviceCommand converterDeviceToDeviceCommand;
     private final DeviceCommandToDevice converterDeviceCommandToDevice;
     private final EncryptionService encryptionService;
     private final DeviceIdentification di;
 
-    public DeviceServiceImpl(RESTClientService restClientService, DeviceToDeviceCommand converterDeviceToDeviceCommand, DeviceCommandToDevice converterDeviceCommandToDevice, EncryptionService encryptionService) {
+    public DeviceServiceImpl(RegistrationService restClientService, DeviceToDeviceCommand converterDeviceToDeviceCommand, DeviceCommandToDevice converterDeviceCommandToDevice, EncryptionService encryptionService) {
         this.restClientService = restClientService;
         this.converterDeviceToDeviceCommand = converterDeviceToDeviceCommand;
         this.converterDeviceCommandToDevice = converterDeviceCommandToDevice;
@@ -51,11 +53,11 @@ public class DeviceServiceImpl implements DeviceService {
         }
 
         if(deviceRegistration.getUniqueId() != null && (deviceRegistration.getUniqueId().equals(device.getUniqueId()))) {
-            log.info("Device was previously registered. Current registration status : " + deviceRegistration.getRegistrationStatus());
+            log.info("device was previously registered. Current registration status : " + deviceRegistration.getRegistrationStatus());
             device.setRegistrationStatus(deviceRegistration.getRegistrationStatus());
         } else {
             deviceRegistration = restClientService.registerCollector(device);
-            log.info("Device has been registered. Current registration status : " + deviceRegistration.getRegistrationStatus());
+            log.info("device has been registered. Current registration status : " + deviceRegistration.getRegistrationStatus());
         }
 
         return deviceRegistration;

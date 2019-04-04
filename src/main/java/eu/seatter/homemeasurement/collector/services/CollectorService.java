@@ -1,7 +1,11 @@
 package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.services.device.DeviceService;
+import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
+import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class CollectorService implements CommandLineRunner {
+    @Value("${app.measurement.interval.seconds:360}")
     private int readIntervalSeconds = 10;
 
     private SensorMeasurement sensorMeasurement;
@@ -38,11 +43,14 @@ public class CollectorService implements CommandLineRunner {
 //
 //        }
 
+        log.info("Sensor Read Interval (seconds) : "+ readIntervalSeconds);
 
         List<SensorRecord> sensorList = Collections.EMPTY_LIST;
+
         try {
+            log.debug("Perform sensor search");
             sensorList = sensorListService.getSensors();
-            //todo Send sensor list to the Edge
+            log.debug("Sensor count : " + sensorList.size());
         } catch (RuntimeException ex) {
             log.warn("No sensors were connected to the system. Shutting down");
             //throw new SensorNotFoundException("No sensors found",
@@ -50,14 +58,18 @@ public class CollectorService implements CommandLineRunner {
             running = false;
         }
 
+
+
         if(sensorList.size() > 0) {
             running = true;
+            //todo Send sensor list to the Edge
         } else {
+            running = false;
             log.info("No sensors connected to device. Exiting.");
         }
 
         while(running) {
-
+            log.debug("Perform sensor measurements");
             sensorMeasurement.collect(sensorList);
 
             try {

@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.sensor;
+package eu.seatter.homemeasurement.collector.sensor.listmanagers;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 

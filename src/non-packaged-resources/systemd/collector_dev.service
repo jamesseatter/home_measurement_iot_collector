@@ -1,0 +1,13 @@
+[Unit]
+Description = Home measurement collector service
+After = syslog.target
+
+[Service]
+Type = forking
+User = iot
+ExecStart = /home/iot/bin/collector_dev/collectorservice.sh start
+ExecStop = /home/iot/bin/collector_dev/collectorservice.sh stop
+ExecReload = /home/iot/bin/collector_dev/collectorservice.sh reload
+
+[Install]
+WantedBy = multi-user.target
