@@ -59,7 +59,7 @@ public class SensorMeasurement {
         sensorReader = SensorFactory.getSensor(sensorRecord.getSensorType());
         try {
             sensorRecord.setValue(sensorReader.readSensorData(sensorRecord));
-            sensorRecord.setMeasureTime(LocalDateTime.now(ZoneOffset.UTC));
+            sensorRecord.setMeasureTimeUTC(LocalDateTime.now(ZoneOffset.UTC));
         }
         catch (RuntimeException ex) {
             //todo improve exception handling

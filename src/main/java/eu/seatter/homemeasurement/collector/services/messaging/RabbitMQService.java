@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -79,9 +80,18 @@ public class RabbitMQService implements Messaging {
         try (Connection connection = factory.newConnection();
             Channel channel = connection.createChannel()) {
 
-            channel.exchangeDeclare(MQ_EXCHANGE_NAME, "topic", true);
-            channel.queueDeclare(MQ_QUEUE_NAME, true, false, false, null);
-            channel.queueBind(MQ_QUEUE_NAME, MQ_EXCHANGE_NAME, MQ_MEASUREMENT_UNIQUE_ID);
+//            channel.exchangeDeclare(MQ_EXCHANGE_NAME, "topic", true);
+//            channel.queueDeclare(MQ_QUEUE_NAME, true, false, false, null);
+//            channel.queueBind(MQ_QUEUE_NAME, MQ_EXCHANGE_NAME, MQ_MEASUREMENT_UNIQUE_ID);
+            try {
+                channel.queueDeclarePassive(MQ_QUEUE_NAME);
+            }
+            catch(IOException ex) {
+                System.out.println("ERROR: Failed to connect to RabbitMQ : " + ex.getLocalizedMessage());
+                System.out.println("ERROR: Host : " + MQ_HOST + " vHost : " + MQ_VHOST + " Q : " + MQ_QUEUE_NAME);
+                //todo Throw an error
+                return;
+            }
             log.debug("Connected to MQ Server");
 
 
@@ -97,7 +107,7 @@ public class RabbitMQService implements Messaging {
             }
 
         } catch (Exception ex) {
-            log.error(ex.getLocalizedMessage());
+            log.error("Failed to connect to RabbitMQ with error message :" + ex.getMessage());
         }
     }
 
@@ -113,7 +123,7 @@ public class RabbitMQService implements Messaging {
 
     private String convertToJSONMesssage(SensorRecord sensorRecord) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(sensorRecord);
-        return json;
+        return mapper.writeValueAsString(sensorRecord);
+
     }
 }

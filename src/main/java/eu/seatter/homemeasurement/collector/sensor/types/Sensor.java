@@ -2,6 +2,8 @@ package eu.seatter.homemeasurement.collector.sensor.types;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 
+import java.util.Optional;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jas
@@ -12,5 +14,5 @@ public interface Sensor {
 
     String sensorDescription="";
 
-    Double readSensorData(SensorRecord sensorRecord);
+    Optional<Double> readSensorData(SensorRecord sensorRecord);
 }

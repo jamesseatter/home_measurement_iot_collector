@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class CollectorService implements CommandLineRunner {
-    @Value("${app.measurement.interval.seconds:360}")
+    @Value("${measurement.interval.seconds:360}")
     private int readIntervalSeconds = 10;
 
     private SensorMeasurement sensorMeasurement;
@@ -55,7 +55,6 @@ public class CollectorService implements CommandLineRunner {
             log.warn("No sensors were connected to the system. Shutting down");
             //throw new SensorNotFoundException("No sensors found",
 //                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
-            running = false;
         }
 
 
@@ -64,7 +63,6 @@ public class CollectorService implements CommandLineRunner {
             running = true;
             //todo Send sensor list to the Edge
         } else {
-            running = false;
             log.info("No sensors connected to device. Exiting.");
         }
 

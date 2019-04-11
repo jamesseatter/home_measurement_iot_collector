@@ -1,5 +1,9 @@
 package eu.seatter.homemeasurement.collector.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +23,9 @@ public class SensorRecord {
     private String sensorID;
     private int familyId;
     private SensorType sensorType;
-    private LocalDateTime measureTime;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime measureTimeUTC;
     private Double value;
 
     public String loggerFormat() {
@@ -32,7 +38,7 @@ public class SensorRecord {
                 "sensorID='" + sensorID + '\'' +
                 ", familyID='" + familyId + '\'' +
                 ", sensorType=" + sensorType +
-                ", measureTime=" + measureTime +
+                ", measureTimeUTC=" + measureTimeUTC +
                 ", value=" + value +
                 '}';
     }
