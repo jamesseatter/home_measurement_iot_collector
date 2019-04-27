@@ -35,8 +35,6 @@ public class RabbitMQService implements Messaging {
     private final String MQ_USERNAME;
     private final String MQ_USERPASSWORD;
 
-    private ConnectionFactory factory;
-
 
     public RabbitMQService(@Value("${RabbitMQService.measurement.unique_id:CHANGE_ME}") String m_uniqueid,
                            @Value("${RabbitMQService.registration.unique_id:CHANGE_ME}") String r_uniqueid,
@@ -70,7 +68,7 @@ public class RabbitMQService implements Messaging {
     @Override
     public void sendMeasurement(SensorRecord sensorRecord) {
         log.info("MQ Sending measurement message");
-        factory = new ConnectionFactory();
+        ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(MQ_HOST);
         factory.setPort(MQ_PORT);
         factory.setUsername(MQ_USERNAME);
@@ -78,7 +76,7 @@ public class RabbitMQService implements Messaging {
         factory.setVirtualHost(MQ_VHOST);
 
         try (Connection connection = factory.newConnection();
-            Channel channel = connection.createChannel()) {
+             Channel channel = connection.createChannel()) {
 
 //            channel.exchangeDeclare(MQ_EXCHANGE_NAME, "topic", true);
 //            channel.queueDeclare(MQ_QUEUE_NAME, true, false, false, null);

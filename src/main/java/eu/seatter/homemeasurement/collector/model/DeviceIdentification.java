@@ -11,6 +11,7 @@ import java.net.NetworkInterface;
  * Date: 29/01/2019
  * Time: 22:45
  */
+@SuppressWarnings("SameReturnValue")
 @Getter
 public enum DeviceIdentification {
     INSTANCE();
@@ -31,7 +32,7 @@ public enum DeviceIdentification {
         }
     }
 
-    String macaddress(){
+    private String macaddress(){
         StringBuilder sb = new StringBuilder();
         try {
             InetAddress addr = InetAddress.getLocalHost();

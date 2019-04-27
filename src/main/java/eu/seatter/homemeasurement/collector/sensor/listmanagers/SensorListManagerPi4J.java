@@ -31,8 +31,8 @@ public class SensorListManagerPi4J implements SensorList {
         for (W1Device w1d : w1DeviceList) {
             log.debug("1 wire device : " + w1d.getName());
             SensorRecord sensor = new SensorRecord();
-            sensor.setSensorID(w1d.getId().trim());
-            sensor.setFamilyId(w1d.getFamilyId());
+            sensor.setSensorid(w1d.getId().trim());
+            sensor.setFamilyid(w1d.getFamilyId());
             sensor.setSensorType(SensorType.ONEWIRE);
             sensorRecords.add(sensor);
             log.info("  Found sensor : " + sensor.loggerFormat());

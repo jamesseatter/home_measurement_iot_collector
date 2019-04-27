@@ -1,7 +1,6 @@
 package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.services.device.DeviceService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +23,12 @@ public class CollectorService implements CommandLineRunner {
     @Value("${measurement.interval.seconds:360}")
     private int readIntervalSeconds = 10;
 
-    private SensorMeasurement sensorMeasurement;
-    private SensorListService sensorListService;
-    private DeviceService deviceService;
+    private final SensorMeasurement sensorMeasurement;
+    private final SensorListService sensorListService;
 
-    public CollectorService(SensorMeasurement sensorMeasurement, SensorListService sensorListService, DeviceService deviceService) {
+    public CollectorService(SensorMeasurement sensorMeasurement, SensorListService sensorListService) {
         this.sensorMeasurement = sensorMeasurement;
         this.sensorListService = sensorListService;
-        this.deviceService = deviceService;
     }
 
     @Override
@@ -45,7 +42,7 @@ public class CollectorService implements CommandLineRunner {
 
         log.info("Sensor Read Interval (seconds) : "+ readIntervalSeconds);
 
-        List<SensorRecord> sensorList = Collections.EMPTY_LIST;
+        List<SensorRecord> sensorList = Collections.emptyList();
 
         try {
             log.debug("Perform sensor search");

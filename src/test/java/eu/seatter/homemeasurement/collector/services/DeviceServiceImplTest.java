@@ -1,8 +1,6 @@
 package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.commands.RegistrationCommand;
-import eu.seatter.homemeasurement.collector.converters.DeviceCommandToDevice;
-import eu.seatter.homemeasurement.collector.converters.DeviceToDeviceCommand;
 import eu.seatter.homemeasurement.collector.model.Device;
 import eu.seatter.homemeasurement.collector.model.DeviceIdentification;
 import eu.seatter.homemeasurement.collector.model.RegistrationStatus;
@@ -16,8 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,25 +28,21 @@ public class DeviceServiceImplTest {
     @Mock
     private RegistrationService restClientServiceMock;
     @Mock
-    private DeviceToDeviceCommand converterDeviceToDeviceCommandMock;
-    @Mock
-    private DeviceCommandToDevice converterDeviceCommandToDeviceMock;
-    @Mock
     private EncryptionService encryptionServiceMock;
 
     private DeviceIdentification di;
 
     private DeviceServiceImpl deviceService;
 
-    private RegistrationCommand returnedRegistrationCommand = new RegistrationCommand();
+    private final RegistrationCommand returnedRegistrationCommand = new RegistrationCommand();
 
-    private final String macAddress = "9C-B6-D0-F9-85-34";
     private String uniqueId;
 
     @Before
     public void setUp() {
         //MockitoAnnotations.initMocks(this);
         EncryptionService encryptionService2 = new EncyptionServiceASE();
+        String macAddress = "9C-B6-D0-F9-85-34";
         uniqueId = encryptionService2.encryptString(macAddress);
 
         returnedRegistrationCommand.setId(1L);
@@ -60,7 +52,7 @@ public class DeviceServiceImplTest {
         returnedRegistrationCommand.setRegistrationStatus(RegistrationStatus.APPROVED);
         returnedRegistrationCommand.setUniqueId(uniqueId);
 
-        deviceService = new DeviceServiceImpl(restClientServiceMock,converterDeviceToDeviceCommandMock,converterDeviceCommandToDeviceMock,encryptionServiceMock);
+        deviceService = new DeviceServiceImpl(restClientServiceMock,encryptionServiceMock);
     }
 
     @Test

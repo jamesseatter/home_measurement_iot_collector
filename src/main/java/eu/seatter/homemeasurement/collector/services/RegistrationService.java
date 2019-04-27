@@ -35,12 +35,10 @@ public class RegistrationService {
     @Value("${rest.edge.uri.api.registration:/api/v1/registration}")
     private String baseRegistrationURI;
 
-    private DeviceCommand deviceCommand;
-    private DeviceToDeviceCommand converterDeviceToDeviceCommand;
-    private SensorRecordToSensorCommand converterSensorRecordToSensorCommand;
+    private final DeviceToDeviceCommand converterDeviceToDeviceCommand;
+    private final SensorRecordToSensorCommand converterSensorRecordToSensorCommand;
 
-    public RegistrationService(DeviceCommand deviceCommand, DeviceToDeviceCommand converterDeviceToDeviceCommand, SensorRecordToSensorCommand converterSensorRecordToSensorCommand) {
-        this.deviceCommand = deviceCommand;
+    public RegistrationService(DeviceToDeviceCommand converterDeviceToDeviceCommand, SensorRecordToSensorCommand converterSensorRecordToSensorCommand) {
         this.converterDeviceToDeviceCommand = converterDeviceToDeviceCommand;
         this.converterSensorRecordToSensorCommand = converterSensorRecordToSensorCommand;
     }
@@ -78,7 +76,7 @@ public class RegistrationService {
                                             .bodyToMono(RegistrationCommand.class)
                                             .retry(5);
 
-        RegistrationCommand registeredDevice = new RegistrationCommand();
+        //RegistrationCommand registeredDevice = new RegistrationCommand();
 
         return result.block();
     }

@@ -20,26 +20,31 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class SensorRecord {
-    private String sensorID;
-    private int familyId;
+    private String sensorid;
+    private int familyid;
     private SensorType sensorType;
+    private SensorMeasurementUnit measurementUnit;
+    private Double low_threshold;
+    private Double high_threshold;
+    private String alertgroup;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime measureTimeUTC;
     private Double value;
 
+
     public String loggerFormat() {
-        return "[" + sensorID + "/" + sensorType + "/" + getFamilyId() + "]";
+        return "[" + sensorid + "/" + sensorType + "/" + familyid + "]";
     }
 
     @Override
     public String toString() {
         return "SensorRecord{" +
-                "sensorID='" + sensorID + '\'' +
-                ", familyID='" + familyId + '\'' +
+                "sensorid='" + sensorid + '\'' +
                 ", sensorType=" + sensorType +
                 ", measureTimeUTC=" + measureTimeUTC +
-                ", value=" + value +
+                ", value=" + value + " " + measurementUnit +
                 '}';
     }
 }

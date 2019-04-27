@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class SensorNotFoundException extends RuntimeException {
-    private String detail;
+    private final String detail;
 
     public SensorNotFoundException(String message, String detail) {
         super(message);

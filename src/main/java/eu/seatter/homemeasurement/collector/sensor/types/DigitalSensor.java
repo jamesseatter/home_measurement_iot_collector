@@ -13,13 +13,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class DigitalSensor implements Sensor {
-    private Double value=0D;
-    private String sensorID;
-    private String sensorDescription;
 
     @Override
     public Double readSensorData(SensorRecord sensorRecord) {
-        sensorDescription = "sensor [" + sensorRecord.getSensorID() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyId() + "]";
+        String sensorDescription = "sensor [" + sensorRecord.getSensorid() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyid() + "]";
         log.warn("DIGITAL SENSOR READING NOT IMPLEMENTED for sensor : " + sensorDescription);
         throw new RuntimeException("DIGITAL SENSOR NOT IMPLEMENTED");
         //return value;

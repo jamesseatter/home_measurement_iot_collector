@@ -5,6 +5,7 @@ import com.pi4j.component.temperature.impl.TmpDS18B20DeviceType;
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
 import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
+import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,25 +22,23 @@ import java.util.Optional;
 @Slf4j
 @Component
 public class OneWirePi4JSensor implements Sensor {
-    private Double value=0D;
-    private String sensorID;
-
-    private W1Master w1master = new W1Master();
+    private final W1Master w1master = new W1Master();
 
     @Override
     public Double readSensorData(SensorRecord sensorRecord) {
         log.info("Processing : " + sensorRecord.loggerFormat());
-        if(sensorRecord.getSensorID().isEmpty()) {
+        if(sensorRecord.getSensorid().isEmpty()) {
             throw new RuntimeException(sensorRecord.loggerFormat() + " : ID not set");
         }
-        sensorID = sensorRecord.getSensorID();
-        Optional<W1Device> w1device = Optional.empty();
+        String sensorID = sensorRecord.getSensorid();
+        Optional<W1Device> w1device;
 
-        if(sensorRecord.getFamilyId() == TmpDS18B20DeviceType.FAMILY_CODE) {
+        if(sensorRecord.getFamilyid() == TmpDS18B20DeviceType.FAMILY_CODE) {
             log.debug("Sensor Family - DS18B20");
             w1device = getTmpDS18B20(sensorID);
+            sensorRecord.setMeasurementUnit(SensorMeasurementUnit.C);
         } else {
-            log.warn("Sensor Family " + sensorRecord.getFamilyId() + " NOT SUPPORTED");
+            log.warn("Sensor Family " + sensorRecord.getFamilyid() + " NOT SUPPORTED");
             return 0.0D;
             //todo convert to a throw
         }
