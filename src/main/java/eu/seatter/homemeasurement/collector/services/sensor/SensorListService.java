@@ -19,8 +19,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class SensorListService {
-    private SensorListManagerJSON jsonFile;
-    private SensorListManagerPi4J pi4j;
+    private final SensorList jsonFile;
+    private final SensorList pi4j;
 
     public SensorListService(SensorListManagerJSON jsonFile, SensorListManagerPi4J pi4j) {
         this.jsonFile = jsonFile;
@@ -31,12 +31,21 @@ public class SensorListService {
         log.info("Getting sensor list");
         List<SensorRecord> sensorRecordList = new ArrayList<>();
 
+        //The josn file defines a list of non-discoverable sensors
+        //and configuration information for discoverable sensors.
         try {
             sensorRecordList.addAll(jsonFile.getSensors());
         } catch (Exception ex) {}
 
         try {
-        sensorRecordList.addAll(pi4j.getSensors());
+            List<SensorRecord> pi4jSensors = new ArrayList<>(pi4j.getSensors());
+
+
+            //for each sensor found, update the main sensorRecordList by either adding the sensor or updating an existing sensor entry
+
+
+
+
         } catch (Exception ex) {}
 
         log.info("Completed sensor list");
@@ -44,7 +53,7 @@ public class SensorListService {
         return sensorRecordList;
     }
 
-    private void registerSensors(List<SensorList> sensorList) {
-
-    }
+//    private void registerSensors(List<SensorList> sensorList) {
+//
+//    }
 }

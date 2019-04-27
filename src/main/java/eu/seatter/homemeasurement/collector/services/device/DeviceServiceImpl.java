@@ -1,8 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.device;
 
 import eu.seatter.homemeasurement.collector.commands.RegistrationCommand;
-import eu.seatter.homemeasurement.collector.converters.DeviceCommandToDevice;
-import eu.seatter.homemeasurement.collector.converters.DeviceToDeviceCommand;
 import eu.seatter.homemeasurement.collector.model.Device;
 import eu.seatter.homemeasurement.collector.model.DeviceIdentification;
 import eu.seatter.homemeasurement.collector.services.RegistrationService;
@@ -21,15 +19,11 @@ import org.springframework.stereotype.Service;
 public class DeviceServiceImpl implements DeviceService {
 
     private final RegistrationService restClientService;
-    private final DeviceToDeviceCommand converterDeviceToDeviceCommand;
-    private final DeviceCommandToDevice converterDeviceCommandToDevice;
     private final EncryptionService encryptionService;
     private final DeviceIdentification di;
 
-    public DeviceServiceImpl(RegistrationService restClientService, DeviceToDeviceCommand converterDeviceToDeviceCommand, DeviceCommandToDevice converterDeviceCommandToDevice, EncryptionService encryptionService) {
+    public DeviceServiceImpl(RegistrationService restClientService, EncryptionService encryptionService) {
         this.restClientService = restClientService;
-        this.converterDeviceToDeviceCommand = converterDeviceToDeviceCommand;
-        this.converterDeviceCommandToDevice = converterDeviceCommandToDevice;
         this.encryptionService = encryptionService;
         this.di = DeviceIdentification.INSTANCE.getInstance();
     }
@@ -43,7 +37,7 @@ public class DeviceServiceImpl implements DeviceService {
         device.setUniqueId(encryptionService.encryptString(di.getMacAddress()));
 
         log.info("Register device with edge");
-        RegistrationCommand deviceRegistration = new RegistrationCommand();
+        RegistrationCommand deviceRegistration;
 
         try {
             deviceRegistration = restClientService.isCollectorRegistered(device.getUniqueId());

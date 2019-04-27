@@ -1,0 +1,78 @@
+{
+  "properties": [
+    {
+      "name": "RabbitMQService.password",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.password."
+    },
+    {
+      "name": "RabbitMQService.username",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.username."
+    },
+    {
+      "name": "RabbitMQService.queue",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.queue."
+    },
+    {
+      "name": "RabbitMQService.exchangee",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.exchangee."
+    },
+    {
+      "name": "RabbitMQService.vhost",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.vhost."
+    },
+    {
+      "name": "RabbitMQService.hostname",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.hostname."
+    },
+    {
+      "name": "RabbitMQService.registration.unique_id",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.registration.unique_id."
+    },
+    {
+      "name": "RabbitMQService.measurement.unique_id",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.measurement.unique_id."
+    },
+    {
+      "name": "RabbitMQService.enabled",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.enabled."
+    },
+    {
+      "name": "app.measurement.interval.seconds",
+      "type": "java.lang.String",
+      "description": "Description for app.measurement.interval.seconds."
+    },
+    {
+      "name": "measurement.interval.seconds",
+      "type": "java.lang.String",
+      "description": "Description for measurement.interval.seconds."
+    },
+    {
+      "name": "rest.edge.uri.base",
+      "type": "java.lang.String",
+      "description": "Description for rest.edge.uri.base."
+    },
+    {
+      "name": "rest.edge.uri.api.registration",
+      "type": "java.lang.String",
+      "description": "Description for rest.edge.uri.api.registration."
+    },
+    {
+      "name": "measurement.temperature.alert.threshold",
+      "type": "java.lang.String",
+      "description": "Description for measurement.temperature.alert.threshold."
+    },
+    {
+      "name": "alert.mail.recipient",
+      "type": "java.lang.String",
+      "description": "Description for alert.mail.recipient."
+    }
+  ] }

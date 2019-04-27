@@ -1,14 +1,17 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
 import eu.seatter.homemeasurement.collector.sensor.SensorFactory;
-import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
+import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
+import eu.seatter.homemeasurement.collector.services.messaging.EmailAlertService;
+import eu.seatter.homemeasurement.collector.services.messaging.MailMessageAlertMeasurement;
 import eu.seatter.homemeasurement.collector.services.messaging.Messaging;
+import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -23,19 +26,25 @@ import java.util.List;
 @Slf4j
 public class SensorMeasurement {
 
-    private Sensor sensorReader;
-    private Messaging mqService;
-    private boolean mqEnabled;
+    private final EmailAlertService alertService;
 
-    public SensorMeasurement(RabbitMQService mqService, @Value("${RabbitMQService.enabled:false}") boolean enabled) {
+    private Sensor sensorReader;
+    private final Messaging mqService;
+    private final boolean mqEnabled;
+
+    @Value("${measurement.temperature.alert.threshold:50}")
+    private double temperatureAlertThreshold;
+
+    public SensorMeasurement(RabbitMQService mqService, @Value("${RabbitMQService.enabled:false}") boolean enabled, EmailAlertService alertService) {
         this.mqService = mqService;
         this.mqEnabled = enabled;
+        this.alertService = alertService;
     }
 
     public void collect(List<SensorRecord> sensorList) {
         log.info("Start measurement processing");
         for (SensorRecord sensorRecord : sensorList) {
-            if(sensorRecord.getSensorID() == null) {
+            if(sensorRecord.getSensorid() == null) {
                 continue;
             }
             SensorRecord srWithMeasurement;
@@ -51,6 +60,8 @@ public class SensorMeasurement {
             if(mqEnabled){
                 mqService.sendMeasurement(srWithMeasurement);
             }
+
+            validateMeasurementThreshold(sensorRecord);
         }
         log.info("Completed measurement processing");
     }
@@ -67,5 +78,19 @@ public class SensorMeasurement {
             throw ex;
         }
         return sensorRecord;
+    }
+
+    private void validateMeasurementThreshold(SensorRecord sensorRecord) {
+        //todo move threshold into a sensor config file so that thresholds are per sensor.
+        if(sensorRecord.getValue() <= temperatureAlertThreshold) {
+            log.debug("Sensor value below threshold. Measurement : " + sensorRecord.getValue() + " / Threshold : " + temperatureAlertThreshold);
+            try {
+                log.info("Sending alert email to " + "***REMOVED***");
+                alertService.sendAlert(new MailMessageAlertMeasurement(sensorRecord));
+            } catch (MessagingException e) {
+                log.error("Failed to send Email Alert : " + e.getLocalizedMessage());
+            }
+        }
+
     }
 }
