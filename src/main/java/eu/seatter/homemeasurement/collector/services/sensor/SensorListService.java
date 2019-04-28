@@ -39,8 +39,6 @@ public class SensorListService {
 
         try {
             List<SensorRecord> pi4jSensors = new ArrayList<>(pi4j.getSensors());
-
-
             //for each sensor found, update the main sensorRecordList by either adding the sensor or updating an existing sensor entry
 
 
