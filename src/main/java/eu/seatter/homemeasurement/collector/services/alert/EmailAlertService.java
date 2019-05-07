@@ -30,7 +30,13 @@ public class EmailAlertService implements Alert {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, false, "utf-8");
 
-        String recipients = mail.getAddress();
+        String recipients;
+        try {
+            recipients = mail.getAddress();
+        } catch (IllegalArgumentException ex) {
+            throw new MessagingException("No email recipients defined");
+        }
+
         String[] recipientList = recipients.split(";");
 
         for(String eID: recipientList) {

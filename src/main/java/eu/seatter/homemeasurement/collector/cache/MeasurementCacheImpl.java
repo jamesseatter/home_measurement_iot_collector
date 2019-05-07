@@ -2,6 +2,8 @@ package eu.seatter.homemeasurement.collector.cache;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -14,16 +16,14 @@ import java.util.*;
  */
 @Slf4j
 @Component
+@Scope("singleton")
 public class MeasurementCacheImpl implements MeasurementCache {
     private final Map<String,List<SensorRecord>> cache = new HashMap<>();
 
-    private int MAX_ENTRIES_PER_SENSOR = 24;
+    @Value("${measurement.cache.max_records_per_sensor:24}")
+    private static final int MAX_ENTRIES_PER_SENSOR=24;
 
     public MeasurementCacheImpl() {}
-
-    public MeasurementCacheImpl(int MAX_ENTRIES_PER_SENSOR) {
-        this.MAX_ENTRIES_PER_SENSOR = MAX_ENTRIES_PER_SENSOR;
-    }
 
     @Override
     public void add(SensorRecord sensorRecord) {
@@ -37,6 +37,11 @@ public class MeasurementCacheImpl implements MeasurementCache {
         }
         cache.get(sensorRecord.getSensorid()).add(sensorRecord);
         log.debug("Cache Add : " + sensorRecord.toString());
+    }
+
+    @Override
+    public Map<String, List<SensorRecord>> getAll() {
+        return cache;
     }
 
     @Override

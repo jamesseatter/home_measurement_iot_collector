@@ -21,10 +21,16 @@ public class MailMessageAlertMeasurement implements MailMessage {
         this.sensorRecord = sensorRecord;
     }
 
-    public String getAddress() {
+    public String getAddress() throws IllegalArgumentException {
+        if(sensorRecord.getAlertgroup().isEmpty()) {
+            return "";
+        }
         String alertGroup = sensorRecord.getAlertgroup();
         AlertContactGroup ag = AlertContactJSON.GetContactsForGroup(alertGroup).orElse(new AlertContactGroup());
-        return  ag.getAddress();
+        if(ag.getAddress().isEmpty()) {
+            throw new java.lang.IllegalArgumentException("No recipients found for alertgroup:" + alertGroup);
+        }
+        return ag.getAddress();
     }
 
     public String getSubject() {
