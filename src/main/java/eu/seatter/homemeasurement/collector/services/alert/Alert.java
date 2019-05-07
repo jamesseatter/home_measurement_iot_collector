@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.services.messaging;
+package eu.seatter.homemeasurement.collector.services.alert;
 
 import javax.mail.MessagingException;
 

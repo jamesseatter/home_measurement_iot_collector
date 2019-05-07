@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.services.messaging;
+package eu.seatter.homemeasurement.collector.services.alert;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,12 @@ public class MailMessageAlertMeasurement implements MailMessage {
 
     public MailMessageAlertMeasurement(SensorRecord sensorRecord) {
         this.sensorRecord = sensorRecord;
+    }
+
+    public String getAddress() {
+        String alertGroup = sensorRecord.getAlertgroup();
+        AlertContactGroup ag = AlertContactJSON.GetContactsForGroup(alertGroup).orElse(new AlertContactGroup());
+        return  ag.getAddress();
     }
 
     public String getSubject() {

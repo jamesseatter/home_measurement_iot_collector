@@ -1,9 +1,12 @@
-{
-  "temperature_threshold_alerts" : {
-    "email": [
-      {
-        "email": "james.seatter@gmail.com"
-      }
-    ]
+[
+  {
+    "name"    : "temperature_threshold_alerts",
+    "type"    : "email",
+    "address" : "james.seatter@gmail.com"
+  },
+  {
+    "name"    : "system_alerts",
+    "type"    : "email",
+    "address" : "james.seatter@gmail.com"
   }
-}
+]

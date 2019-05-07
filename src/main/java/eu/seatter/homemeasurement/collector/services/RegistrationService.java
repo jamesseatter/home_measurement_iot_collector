@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -52,7 +53,7 @@ public class RegistrationService {
         Mono<RegistrationCommand> result = client
                 .post()
                 .uri(baseRegistrationURI + "/device/new")
-                .body(BodyInserters.fromObject(dc))
+                .body(BodyInserters.fromObject(Objects.requireNonNull(dc)))
                 .accept(APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(RegistrationCommand.class)

@@ -1,6 +1,6 @@
-package eu.seatter.homemeasurement.collector.services.messaging;
+package eu.seatter.homemeasurement.collector.services.alert;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -14,13 +14,11 @@ import javax.mail.internet.MimeMessage;
  * Date: 12/04/2019
  * Time: 13:14
  */
+@Slf4j
 @Service
 public class EmailAlertService implements Alert {
 
     private final JavaMailSender mailSender;
-
-    @Value("${alert.mail.recipient}")
-    private String recipients;
 
     public EmailAlertService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -32,6 +30,7 @@ public class EmailAlertService implements Alert {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, false, "utf-8");
 
+        String recipients = mail.getAddress();
         String[] recipientList = recipients.split(";");
 
         for(String eID: recipientList) {
@@ -39,6 +38,9 @@ public class EmailAlertService implements Alert {
         }
         helper.setSubject(mail.getSubject());
         message.setContent(mail.getContent(), "text/html");
+
+        log.debug("Email Recipients : " + recipients);
+        log.debug("Email Subject : " + mail.getSubject());
 
         mailSender.send(message);
     }

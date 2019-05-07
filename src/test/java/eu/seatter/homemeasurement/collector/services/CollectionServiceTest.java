@@ -1,6 +1,10 @@
 //package eu.seatter.homemeasurement.collector.services;
 //
 //import SensorRecord;
+//import eu.seatter.homemeasurement.collector.model.SensorRecord;
+//import eu.seatter.homemeasurement.collector.services.device.DeviceService;
+//import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
+//import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 //import org.junit.Before;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
