@@ -1,6 +1,7 @@
 package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.cache.MeasurementCacheImpl;
+import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.EmailAlertService;
 import eu.seatter.homemeasurement.collector.services.alert.MailMessageAlertMeasurement;
@@ -14,6 +15,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,13 +29,16 @@ import java.util.List;
 @Service
 @Slf4j
 public class CollectorService implements CommandLineRunner {
-    private final MeasurementCacheImpl measurementCache = new MeasurementCacheImpl(24);
+    private final MeasurementCacheImpl measurementCache;
 
     @Value("${measurement.interval.seconds:360}")
     private int readIntervalSeconds = 10;
 
     @Value("${measurement.temperature.alert.threshold:50}")
     private double temperatureAlertThreshold;
+
+    @Value("${spring.profiles.active:}")
+    private String activeProfile;
 
     private final boolean mqEnabled;
 
@@ -42,7 +47,8 @@ public class CollectorService implements CommandLineRunner {
     private final EmailAlertService alertService;
     private final SensorMessaging mqService;
 
-    public CollectorService(SensorMeasurement sensorMeasurement, SensorListService sensorListService, EmailAlertService alertService, RabbitMQService mqService, @Value("${RabbitMQService.enabled:false}") boolean enabled) {
+    public CollectorService(MeasurementCacheImpl measurementCache, SensorMeasurement sensorMeasurement, SensorListService sensorListService, EmailAlertService alertService, RabbitMQService mqService, @Value("${RabbitMQService.enabled:false}") boolean enabled) {
+        this.measurementCache = measurementCache;
         this.sensorMeasurement = sensorMeasurement;
         this.sensorListService = sensorListService;
         this.alertService = alertService;
@@ -88,14 +94,21 @@ public class CollectorService implements CommandLineRunner {
             measurements.clear();
             measurements = sensorMeasurement.collect(sensorList);
 
+            if(activeProfile.equals("dev")) {
+                measurements.addAll(testData(sensorList));
+            }
+
             for (SensorRecord sr : measurements){
                 measurementCache.add(sr);
 
                 if (mqEnabled) {
                     mqService.sendMeasurement(sr);
                 }
-
-                AlertOnThresholdExceeded(sr);
+                try {
+                    AlertOnThresholdExceeded(sr);
+                } catch (Exception ex) {
+                    log.error("Email not sent : " + ex.getLocalizedMessage());
+                }
             }
 
             try {
@@ -120,5 +133,16 @@ public class CollectorService implements CommandLineRunner {
             }
         }
 
+    }
+
+    private List<SensorRecord> testData(List<SensorRecord> sensorList) {
+        log.warn("Setting up test measurement data");
+        for(SensorRecord srec : sensorList) {
+            srec.setMeasurementUnit(SensorMeasurementUnit.C);
+            srec.setMeasureTimeUTC(LocalDateTime.now());
+            srec.setValue(50.0);
+        }
+
+        return Collections.unmodifiableList(sensorList);
     }
 }

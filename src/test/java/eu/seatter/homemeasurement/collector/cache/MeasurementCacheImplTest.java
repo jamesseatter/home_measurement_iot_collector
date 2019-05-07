@@ -23,13 +23,12 @@ import static org.junit.Assert.assertEquals;
 public class MeasurementCacheImplTest {
 
     MeasurementCache measurementCache;
-    MeasurementCache measurementCacheDefaultSize;
-    private static final int MAX_ENTRIES_PER_SENSOR =24;
+    private int MAX_ENTRIES_PER_SENSOR =24;
 
     @Before
     public void setUp() {
-        this.measurementCache = new MeasurementCacheImpl(MAX_ENTRIES_PER_SENSOR);
-        this.measurementCacheDefaultSize = new MeasurementCacheImpl();
+        this.measurementCache = new MeasurementCacheImpl();
+        this.MAX_ENTRIES_PER_SENSOR = this.measurementCache.getCacheMaxSizePerSensor();
     }
 
     private SensorRecord testRecord(String sensorId) {
@@ -102,17 +101,6 @@ public class MeasurementCacheImplTest {
 
         //then
         assertEquals(result.size(),0);
-    }
-
-    @Test
-    public void givenMeasurementCacheNoConstructor_thenCacheSizeIs24() {
-        //given
-
-        //when
-        int cacheMaxSize = measurementCacheDefaultSize.getCacheMaxSizePerSensor();
-
-        //then
-        assertEquals(cacheMaxSize,24);
     }
 
     @Test

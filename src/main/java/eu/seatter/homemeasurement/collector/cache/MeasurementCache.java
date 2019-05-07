@@ -3,6 +3,7 @@ package eu.seatter.homemeasurement.collector.cache;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -13,6 +14,7 @@ import java.util.Set;
  */
 interface MeasurementCache {
     void add(SensorRecord sensorRecord);
+    Map<String, List<SensorRecord>> getAll();
     List<SensorRecord> getAllBySensorId(String sensorId);
     List<SensorRecord> getLastBySensorId(String sensorId);
     List<SensorRecord> getLastBySensorId(String sensorId, int last);
