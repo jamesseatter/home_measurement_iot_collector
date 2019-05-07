@@ -37,7 +37,7 @@ public class SensorListManagerPi4J implements SensorList {
             sensorRecords.add(sensor);
             log.info("  Found sensor : " + sensor.loggerFormat());
         }
-        log.info("Completed 1-Wire sensor scan finished. Found " + sensorRecords.size() + " sensors");
+        log.info("Completed 1-Wire sensor scan. Found " + sensorRecords.size() + " sensors");
         return sensorRecords;
     }
 }

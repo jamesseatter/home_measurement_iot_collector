@@ -1,8 +1,5 @@
 package eu.seatter.homemeasurement.collector.services;
 
-import org.junit.Before;
-import org.junit.Test;
-
 /**
  * Created by IntelliJ IDEA.
  * User: jas
@@ -11,11 +8,11 @@ import org.junit.Test;
  */
 public class RabbitMQServiceTest {
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @Test
-    public void send() {
-    }
+//    @Before
+//    public void setUp() {
+//    }
+//
+//    @Test
+//    public void send() {
+//    }
 }

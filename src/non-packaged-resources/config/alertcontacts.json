@@ -1,9 +1,12 @@
-{
-  "temperature_threshold_alerts" : {
-    "email": [
-      {
-        "email": "***REMOVED***"
-      }
-    ]
+[
+  {
+    "name"    : "temperature_threshold_alerts",
+    "type"    : "email",
+    "address" : "***REMOVED***"
+  },
+  {
+    "name"    : "system_alerts",
+    "type"    : "email",
+    "address" : "***REMOVED***"
   }
-}
+]

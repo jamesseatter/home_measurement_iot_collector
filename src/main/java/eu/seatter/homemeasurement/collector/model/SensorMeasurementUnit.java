@@ -10,7 +10,7 @@ public enum SensorMeasurementUnit {
     C ("C"),
     F ("F");
 
-    private String displayName;
+    private final String displayName;
 
     SensorMeasurementUnit(String displayName) {
         this.displayName = displayName;

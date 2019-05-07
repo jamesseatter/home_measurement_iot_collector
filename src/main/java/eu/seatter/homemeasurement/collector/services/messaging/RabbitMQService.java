@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import eu.seatter.homemeasurement.collector.model.Device;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,9 +19,10 @@ import java.nio.charset.StandardCharsets;
  * Date: 24/03/2019
  * Time: 12:13
  */
+@SuppressWarnings("FieldCanBeLocal")
 @Slf4j
 @Service
-public class RabbitMQService implements Messaging {
+public class RabbitMQService implements SensorMessaging {
 
     private final String MQ_MEASUREMENT_UNIQUE_ID;
     private final String MQ_REGISTRATION_UNIQUE_ID;
@@ -107,16 +106,6 @@ public class RabbitMQService implements Messaging {
         } catch (Exception ex) {
             log.error("Failed to connect to RabbitMQ with error message :" + ex.getMessage());
         }
-    }
-
-    @Override
-    public void registerDevice(Device device) {
-
-    }
-
-    @Override
-    public void registerSensor(Sensor sensor) {
-
     }
 
     private String convertToJSONMesssage(SensorRecord sensorRecord) throws JsonProcessingException {

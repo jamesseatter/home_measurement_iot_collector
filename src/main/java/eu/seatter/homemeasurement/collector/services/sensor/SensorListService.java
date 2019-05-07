@@ -31,27 +31,34 @@ public class SensorListService {
         log.info("Getting sensor list");
         List<SensorRecord> sensorRecordList = new ArrayList<>();
 
-        //The josn file defines a list of non-discoverable sensors
+        //The json file defines a list of non-discoverable sensors
         //and configuration information for discoverable sensors.
         try {
             sensorRecordList.addAll(jsonFile.getSensors());
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            log.error(ex.getLocalizedMessage());
+        }
 
         try {
-            List<SensorRecord> pi4jSensors = new ArrayList<>(pi4j.getSensors());
-            //for each sensor found, update the main sensorRecordList by either adding the sensor or updating an existing sensor entry
-
-
-
-
+            @SuppressWarnings("unchecked")
+            List<SensorRecord>  pi4jSensors = new ArrayList<>(pi4j.getSensors());
+            //for each 1-wire sensor found validate that it is in the configuration file and can be measured.
+            boolean sensorFound = false;
+            for (SensorRecord pi4jSensor : pi4jSensors) {
+                for (int srIndex = 0; srIndex < sensorRecordList.size(); srIndex++) {
+                    if (sensorRecordList.get(srIndex).getSensorid().trim().equals(pi4jSensor.getSensorid().trim())) {
+                        sensorFound = true;
+                        log.info("Sensor " + pi4jSensors.get(srIndex).getSensorid().trim() + " found in main configuration");
+                    }
+                }
+                if (!sensorFound) {
+                    log.warn("Sensor " + pi4jSensor.getSensorid().trim() + " NOT found in main configuration and will not be measured. To measure the sensor value add it to the main configuration.");
+                }
+            }
         } catch (Exception ex) {}
 
         log.info("Completed sensor list");
 
         return sensorRecordList;
     }
-
-//    private void registerSensors(List<SensorList> sensorList) {
-//
-//    }
 }
