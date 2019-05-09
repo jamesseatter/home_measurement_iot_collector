@@ -74,5 +74,20 @@
       "name": "alert.mail.recipient",
       "type": "java.lang.String",
       "description": "Description for alert.mail.recipient."
+    },
+    {
+      "name": "message.mq.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Description for message.mq.enabled."
+    },
+    {
+      "name": "message.alert.email.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Description for message.alert.email.enabled."
+    },
+    {
+      "name": "message.alert.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Description for message.alert.enabled."
     }
   ] }

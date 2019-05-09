@@ -1,16 +1,13 @@
 package eu.seatter.homemeasurement.collector.actuator;
 
 import eu.seatter.homemeasurement.collector.cache.MeasurementCacheImpl;
-import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,20 +26,20 @@ public class MeasurementsEndpoint {
     @Autowired
     MeasurementCacheImpl cache;
 
+    static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
     @ReadOperation
-    public Map<String, List<PublicMeasurement>>  measurements() {
+    public Map<String, List<String>> measurements() {
 
         Map<String, List<SensorRecord>> data = cache.getAll();
-        Map<String, List<PublicMeasurement>> dataout = new HashMap<>();
+        Map<String, List<String>> dataout = new HashMap<>();
+
+
 
         for(String sensorid : data.keySet()) {
-            dataout.putIfAbsent(sensorid,new ArrayList<PublicMeasurement>());
+            dataout.putIfAbsent(sensorid,new ArrayList<String>());
             for(SensorRecord sr : data.get(sensorid)) {
-                PublicMeasurement pm = new PublicMeasurement();
-                pm.setMeasureTimeUTC(sr.getMeasureTimeUTC());
-                pm.setMeasurementUnit(sr.getMeasurementUnit());
-                pm.setValue(sr.getValue());
-                dataout.get(sensorid).add(pm);
+                dataout.get(sensorid).add(formatMeasurements(sr));
             }
         }
 
@@ -50,18 +47,26 @@ public class MeasurementsEndpoint {
     }
 
 //    @ReadOperation
-//    public List<SensorRecord> measurements(@Selector String sensorid) {
-//        return cache.getAllBySensorId(sensorid);
-//    }
+//    public List<String> measurements(@Selector String sensorid) {
+//        List<SensorRecord> data = cache.getAllBySensorId(sensorid);
+//        List<String> dataout = new ArrayList<>();
 //
+//        for(SensorRecord sr : data) {
+//            dataout.add(formatMeasurements(sr));
+//        }
+//        return dataout;
+//    }
 
-    @Getter
-    @Setter
-    private class PublicMeasurement {
-        LocalDateTime measureTimeUTC;
-        Double value;
-        SensorMeasurementUnit measurementUnit;
 
+    private String formatMeasurements(SensorRecord record) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(record.getMeasureTimeUTC().format(formatter));
+        sb.append(" UTC;");
+        sb.append(record.getValue());
+        sb.append(record.getMeasurementUnit());
+
+        return sb.toString();
     }
 
 }

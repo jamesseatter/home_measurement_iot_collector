@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,10 +30,13 @@ public class SensorListManagerJSON implements SensorList {
         File sensorFileLocation;
 
         try {
+
             URI path = CollectorApplication.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+            log.debug("JAR PATH : " + path.toString());
             sensorFileLocation = new File(new File(path).getParent(), "/config/sensorlist.json");
             log.info("Sensor File Location " + sensorFileLocation.toString());
-        } catch (URISyntaxException ex) {
+        } //catch (URISyntaxException ex) {
+        catch (Exception ex) {
             log.info("Unable to find application location : " + ex.getLocalizedMessage());
             return Collections.emptyList();
         }

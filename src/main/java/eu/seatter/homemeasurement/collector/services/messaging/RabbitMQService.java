@@ -82,8 +82,7 @@ public class RabbitMQService implements SensorMessaging {
 //            channel.queueBind(MQ_QUEUE_NAME, MQ_EXCHANGE_NAME, MQ_MEASUREMENT_UNIQUE_ID);
             try {
                 channel.queueDeclarePassive(MQ_QUEUE_NAME);
-            }
-            catch(IOException ex) {
+            } catch (IOException ex) {
                 System.out.println("ERROR: Failed to connect to RabbitMQ : " + ex.getLocalizedMessage());
                 System.out.println("ERROR: Host : " + MQ_HOST + " vHost : " + MQ_VHOST + " Q : " + MQ_QUEUE_NAME);
                 //todo Throw an error
@@ -97,14 +96,14 @@ public class RabbitMQService implements SensorMessaging {
                 channel.basicPublish(MQ_EXCHANGE_NAME, MQ_MEASUREMENT_UNIQUE_ID, null, messagesToEmit.getBytes(StandardCharsets.UTF_8));
                 log.info("MQ Sent message");
                 log.debug("MQ Message : " + messagesToEmit);
-            }
-            catch (JsonProcessingException ex) {
+            } catch (JsonProcessingException ex) {
                 log.error("Converting SensorRecord to JSON failed : " + ex.getMessage());
 
             }
-
+        } catch (IOException ex) {
+            log.error("Failed to connect to RabbitMQ with error message :" + ex.getCause());
         } catch (Exception ex) {
-            log.error("Failed to connect to RabbitMQ with error message :" + ex.getMessage());
+            log.error("Failed to connect to RabbitMQ with error message :" + ex.getCause());
         }
     }
 
