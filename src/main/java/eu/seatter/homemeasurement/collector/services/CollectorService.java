@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by IntelliJ IDEA.
@@ -144,7 +145,8 @@ public class CollectorService implements CommandLineRunner {
         for(SensorRecord srec : sensorList) {
             srec.setMeasurementUnit(SensorMeasurementUnit.C);
             srec.setMeasureTimeUTC(LocalDateTime.now());
-            srec.setValue(50.0);
+            int val = ThreadLocalRandom.current().nextInt(35, 75);
+            srec.setValue((double)val);
         }
 
         return Collections.unmodifiableList(sensorList);

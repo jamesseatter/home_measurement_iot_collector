@@ -18,9 +18,11 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder=true)
 public class SensorRecord {
     private String sensorid;
+    private String title;
+    private String description;
     private int familyid;
     private SensorType sensorType;
     private SensorMeasurementUnit measurementUnit;

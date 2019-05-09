@@ -89,5 +89,20 @@
       "name": "message.alert.enabled",
       "type": "java.lang.Boolean",
       "description": "Description for message.alert.enabled."
+    },
+    {
+      "name": "measurement.cache.max_records_per_sensor",
+      "type": "java.lang.String",
+      "description": "Description for measurement.cache.max_records_per_sensor."
+    },
+    {
+      "name": "config.path",
+      "type": "java.lang.String",
+      "description": "Description for config.path."
+    },
+    {
+      "name": "message.mq.rabbitmq.enabled",
+      "type": "java.lang.String",
+      "description": "Description for message.mq.rabbitmq.enabled."
     }
   ] }

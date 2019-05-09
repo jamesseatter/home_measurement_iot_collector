@@ -27,16 +27,19 @@ public class MeasurementCacheImpl implements MeasurementCache {
 
     @Override
     public void add(SensorRecord sensorRecord) {
-        if(!cache.containsKey(sensorRecord.getSensorid())) {
+        SensorRecord toCache = sensorRecord.toBuilder().build();
+        System.out.println(sensorRecord.hashCode() + "   /   " + toCache.hashCode());
+
+        if(!cache.containsKey(toCache.getSensorid())) {
             // initialize new Map entry for sensor
-            cache.put(sensorRecord.getSensorid(),new ArrayList<>(MAX_ENTRIES_PER_SENSOR));
+            cache.put(toCache.getSensorid(),new ArrayList<>(MAX_ENTRIES_PER_SENSOR));
         }
 
-        if(cache.get(sensorRecord.getSensorid()).size() == MAX_ENTRIES_PER_SENSOR) {
-            cache.get(sensorRecord.getSensorid()).remove(0);
+        if(cache.get(toCache.getSensorid()).size() == MAX_ENTRIES_PER_SENSOR) {
+            cache.get(toCache.getSensorid()).remove(0);
         }
-        cache.get(sensorRecord.getSensorid()).add(sensorRecord);
-        log.debug("Cache Add : " + sensorRecord.toString());
+        cache.get(toCache.getSensorid()).add(toCache);
+        log.debug("Cache Add : " + toCache.toString());
     }
 
     @Override

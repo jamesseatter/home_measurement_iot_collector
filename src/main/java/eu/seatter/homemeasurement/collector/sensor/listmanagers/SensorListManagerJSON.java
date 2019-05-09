@@ -4,13 +4,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.seatter.homemeasurement.collector.CollectorApplication;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,22 +23,19 @@ import java.util.List;
 @Slf4j
 public class SensorListManagerJSON implements SensorList {
 
+    private static String configPath;
+
+    public SensorListManagerJSON(@Value("${config.path}") String configpath) {
+        this.configPath = configpath;
+    }
+
     @Override
     public List<SensorRecord> getSensors() {
         log.info("Start JSON Sensor list import");
         File sensorFileLocation;
 
-        try {
-
-            URI path = CollectorApplication.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-            log.debug("JAR PATH : " + path.toString());
-            sensorFileLocation = new File(new File(path).getParent(), "/config/sensorlist.json");
-            log.info("Sensor File Location " + sensorFileLocation.toString());
-        } //catch (URISyntaxException ex) {
-        catch (Exception ex) {
-            log.info("Unable to find application location : " + ex.getLocalizedMessage());
-            return Collections.emptyList();
-        }
+        sensorFileLocation = new File(configPath,"sensorlist.json");
+        log.info("Sensor File Location " + sensorFileLocation.toString());
 
         if (!(sensorFileLocation.exists())) {
             log.info("Sensor file does not exist at location. Import terminated");

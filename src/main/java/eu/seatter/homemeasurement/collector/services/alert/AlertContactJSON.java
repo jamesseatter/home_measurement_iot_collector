@@ -4,13 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.seatter.homemeasurement.collector.CollectorApplication;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,17 +22,18 @@ import java.util.Optional;
 @Slf4j
 public class AlertContactJSON {
 
-    public static Optional<AlertContactGroup> GetContactsForGroup(String groupName) {
+    private static String configPath;
+
+    public AlertContactJSON(@Value("${config.path}") String configpath) {
+        this.configPath = configpath;
+    }
+
+    public static Optional<AlertContactGroup> GetContactsForGroup(String groupName){
+        log.info("Start JSON Alert Contacts import");
         File alertGroupFileLocation;
 
-        try {
-            URI path = CollectorApplication.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-            alertGroupFileLocation = new File(new File(path).getParent(), "/config/alertcontacts.json");
-            log.info("Alert Contacts File Location " + alertGroupFileLocation.toString());
-        } catch (URISyntaxException ex) {
-            log.info("Unable to find application location : " + ex.getLocalizedMessage());
-            return Optional.empty();
-        }
+        alertGroupFileLocation = new File(configPath,"alertcontacts.json");
+        log.info("Alert Contacts File Location " + alertGroupFileLocation.toString());
 
         if (!(alertGroupFileLocation.exists())) {
             log.info("Alert Group file does not exist at location. Import terminated");

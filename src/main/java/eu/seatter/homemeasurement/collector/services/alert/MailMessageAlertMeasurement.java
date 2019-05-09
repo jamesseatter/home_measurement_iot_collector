@@ -27,6 +27,7 @@ public class MailMessageAlertMeasurement implements MailMessage {
         }
         String alertGroup = sensorRecord.getAlertgroup();
         AlertContactGroup ag = AlertContactJSON.GetContactsForGroup(alertGroup).orElse(new AlertContactGroup());
+
         if(ag.getAddress().isEmpty()) {
             throw new java.lang.IllegalArgumentException("No recipients found for alertgroup:" + alertGroup);
         }
