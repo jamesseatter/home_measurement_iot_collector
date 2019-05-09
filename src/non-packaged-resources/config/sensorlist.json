@@ -1,6 +1,8 @@
 [
   {
     "sensorid": "28-000008d2fdb9",
+    "title" : "Chauffage Central Water Temperature",
+    "description" : "Returns the temperature of the hot water entering the house from the central heating system.",
     "familyid": "40",
     "sensortype": "ONEWIRE",
     "measurementUnit": "C",
