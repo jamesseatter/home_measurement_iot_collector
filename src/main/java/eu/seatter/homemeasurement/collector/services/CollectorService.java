@@ -29,31 +29,36 @@ import java.util.List;
 @Service
 @Slf4j
 public class CollectorService implements CommandLineRunner {
-    private final MeasurementCacheImpl measurementCache;
-
-    @Value("${measurement.interval.seconds:360}")
-    private int readIntervalSeconds = 10;
-
-    @Value("${measurement.temperature.alert.threshold:50}")
-    private double temperatureAlertThreshold;
-
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
-    private final boolean mqEnabled;
 
+    private int readIntervalSeconds;
+    private final Boolean mqEnabled;
+    private final Boolean alertEnabled;
+
+    private final MeasurementCacheImpl measurementCache;
     private final SensorMeasurement sensorMeasurement;
     private final SensorListService sensorListService;
     private final EmailAlertService alertService;
     private final SensorMessaging mqService;
 
-    public CollectorService(MeasurementCacheImpl measurementCache, SensorMeasurement sensorMeasurement, SensorListService sensorListService, EmailAlertService alertService, RabbitMQService mqService, @Value("${RabbitMQService.enabled:false}") boolean enabled) {
+    public CollectorService(MeasurementCacheImpl measurementCache,
+                            SensorMeasurement sensorMeasurement,
+                            SensorListService sensorListService,
+                            EmailAlertService alertService,
+                            RabbitMQService mqService,
+                            @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
+                            @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
+                            @Value("#{new Boolean('${message.alert.enabled:false}')}") Boolean alertEnabled) {
         this.measurementCache = measurementCache;
         this.sensorMeasurement = sensorMeasurement;
         this.sensorListService = sensorListService;
         this.alertService = alertService;
         this.mqService = mqService;
-        this.mqEnabled = enabled;
+        this.mqEnabled = mqEnabled;
+        this.alertEnabled = alertEnabled;
+        this.readIntervalSeconds = readIntervalSeconds;
     }
 
     @Override
@@ -104,11 +109,10 @@ public class CollectorService implements CommandLineRunner {
                 if (mqEnabled) {
                     mqService.sendMeasurement(sr);
                 }
-                try {
-                    AlertOnThresholdExceeded(sr);
-                } catch (Exception ex) {
-                    log.error("Email not sent : " + ex.getLocalizedMessage());
-                }
+
+
+                AlertOnThresholdExceeded(sr);
+
             }
 
             try {
@@ -123,8 +127,8 @@ public class CollectorService implements CommandLineRunner {
     }
 
     private void AlertOnThresholdExceeded(SensorRecord sensorRecord) {
-        if(sensorRecord.getValue() <= temperatureAlertThreshold) {
-            log.debug("Sensor value below threshold. Measurement : " + sensorRecord.getValue() + " / Threshold : " + temperatureAlertThreshold);
+        if(sensorRecord.getValue() <= sensorRecord.getLow_threshold()) {
+            log.debug("Sensor value below threshold. Measurement : " + sensorRecord.getValue() + " / Threshold : " + sensorRecord.getLow_threshold());
             try {
                 log.info("Sending alert email to " + "james.seatter@gmail.com");
                 alertService.sendAlert(new MailMessageAlertMeasurement(sensorRecord));
