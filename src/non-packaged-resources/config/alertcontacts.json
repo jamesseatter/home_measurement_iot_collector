@@ -2,11 +2,11 @@
   {
     "name"    : "temperature_threshold_alerts",
     "type"    : "email",
-    "address" : "***REMOVED***"
+    "address" : "***REMOVED***;***REMOVED***"
   },
   {
     "name"    : "system_alerts",
     "type"    : "email",
-    "address" : "***REMOVED***"
+    "address" : "***REMOVED***;***REMOVED***"
   }
 ]

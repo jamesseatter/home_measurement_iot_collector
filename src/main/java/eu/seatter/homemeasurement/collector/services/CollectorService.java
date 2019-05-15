@@ -3,8 +3,8 @@ package eu.seatter.homemeasurement.collector.services;
 import eu.seatter.homemeasurement.collector.cache.MeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.services.alert.EmailAlertService;
-import eu.seatter.homemeasurement.collector.services.alert.MailMessageAlertMeasurement;
+import eu.seatter.homemeasurement.collector.services.alert.AlertService;
+import eu.seatter.homemeasurement.collector.services.alert.AlertServiceImpl;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
@@ -33,7 +33,6 @@ public class CollectorService implements CommandLineRunner {
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
-
     private int readIntervalSeconds;
     private final Boolean mqEnabled;
     private final Boolean alertEnabled;
@@ -41,13 +40,13 @@ public class CollectorService implements CommandLineRunner {
     private final MeasurementCacheImpl measurementCache;
     private final SensorMeasurement sensorMeasurement;
     private final SensorListService sensorListService;
-    private final EmailAlertService alertService;
+    private final AlertService alertService;
     private final SensorMessaging mqService;
 
     public CollectorService(MeasurementCacheImpl measurementCache,
                             SensorMeasurement sensorMeasurement,
                             SensorListService sensorListService,
-                            EmailAlertService alertService,
+                            AlertServiceImpl alertService,
                             RabbitMQService mqService,
                             @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
                             @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
@@ -131,8 +130,8 @@ public class CollectorService implements CommandLineRunner {
         if(sensorRecord.getValue() <= sensorRecord.getLow_threshold()) {
             log.debug("Sensor value below threshold. Measurement : " + sensorRecord.getValue() + " / Threshold : " + sensorRecord.getLow_threshold());
             try {
-                log.info("Sending alert email to " + "***REMOVED***");
-                alertService.sendAlert(new MailMessageAlertMeasurement(sensorRecord));
+                log.info("Sending alert email");
+                alertService.sendAlert(sensorRecord);
             } catch (MessagingException e) {
                 log.error("Failed to send Email Alert : " + e.getLocalizedMessage());
             }

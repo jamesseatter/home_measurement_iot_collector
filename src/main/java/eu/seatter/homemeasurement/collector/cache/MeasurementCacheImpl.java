@@ -21,7 +21,7 @@ public class MeasurementCacheImpl implements MeasurementCache {
     private final Map<String,List<SensorRecord>> cache = new HashMap<>();
 
     @Value("${measurement.cache.max_records_per_sensor:24}")
-    private static final int MAX_ENTRIES_PER_SENSOR=24;
+    private final int MAX_ENTRIES_PER_SENSOR=24;
 
     public MeasurementCacheImpl() {}
 
@@ -78,8 +78,8 @@ public class MeasurementCacheImpl implements MeasurementCache {
     }
 
     @Override
-    public Set<String> getSensorIds() {
-        return cache.keySet();
+    public List<String> getSensorIds() {
+        return new ArrayList(cache.keySet());
     }
 
     @Override

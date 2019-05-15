@@ -1,5 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.alert;
 
+import eu.seatter.homemeasurement.collector.model.SensorRecord;
+
 import javax.mail.MessagingException;
 
 /**
@@ -8,6 +10,6 @@ import javax.mail.MessagingException;
  * Date: 12/04/2019
  * Time: 13:13
  */
-public interface  Alert {
-    void sendAlert(MailMessage mail) throws MessagingException;
+public interface AlertService {
+    void sendAlert(SensorRecord sensorRecord) throws MessagingException;
 }

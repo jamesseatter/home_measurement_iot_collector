@@ -4,7 +4,6 @@ import eu.seatter.homemeasurement.collector.model.SensorRecord;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +18,7 @@ interface MeasurementCache {
     List<SensorRecord> getLastBySensorId(String sensorId);
     List<SensorRecord> getLastBySensorId(String sensorId, int last);
 
-    Set<String> getSensorIds();
+    List<String> getSensorIds();
     int getCacheMaxSizePerSensor();
     int getCacheSizeBySensorId(String sensorId);
 }
