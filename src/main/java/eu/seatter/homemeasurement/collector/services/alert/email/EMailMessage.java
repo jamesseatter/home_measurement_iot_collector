@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.services.alert;
+package eu.seatter.homemeasurement.collector.services.alert.email;
 
 /**
  * Created by IntelliJ IDEA.
@@ -6,7 +6,7 @@ package eu.seatter.homemeasurement.collector.services.alert;
  * Date: 12/04/2019
  * Time: 13:24
  */
-interface MailMessage {
+interface EMailMessage {
 
     String getAddress();
 

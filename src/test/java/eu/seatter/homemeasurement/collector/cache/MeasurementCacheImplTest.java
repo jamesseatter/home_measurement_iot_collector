@@ -10,7 +10,6 @@ import org.junit.rules.ExpectedException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -97,7 +96,7 @@ public class MeasurementCacheImplTest {
         //given
 
         //when
-        Set<String> result = measurementCache.getSensorIds();
+        List<String> result = measurementCache.getSensorIds();
 
         //then
         assertEquals(result.size(),0);
@@ -125,7 +124,7 @@ public class MeasurementCacheImplTest {
 
         //when
         int sensorCount = measurementCache.getSensorIds().size();
-        Set<String> records = measurementCache.getSensorIds();
+        List<String> records = measurementCache.getSensorIds();
 
         //then
         assertEquals(sensorCount,2);

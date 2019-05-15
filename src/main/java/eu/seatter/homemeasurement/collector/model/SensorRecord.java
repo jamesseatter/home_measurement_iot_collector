@@ -22,19 +22,19 @@ import java.time.LocalDateTime;
 public class SensorRecord {
     private String sensorid;
     private String title;
-    private String description;
-    private int familyid;
-    private SensorType sensorType;
-    private SensorMeasurementUnit measurementUnit;
-    private Double low_threshold;
-    private Double high_threshold;
-    private String alertgroup;
-
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime measureTimeUTC;
     private Double value;
 
+    private String description;
+    private SensorMeasurementUnit measurementUnit;
+    private SensorType sensorType;
+    private int familyid;
+
+    private Double low_threshold;
+    private Double high_threshold;
+    private String alertgroup;
 
     public String loggerFormat() {
         return "[" + sensorid + "/" + sensorType + "/" + familyid + "]";

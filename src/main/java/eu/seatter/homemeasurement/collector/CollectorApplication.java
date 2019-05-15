@@ -15,17 +15,4 @@ public class CollectorApplication implements CommandLineRunner {
 	@Override
 	public void run(String... strings) {
 	}
-
-//	@Override
-//	@PostConstruct
-//	public void run(String... args) throws Exception {
-//		log.info("Application Main");
-//		log.info("Starting service");
-//		IOTServiceImpl readerService = new IOTServiceImpl();
-//		if(readerService == null) {
-//			System.out.println("ERROR");
-//		}
-//		readerService.run();
-//		log.info("Ending service");
-//	}
 }

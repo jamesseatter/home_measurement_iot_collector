@@ -2,11 +2,11 @@
   {
     "name"    : "temperature_threshold_alerts",
     "type"    : "email",
-    "address" : "james.seatter@gmail.com"
+    "address" : "james.seatter@gmail.com;gw3gd1tt5x@pomail.net"
   },
   {
     "name"    : "system_alerts",
     "type"    : "email",
-    "address" : "james.seatter@gmail.com"
+    "address" : "james.seatter@gmail.com;gw3gd1tt5x@pomail.net"
   }
 ]

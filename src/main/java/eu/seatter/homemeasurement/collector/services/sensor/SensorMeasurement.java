@@ -26,6 +26,7 @@ public class SensorMeasurement {
 
     public List<SensorRecord> collect(List<SensorRecord> sensorList) {
         log.info("Start measurement collection");
+        LocalDateTime measurementTime = LocalDateTime.now(ZoneOffset.UTC).withSecond(00); //all measurements will use the same time to make reporting easier.
         for (SensorRecord sensorRecord : sensorList) {
             if(sensorRecord.getSensorid() == null) {
                 //todo improve handling of missing sensorId
@@ -34,6 +35,7 @@ public class SensorMeasurement {
             SensorRecord srWithMeasurement;
             try {
                 readSensorValue(sensorRecord);
+                sensorRecord.setMeasureTimeUTC(measurementTime);
                 measurements.add(sensorRecord);
                 log.debug(sensorRecord.loggerFormat() + " : Value returned - " + sensorRecord.getValue());
             } catch (Exception ex) {
@@ -49,7 +51,7 @@ public class SensorMeasurement {
         Sensor sensorReader = SensorFactory.getSensor(sensorRecord.getSensorType());
         try {
             sensorRecord.setValue(Objects.requireNonNull(sensorReader).readSensorData(sensorRecord));
-            sensorRecord.setMeasureTimeUTC(LocalDateTime.now(ZoneOffset.UTC));
+
         }
         catch (RuntimeException ex) {
             //todo improve exception handling
