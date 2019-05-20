@@ -57,6 +57,22 @@ public class MeasurementCacheImpl implements MeasurementCache {
     }
 
     @Override
+    public List<SensorRecord> getAllSorted() {
+        List<SensorRecord> sortedRecords = new ArrayList<>();
+        for(List<SensorRecord> srList : cache.values()) {
+            for(SensorRecord sr : srList) {
+                sortedRecords.add(sr);
+            }
+        }
+
+        sortedRecords.sort(Comparator.comparing((SensorRecord sr) -> sr.getMeasureTimeUTC())
+                .thenComparing(sr -> sr.getSensorid()));
+
+        return sortedRecords;
+
+    }
+
+    @Override
     public List<SensorRecord> getLastBySensorId(String sensorId, int last) {
         if(cache.containsKey(sensorId)) {
             if(cache.get(sensorId).size() < last) {

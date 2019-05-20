@@ -17,6 +17,7 @@ interface MeasurementCache {
     List<SensorRecord> getAllBySensorId(String sensorId);
     List<SensorRecord> getLastBySensorId(String sensorId);
     List<SensorRecord> getLastBySensorId(String sensorId, int last);
+    List<SensorRecord> getAllSorted();
 
     List<String> getSensorIds();
     int getCacheMaxSizePerSensor();

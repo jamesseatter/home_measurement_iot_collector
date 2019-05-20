@@ -11,46 +11,46 @@
 </head>
 <body>
 <!--/*@thymesVar id="sensor" type="java.util.Map.Entry"*/-->
-
 <!--/*@thymesVar id="sensorrecord" type="eu.seatter.homemeasurement.collector.model.SensorRecord"*/-->
-<div class="container-fluid" style="margin-top: 20px">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <div class="panel panel-primary">
+    <div class="container-fluid" style="margin-top: 20px">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-primary">
 
-                <div class="panel-heading">
-                    <h1 class="panel-title">Sensor Measurements</h1>
-                </div>
-                <div class="panel-body">
-                    <div class="table-responsive" th:if="${not #lists.isEmpty(measurements)}">
-                        <table class="table table-hover ">
-                            <thead class="thead-inverse">
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>SensorID</th>
-                                <th>Time</th>
-                                <th>value</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <th:block th:each="sensor : ${measurements}">
-                                    <tr>
-                                        <tr th:each="sensorrecord, iStat : ${sensor.value}" th:class="${sensorrecord.value > sensorrecord.low_threshold}? 'table-light' : 'table-danger'">
-                                            <td th:text="${iStat.index + 1}">index missing</td>
-                                            <td th:text="${sensorrecord.title}">title missing</td>
-                                            <td th:text="${sensorrecord.sensorid}">sensorid missing</td>
-                                            <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
-                                            <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
+                    <div class="panel-heading">
+                        <h1 class="panel-title">Sensor Measurements</h1>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive" th:if="${not #lists.isEmpty(measurements)}">
+                            <table class="table table-hover ">
+                                <thead class="thead-inverse">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>SensorID</th>
+                                    <th>Time</th>
+                                    <th>value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <th:block th:each="sensor : ${measurements}">
+                                        <tr>
+                                            <tr th:each="sensorrecord, iStat : ${sensor.value}" th:class="${sensorrecord.value > sensorrecord.low_threshold}? 'table-light' : 'table-danger'">
+                                                <td th:text="${iStat.index + 1}">index missing</td>
+                                                <td th:text="${sensorrecord.title}">title missing</td>
+                                                <td th:text="${sensorrecord.sensorid}">sensorid missing</td>
+                                                <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
+                                                <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
+                                            </tr>
                                         </tr>
-                                    </tr>
-                                </th:block>
-                            </tbody>
-                        </table>
+                                    </th:block>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
+</body>
