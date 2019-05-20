@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
-import eu.seatter.homemeasurement.collector.cache.MeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.services.CacheService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,17 +19,17 @@ import java.util.Map;
 @Controller
 public class DashboardController {
 
-    private MeasurementCacheImpl cache;
+    private CacheService cacheService;
 
-    public DashboardController(MeasurementCacheImpl cache) {
-        this.cache = cache;
+    public DashboardController(CacheService cache) {
+        this.cacheService = cache;
     }
 
     @RequestMapping("/")
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
-        Map<String, List<SensorRecord>> dataset = cache.getAll();
+        Map<String, List<SensorRecord>> dataset = cacheService.getAll();
         for(Map.Entry<String, List<SensorRecord>> entry: dataset.entrySet()) {
             System.out.println(entry.getKey() + " => " + entry.getValue());
             List<SensorRecord> sr = entry.getValue();
@@ -37,7 +37,6 @@ public class DashboardController {
                s.setMeasureTimeUTC(s.getMeasureTimeUTC().atZone(zoneId).toLocalDateTime());
             }
         }
-
 
         model.addAttribute("measurements", dataset);
         return "index";

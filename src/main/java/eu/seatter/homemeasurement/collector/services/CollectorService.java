@@ -1,6 +1,5 @@
 package eu.seatter.homemeasurement.collector.services;
 
-import eu.seatter.homemeasurement.collector.cache.MeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
@@ -37,21 +36,20 @@ public class CollectorService implements CommandLineRunner {
     private final Boolean mqEnabled;
     private final Boolean alertEnabled;
 
-    private final MeasurementCacheImpl measurementCache;
+    private CacheService cacheService;
     private final SensorMeasurement sensorMeasurement;
     private final SensorListService sensorListService;
     private final AlertService alertService;
     private final SensorMessaging mqService;
 
-    public CollectorService(MeasurementCacheImpl measurementCache,
-                            SensorMeasurement sensorMeasurement,
-                            SensorListService sensorListService,
-                            AlertServiceImpl alertService,
-                            RabbitMQService mqService,
-                            @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
-                            @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
-                            @Value("#{new Boolean('${message.alert.enabled:false}')}") Boolean alertEnabled) {
-        this.measurementCache = measurementCache;
+    public CollectorService(
+            SensorMeasurement sensorMeasurement,
+            SensorListService sensorListService,
+            AlertServiceImpl alertService,
+            RabbitMQService mqService,
+            @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
+            @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
+            @Value("#{new Boolean('${message.alert.enabled:false}')}") Boolean alertEnabled, CacheService cacheService) {
         this.sensorMeasurement = sensorMeasurement;
         this.sensorListService = sensorListService;
         this.alertService = alertService;
@@ -59,6 +57,7 @@ public class CollectorService implements CommandLineRunner {
         this.mqEnabled = mqEnabled;
         this.alertEnabled = alertEnabled;
         this.readIntervalSeconds = readIntervalSeconds;
+        this.cacheService = cacheService;
     }
 
     @Override
@@ -104,7 +103,7 @@ public class CollectorService implements CommandLineRunner {
             }
 
             for (SensorRecord sr : measurements){
-                measurementCache.add(sr);
+                cacheService.add(sr);
 
                 if (mqEnabled) {
                     mqService.sendMeasurement(sr);
