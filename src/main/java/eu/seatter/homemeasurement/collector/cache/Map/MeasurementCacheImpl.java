@@ -1,5 +1,6 @@
-package eu.seatter.homemeasurement.collector.cache;
+package eu.seatter.homemeasurement.collector.cache.Map;
 
+import eu.seatter.homemeasurement.collector.cache.MeasurementCache;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

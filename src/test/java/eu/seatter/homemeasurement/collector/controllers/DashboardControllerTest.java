@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
-import eu.seatter.homemeasurement.collector.cache.MeasurementCacheImpl;
+import eu.seatter.homemeasurement.collector.cache.Map.MeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.model.SensorType;

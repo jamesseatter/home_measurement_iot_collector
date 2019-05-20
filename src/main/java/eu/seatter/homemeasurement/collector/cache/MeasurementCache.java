@@ -11,7 +11,7 @@ import java.util.Map;
  * Date: 01/05/2019
  * Time: 16:01
  */
-interface MeasurementCache {
+public interface MeasurementCache {
     void add(SensorRecord sensorRecord);
     Map<String, List<SensorRecord>> getAll();
     List<SensorRecord> getAllBySensorId(String sensorId);
