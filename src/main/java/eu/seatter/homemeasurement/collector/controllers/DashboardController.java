@@ -4,10 +4,11 @@ import eu.seatter.homemeasurement.collector.cache.MeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,44 +27,19 @@ public class DashboardController {
 
     @RequestMapping("/")
     public String index(final Model model) {
+        ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
-        model.addAttribute("measurements", cache.getAll());
-
-        return "index";
-    }
-
-    @RequestMapping("/chart")
-    public String measurementChart(final Model model) {
-
-        model.addAttribute("sensors", cache.getSensorIds());
-        for(String sensorId : cache.getSensorIds()) {
-            model.addAttribute(sensorId, cache.getAllBySensorId(sensorId));
+        Map<String, List<SensorRecord>> dataset = cache.getAll();
+        for(Map.Entry<String, List<SensorRecord>> entry: dataset.entrySet()) {
+            System.out.println(entry.getKey() + " => " + entry.getValue());
+            List<SensorRecord> sr = entry.getValue();
+            for(SensorRecord s : sr) {
+               s.setMeasureTimeUTC(s.getMeasureTimeUTC().atZone(zoneId).toLocalDateTime());
+            }
         }
 
-        return "chart";
-    }
 
-//    @RequestMapping(value="/chart/data", produces = "application/json")
-//    public List<ArrayList<Double>> getChartData() {
-//        List<String> sensors = cache.getSensorIds();
-//
-//
-//        Map<String,List<SensorRecord>> rawdata = cache.getAll();
-//
-//        List<ArrayList<String>> chartData = new ArrayList<>();
-//        ArrayList<String> dataElements = new ArrayList<>();
-//        dataElements.addAll(sensors);
-//        chartData.add(dataElements);
-//
-//
-//        sensorSB.deleteCharAt(-1);
-//        chartData.add(new ArrayList<java.lang.String>(sensorSB.toString()));
-//
-//        return chartData;
-//    }
-
-    @RequestMapping("/chart/data/{sensorid}")
-    public List<SensorRecord> getChartDatabySensorId(@PathVariable("sensorid") String sensorid) {
-        return cache.getAllBySensorId(sensorid);
+        model.addAttribute("measurements", dataset);
+        return "index";
     }
 }

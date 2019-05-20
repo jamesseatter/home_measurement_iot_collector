@@ -211,4 +211,38 @@ public class MeasurementCacheImplTest {
         //then
     }
 
+    @Test
+    public void givenSensorRecord_ReturnSortedList() {
+        //given
+        measurementCache.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,12,01)));
+        measurementCache.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,18,01)));
+        measurementCache.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,05,01)));
+        measurementCache.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,01,01)));
+        measurementCache.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,18,01)));
+        measurementCache.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,18,01)));
+        measurementCache.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,12,01)));
+        measurementCache.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,12,01)));
+        measurementCache.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,05,01)));
+        measurementCache.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,01,01)));
+        measurementCache.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,01,01)));
+        measurementCache.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,05,01)));
+
+        //when
+        List<SensorRecord> sortedRecords = measurementCache.getAllSorted();
+
+        //then
+        assertEquals(12,sortedRecords.size());
+        assertEquals("SENSOR_1", sortedRecords.get(0).getSensorid());
+        assertEquals(LocalDateTime.of(2019,01,01,01,01), sortedRecords.get(0).getMeasureTimeUTC());
+    }
+
+    private SensorRecord createTestRecord(String sensorId,LocalDateTime dt) {
+        return new SensorRecord()
+                .toBuilder()
+                .familyid(10).description("Test sensor for testing json").low_threshold(35.0).high_threshold(70.0).measurementUnit(SensorMeasurementUnit.C).sensorType(SensorType.ONEWIRE).value(55.8).alertgroup("testalertgroup")
+                .sensorid(sensorId)
+                .measureTimeUTC(dt)
+                .build();
+    }
+
 }
