@@ -16,7 +16,7 @@ public interface MeasurementCache {
     void add(SensorRecord sensorRecord);
     Map<String, List<SensorRecord>> getAll();
     List<SensorRecord> getAllBySensorId(String sensorId);
-    List<SensorRecord> getLastBySensorId(String sensorId);
+//    List<SensorRecord> getLastBySensorId(String sensorId);
     List<SensorRecord> getLastBySensorId(String sensorId, int last);
     List<SensorRecord> getAllSorted();
 
