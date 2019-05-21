@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.services.CacheService;
+import eu.seatter.homemeasurement.collector.services.cache.CacheService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +19,7 @@ import java.util.Map;
 @Controller
 public class DashboardController {
 
-    private CacheService cacheService;
+    private final CacheService cacheService;
 
     public DashboardController(CacheService cache) {
         this.cacheService = cache;

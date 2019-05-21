@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.cache.Map;
+package eu.seatter.homemeasurement.collector.cache.map;
 
 import eu.seatter.homemeasurement.collector.cache.MeasurementCache;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
@@ -32,7 +32,7 @@ public class MeasurementCacheImpl implements MeasurementCache {
         System.out.println(sensorRecord.hashCode() + "   /   " + toCache.hashCode());
 
         if(!cache.containsKey(toCache.getSensorid())) {
-            // initialize new Map entry for sensor
+            // initialize new map entry for sensor
             cache.put(toCache.getSensorid(),new ArrayList<>(MAX_ENTRIES_PER_SENSOR));
         }
 
@@ -66,8 +66,8 @@ public class MeasurementCacheImpl implements MeasurementCache {
             }
         }
 
-        sortedRecords.sort(Comparator.comparing((SensorRecord sr) -> sr.getMeasureTimeUTC())
-                .thenComparing(sr -> sr.getSensorid()));
+        sortedRecords.sort(Comparator.comparing(SensorRecord::getMeasureTimeUTC)
+                .thenComparing(SensorRecord::getSensorid));
 
         return sortedRecords;
 
@@ -95,8 +95,8 @@ public class MeasurementCacheImpl implements MeasurementCache {
     }
 
     @Override
-    public List<String> getSensorIds() {
-        return new ArrayList(cache.keySet());
+    public ArrayList getSensorIds() {
+        return new ArrayList<>(cache.keySet());
     }
 
     @Override

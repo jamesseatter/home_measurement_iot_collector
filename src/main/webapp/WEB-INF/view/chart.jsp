@@ -1,12 +1,12 @@
+<%--suppress HtmlUnknownTarget --%>
 <!-- chart.jsp-->
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Home Measurement Dashboard</title>
-    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
@@ -31,8 +31,8 @@
             <%--    </c:forEach>--%>
             <%--]);--%>
 
-            var data = new google.visualization.DataTable();
-            data.addColumn('datetime', 'Time')
+            const data = new google.visualization.DataTable();
+            data.addColumn('datetime', 'Time');
             data.addColumn('number', 'Sensor1');
             data.addColumn('number', 'Sensor2');
             data.addRows([
@@ -49,16 +49,16 @@
             ]);
 console.log("here");
             // Set chart options
-            var options = {
+            const options = {
                 'title': 'Area-wise Top Seven Countries in the World',
                 curveType: 'function',
-                legend: { position: 'bottom' },
+                legend: {position: 'bottom'},
                 'width': 900,
                 'height': 500
             };
 
             // Instantiate and draw our chart, passing in some options.
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            const chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
             chart.draw(data, options);
         }
     </script>

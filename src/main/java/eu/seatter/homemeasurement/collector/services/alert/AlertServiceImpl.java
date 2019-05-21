@@ -19,8 +19,8 @@ import javax.mail.MessagingException;
 @Service
 public class AlertServiceImpl implements AlertService {
 
-    private EmailAlertService emailAlertService;
-    private Boolean alertEmailEnabled;
+    private final EmailAlertService emailAlertService;
+    private final Boolean alertEmailEnabled;
 
     public AlertServiceImpl(EmailAlertServiceImpl emailAlertService, @Value("#{new Boolean('${message.alert.email.enabled:false}')}") Boolean alertEmailEnabled) {
         this.emailAlertService = emailAlertService;

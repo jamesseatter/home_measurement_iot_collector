@@ -25,7 +25,7 @@ import javax.mail.internet.MimeMessage;
 public class EmailAlertServiceImpl implements EmailAlertService {
 
     private final JavaMailSender mailSender;
-    private TemplateEngine templateEngine;
+    private final TemplateEngine templateEngine;
 
     private SensorRecord sensorRecord;
 
@@ -67,7 +67,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
     }
 
 
-    public String[] getAddress() throws IllegalArgumentException {
+    private String[] getAddress() throws IllegalArgumentException {
         if(sensorRecord.getAlertgroup().isEmpty()) {
             return null;
         }
@@ -81,13 +81,13 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         return (ag.getAddress().split(";"));
     }
 
-    public String getSubject() {
+    private String getSubject() {
         String subject = "Home Monitor Alert - " + sensorRecord.getTitle() + " - " + sensorRecord.getValue() + sensorRecord.getMeasurementUnit().toString();
         log.debug("Email Subject : " + subject);
         return subject;
     }
 
-    public String getContent() {
+    private String getContent() {
         Context context = new Context();
         context.setVariable("temperature", sensorRecord.getValue().toString() + sensorRecord.getMeasurementUnit().toString());
         context.setVariable("date", sensorRecord.getMeasureTimeUTC());

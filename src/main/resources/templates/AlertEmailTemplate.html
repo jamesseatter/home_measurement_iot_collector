@@ -5,8 +5,8 @@
     <title>Title</title>
 </head>
 <body style="margin: 0; padding: 20px 0 30px 0;">
-<table align="center" border="1" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; border: 1px solid #cccccc;">
-    <tr style="padding-top: 10px; padding-right: 10px; padding-bottom: 8px; padding-left: 5px;">
+<table style="width:600px; text-align:center; padding:0; border-spacing: 0; border-collapse: collapse; border: 1px solid #cccccc;">
+    <tr style="padding: 10px 10px 8px 5px;">
 <!--        <table>-->
 <!--            <tr>-->
 <!--                <td bgcolor="#70bbd9" align="center" style="padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">-->
@@ -19,15 +19,15 @@
 <!--            </tr>-->
 
 <!--        </table>-->
-        <td bgcolor="#70bbd9" align="center" style="padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
-            <img src="CdBLogo.webp" height="103" width="81" style="padding: 0px 0px 10px 0px;"/> <br>
+        <td style="text-align:center; background-color: #70bbd9; padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
+            <img alt="CdB Logo image" src="CdBLogo.webp" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>
             <b>Chauffage PPE Chavannes-des-Bois</b>
             <b>Chauffage Central Communal Temperature Alert!!</b>
         </td>
     </tr>
 
-    <tr style="padding-top: 10px; padding-right: 10px; padding-bottom: 8px; padding-left: 5px; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
-        <td bgcolor="#ee4c50" align="left" style="padding: 40px 30px 40px 30px;">
+    <tr style="padding: 10px 10px 8px 5px;color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
+        <td style="background-color: #ee4c50; text-align:left; padding: 40px 30px 40px 30px;">
             <table >
                 <tr><td><b>Température</b></td><td>:</td><td><span th:text="${temperature}"></span></td></tr>
                 <tr><td><b>Date</b></td><td>:</td><td><span th:text="${#temporals.format(date,'dd/MMMM/yyyy hh:mm')}"></span></td></tr>
@@ -36,17 +36,17 @@
     </tr>
 
     <tr  style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
-        <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;">
+        <td style="background-color: #ffffff; padding: 40px 30px 40px 30px;">
             <h3>Envoyez l'email suivant pour avertir Bory de l'échec.</h3>
             <table style="color: #37474F; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px; padding: 10px 10px 10px 10px;">
-                <tr style="padding: 10px 0px 0px 0px;">
-                    <td width="50"><b>TO:</b></td><td>e.pistotnik@bory.ch, e.naz@bory.ch</td>
+                <tr style="padding: 10px 0 0 0;">
+                    <td style="width:50px;"><b>TO:</b></td><td>e.pistotnik@bory.ch, e.naz@bory.ch</td>
                 </tr>
-                <tr style="padding: 10px 0px 0px 0px;">
-                    <td width="50"><b>CC:</b></td><td>maradan@ecosys.com, i.martinelli@philippemarechal.ch, James.Seatter@gmail.com, laurent.oudin@bluewin.ch</td>
+                <tr style="padding: 10px 0 0 0;">
+                    <td style="width:50px;"><b>CC:</b></td><td>maradan@ecosys.com, i.martinelli@philippemarechal.ch, James.Seatter@gmail.com, laurent.oudin@bluewin.ch</td>
                 </tr>
-                <tr style="padding: 10px 0px 0px 0px;">
-                    <td width="50"><b>Sujet:</b></td><td>Chauffage PPE Chavannes-des-Bois a échoué.</td>
+                <tr style="padding: 10px 0 0 0;">
+                    <td style="width:50px;"><b>Sujet:</b></td><td>Chauffage PPE Chavannes-des-Bois a échoué.</td>
                 </tr>
                 <tr></tr>
                 <tr>

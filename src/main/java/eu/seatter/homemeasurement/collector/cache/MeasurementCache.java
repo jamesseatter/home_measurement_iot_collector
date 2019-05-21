@@ -2,6 +2,7 @@ package eu.seatter.homemeasurement.collector.cache;
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public interface MeasurementCache {
     List<SensorRecord> getLastBySensorId(String sensorId, int last);
     List<SensorRecord> getAllSorted();
 
-    List<String> getSensorIds();
+    ArrayList getSensorIds();
     int getCacheMaxSizePerSensor();
     int getCacheSizeBySensorId(String sensorId);
 }

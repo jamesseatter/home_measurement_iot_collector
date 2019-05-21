@@ -26,7 +26,7 @@ public class SensorListManagerJSON implements SensorList {
     private static String configPath;
 
     public SensorListManagerJSON(@Value("${config.path}") String configpath) {
-        this.configPath = configpath;
+        configPath = configpath;
     }
 
     @Override

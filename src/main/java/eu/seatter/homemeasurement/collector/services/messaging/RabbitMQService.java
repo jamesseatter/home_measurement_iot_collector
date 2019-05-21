@@ -100,8 +100,6 @@ public class RabbitMQService implements SensorMessaging {
                 log.error("Converting SensorRecord to JSON failed : " + ex.getMessage());
 
             }
-        } catch (IOException ex) {
-            log.error("Failed to connect to RabbitMQ with error message :" + ex.getCause());
         } catch (Exception ex) {
             log.error("Failed to connect to RabbitMQ with error message :" + ex.getCause());
         }
