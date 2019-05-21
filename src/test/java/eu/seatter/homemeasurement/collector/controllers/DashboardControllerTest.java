@@ -1,6 +1,5 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
-import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.model.SensorType;
@@ -22,7 +21,7 @@ public class DashboardControllerTest {
 
     @Before
     public void setUp() {
-        this.cacheService = new CacheService(new MeasurementCacheImpl());
+        this.cacheService = new CacheService();
     }
 
     @Test

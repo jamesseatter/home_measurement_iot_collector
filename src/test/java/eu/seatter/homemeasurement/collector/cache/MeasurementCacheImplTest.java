@@ -1,9 +1,7 @@
 package eu.seatter.homemeasurement.collector.cache;
 
 import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheImpl;
-import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.model.SensorType;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,6 +10,7 @@ import org.junit.rules.ExpectedException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static eu.seatter.homemeasurement.collector.TestUtility_SensorRecord.createTestRecord;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -31,22 +30,12 @@ public class MeasurementCacheImplTest {
         this.MAX_ENTRIES_PER_SENSOR = this.measurementCache.getCacheMaxSizePerSensor();
     }
 
-    private SensorRecord testRecord(String sensorId) {
-        SensorRecord sr = new SensorRecord();
-        sr.setFamilyid(40);
-        sr.setSensorid(sensorId);
-        sr.setSensorType(SensorType.ONEWIRE);
-        sr.setMeasureTimeUTC(LocalDateTime.now());
-        sr.setMeasurementUnit(SensorMeasurementUnit.C);
-        sr.setValue(20.0);
 
-        return sr;
-    }
 
     @Test
     public void givenAddOneEntry_thenGetAllReturnsOne() {
         //given
-        SensorRecord sr = testRecord("28-0000000001");
+        SensorRecord sr = createTestRecord("28-0000000001", LocalDateTime.now());
         measurementCache.add(sr);
 
         //when
@@ -60,10 +49,10 @@ public class MeasurementCacheImplTest {
     @Test
     public void givenAddTwoCacheEntries_thenReturnTwoEntries() {
         //given
-        SensorRecord sr = testRecord("28-0000000001");
+        SensorRecord sr = createTestRecord("28-0000000001", LocalDateTime.now());
         measurementCache.add(sr);
 
-        SensorRecord sr1 = testRecord("28-0000000001");
+        SensorRecord sr1 = createTestRecord("28-0000000001", LocalDateTime.now());
         measurementCache.add(sr1);
 
         //when
@@ -79,7 +68,7 @@ public class MeasurementCacheImplTest {
         String sensorId = "28-000000000";
         SensorRecord sr;
         for (int i = 0; i < MAX_ENTRIES_PER_SENSOR + 5 ; i++) {
-            sr = testRecord(sensorId);
+            sr = createTestRecord(sensorId,LocalDateTime.now());
             measurementCache.add(sr);
         }
 
@@ -119,7 +108,7 @@ public class MeasurementCacheImplTest {
         //given
         SensorRecord sr;
         for (int i = 0 ; i < 2 ; i++) {
-            sr = testRecord("28-000000000" + i);
+            sr = createTestRecord("28-000000000" + i, LocalDateTime.now());
             measurementCache.add(sr);
         }
 
@@ -140,7 +129,7 @@ public class MeasurementCacheImplTest {
         String sensorId = "28-000000000";
         SensorRecord sr;
         for (int i = 0 ; i < 10 ; i++) {
-            sr = testRecord(sensorId);
+            sr = createTestRecord(sensorId,LocalDateTime.now());
             sr.setValue((double)i);
             measurementCache.add(sr);
         }
@@ -159,13 +148,13 @@ public class MeasurementCacheImplTest {
         String sensorId = "28-000000000";
         SensorRecord sr;
         for (int i = 0 ; i < 10 ; i++) {
-            sr = testRecord(sensorId);
+            sr = createTestRecord(sensorId,LocalDateTime.now());
             sr.setValue((double)i);
             measurementCache.add(sr);
         }
 
         //when
-        List<SensorRecord> results = measurementCache.getLastBySensorId(sensorId);
+        List<SensorRecord> results = measurementCache.getLastBySensorId(sensorId,1);
 
         //then
         assertEquals(results.size(),1);
@@ -185,7 +174,7 @@ public class MeasurementCacheImplTest {
 
 
         //when
-        measurementCache.getLastBySensorId(sensorId);
+        measurementCache.getLastBySensorId(sensorId,1);
 
         //then
     }
@@ -201,7 +190,7 @@ public class MeasurementCacheImplTest {
 
         SensorRecord sr;
         for (int i = 0 ; i < recordCount ; i++) {
-            sr = testRecord(sensorId);
+            sr = createTestRecord(sensorId,LocalDateTime.now());
             sr.setValue((double)i);
             measurementCache.add(sr);
         }
@@ -237,13 +226,6 @@ public class MeasurementCacheImplTest {
         assertEquals(LocalDateTime.of(2019,01,01,01,01), sortedRecords.get(0).getMeasureTimeUTC());
     }
 
-    private SensorRecord createTestRecord(String sensorId,LocalDateTime dt) {
-        return new SensorRecord()
-                .toBuilder()
-                .familyid(10).description("Test sensor for testing json").low_threshold(35.0).high_threshold(70.0).measurementUnit(SensorMeasurementUnit.C).sensorType(SensorType.ONEWIRE).value(55.8).alertgroup("testalertgroup")
-                .sensorid(sensorId)
-                .measureTimeUTC(dt)
-                .build();
-    }
+
 
 }

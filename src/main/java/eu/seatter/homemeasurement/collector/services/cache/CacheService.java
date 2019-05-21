@@ -2,6 +2,7 @@ package eu.seatter.homemeasurement.collector.services.cache;
 
 import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,11 +17,9 @@ import java.util.Map;
  */
 @Service
 public class CacheService {
-    private final MeasurementCacheImpl measurementCache;
+    @Autowired
+    private MeasurementCacheImpl measurementCache;
 
-    public CacheService(MeasurementCacheImpl measurementCache) {
-        this.measurementCache = measurementCache;
-    }
 
     public void add(SensorRecord sensorRecord) {
         measurementCache.add(sensorRecord);
@@ -42,11 +41,7 @@ public class CacheService {
         return measurementCache.getLastBySensorId(sensorId,last);
     }
 
-    public List<SensorRecord> getLastBySensorId(String sensorId) {
-        return measurementCache.getLastBySensorId(sensorId,1);
-    }
-
-    public ArrayList getSensorIds() {
+    public ArrayList<String> getSensorIds() {
         return new ArrayList<String>(measurementCache.getSensorIds());
     }
 

@@ -89,10 +89,10 @@ public class MeasurementCacheImpl implements MeasurementCache {
         }
     }
 
-    @Override
-    public List<SensorRecord> getLastBySensorId(String sensorId) {
-        return getLastBySensorId(sensorId,1);
-    }
+//    @Override
+//    public List<SensorRecord> getLastBySensorId(String sensorId) {
+//        return getLastBySensorId(sensorId,1);
+//    }
 
     @Override
     public ArrayList getSensorIds() {
