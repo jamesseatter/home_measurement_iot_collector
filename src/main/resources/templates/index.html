@@ -34,7 +34,7 @@
                                 </thead>
                                 <tbody>
                                     <th:block th:each="sensor : ${measurements}">
-                                        <tr>
+<!--                                        <tr>-->
                                             <tr th:each="sensorrecord, iStat : ${sensor.value}" th:class="${sensorrecord.value > sensorrecord.low_threshold}? 'table-light' : 'table-danger'">
                                                 <td th:text="${iStat.index + 1}">index missing</td>
                                                 <td th:text="${sensorrecord.title}">title missing</td>
@@ -42,7 +42,7 @@
                                                 <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
                                                 <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
                                             </tr>
-                                        </tr>
+<!--                                        </tr>-->
                                     </th:block>
                                 </tbody>
                             </table>

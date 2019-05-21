@@ -4,6 +4,7 @@ import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.alert.AlertServiceImpl;
+import eu.seatter.homemeasurement.collector.services.cache.CacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
@@ -32,11 +33,10 @@ public class CollectorService implements CommandLineRunner {
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
-    private int readIntervalSeconds;
+    private final int readIntervalSeconds;
     private final Boolean mqEnabled;
-    private final Boolean alertEnabled;
 
-    private CacheService cacheService;
+    private final CacheService cacheService;
     private final SensorMeasurement sensorMeasurement;
     private final SensorListService sensorListService;
     private final AlertService alertService;
@@ -55,7 +55,6 @@ public class CollectorService implements CommandLineRunner {
         this.alertService = alertService;
         this.mqService = mqService;
         this.mqEnabled = mqEnabled;
-        this.alertEnabled = alertEnabled;
         this.readIntervalSeconds = readIntervalSeconds;
         this.cacheService = cacheService;
     }

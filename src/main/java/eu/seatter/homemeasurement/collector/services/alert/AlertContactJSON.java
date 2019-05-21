@@ -26,7 +26,7 @@ public class AlertContactJSON {
     private static String configPath;
 
     public AlertContactJSON(@Value("${config.path}") String configpath) {
-        this.configPath = configpath;
+        configPath = configpath;
     }
 
     public static Optional<AlertContactGroup> GetContactsForGroup(String groupName){

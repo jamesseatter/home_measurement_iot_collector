@@ -2,8 +2,7 @@ package eu.seatter.homemeasurement.collector.actuator;
 
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.services.CacheService;
-import org.springframework.beans.factory.annotation.Autowired;
+import eu.seatter.homemeasurement.collector.services.cache.CacheService;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.stereotype.Component;
@@ -24,10 +23,13 @@ import java.util.Map;
 @Endpoint(id = "measurements")
 public class MeasurementsEndpoint {
 
-    @Autowired
     CacheService cacheService;
 
-    static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    public MeasurementsEndpoint(CacheService cacheService) {
+        this.cacheService = cacheService;
+    }
+
+    static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
     @ReadOperation
     public Map<String, List<String>> measurements() {
@@ -38,7 +40,7 @@ public class MeasurementsEndpoint {
 
 
         for(String sensorid : data.keySet()) {
-            dataout.putIfAbsent(sensorid,new ArrayList<String>());
+            dataout.putIfAbsent(sensorid, new ArrayList<>());
             for(SensorRecord sr : data.get(sensorid)) {
                 dataout.get(sensorid).add(formatMeasurements(sr));
             }

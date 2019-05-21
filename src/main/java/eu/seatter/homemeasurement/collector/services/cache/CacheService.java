@@ -1,6 +1,6 @@
-package eu.seatter.homemeasurement.collector.services;
+package eu.seatter.homemeasurement.collector.services.cache;
 
-import eu.seatter.homemeasurement.collector.cache.Map.MeasurementCacheImpl;
+import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Service
 public class CacheService {
-    MeasurementCacheImpl measurementCache;
+    private final MeasurementCacheImpl measurementCache;
 
     public CacheService(MeasurementCacheImpl measurementCache) {
         this.measurementCache = measurementCache;
@@ -46,8 +46,8 @@ public class CacheService {
         return measurementCache.getLastBySensorId(sensorId,1);
     }
 
-    public List<String> getSensorIds() {
-        return new ArrayList(measurementCache.getSensorIds());
+    public ArrayList getSensorIds() {
+        return new ArrayList<String>(measurementCache.getSensorIds());
     }
 
     public int getCacheMaxSizePerSensor() {
