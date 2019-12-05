@@ -39,7 +39,8 @@ public class MeasurementCacheImpl implements MeasurementCache {
         if(cache.get(toCache.getSensorid()).size() == MAX_ENTRIES_PER_SENSOR) {
             cache.get(toCache.getSensorid()).remove(0);
         }
-        cache.get(toCache.getSensorid()).add(toCache);
+        //cache.get(toCache.getSensorid()).add(toCache);
+        cache.get(toCache.getSensorid()).add(0,toCache);
         log.debug("Cache Add : " + toCache.toString());
     }
 

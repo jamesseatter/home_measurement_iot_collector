@@ -139,7 +139,7 @@ public class MeasurementCacheImplTest {
 
         //then
         assertEquals(results.size(), requestedCount);
-        assertEquals(9.0, (results.get(results.size()-1).getValue()),0);
+        assertEquals(0.0, (results.get(results.size()-1).getValue()),0);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class MeasurementCacheImplTest {
 
         //then
         assertEquals(results.size(),1);
-        assertEquals(9.0, (results.get(0).getValue()),0);
+        assertEquals(0.0, (results.get(0).getValue()),0);
     }
 
     @Rule

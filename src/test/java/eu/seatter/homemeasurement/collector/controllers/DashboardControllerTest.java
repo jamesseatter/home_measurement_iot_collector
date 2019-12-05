@@ -27,20 +27,20 @@ public class DashboardControllerTest {
     @Test
     public void givenMeasurementList_ReturnMVC() {
         //given
-        cacheService.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,12,01)));
-        cacheService.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,18,01)));
-        cacheService.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,05,01)));
-        cacheService.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,01,01)));
-        cacheService.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,18,01)));
-        cacheService.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,18,01)));
-        cacheService.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,12,01)));
-        cacheService.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,12,01)));
-        cacheService.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,05,01)));
-        cacheService.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,01,01)));
-        cacheService.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,01,01)));
-        cacheService.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,05,01)));
-
-        //when
+//        cacheService.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,12,01)));
+//        cacheService.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,18,01)));
+//        cacheService.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,05,01)));
+//        cacheService.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,01,01)));
+//        cacheService.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,18,01)));
+//        cacheService.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,18,01)));
+//        cacheService.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,12,01)));
+//        cacheService.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,12,01)));
+//        cacheService.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,05,01)));
+//        cacheService.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,01,01)));
+//        cacheService.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,01,01)));
+//        cacheService.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,05,01)));
+//
+//        //when
 
 
         //then
