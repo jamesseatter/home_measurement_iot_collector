@@ -1,6 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.alert.email;
 
 import eu.seatter.homemeasurement.collector.model.AlertContactGroup;
+import eu.seatter.homemeasurement.collector.model.GeneralAlertMessage;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.AlertContactJSON;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
     }
 
     @Override
-    public void sendAlert(SensorRecord sensorRecord) throws MessagingException {
+    public void sendMeasurementAlert(SensorRecord sensorRecord) throws MessagingException {
         this.sensorRecord = sensorRecord;
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -66,6 +67,35 @@ public class EmailAlertServiceImpl implements EmailAlertService {
 
     }
 
+    @Override
+    public void sendGeneralAlert(GeneralAlertMessage alertMessage) throws MessagingException {
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "utf-8");
+
+        try {
+            String[] recipients = getAddress();
+            helper.setTo(recipients);
+        } catch (MessagingException ex) {
+            throw new MessagingException("Error adding mail recipients to mailer message");
+        }
+        try {
+            helper.setSubject(getSubject());
+        } catch (MessagingException ex) {
+            throw new MessagingException("No email recipients defined");
+        }
+        try {
+            message.setContent(getContent(), "text/html");
+        } catch (MessagingException ex) {
+            throw new MessagingException("Error occurred setting the email content");
+        }
+
+        try {
+            mailSender.send(message);
+        } catch (MailException ex) {
+            throw new MessagingException("An error occurred sending the email : " + ex.getMessage());
+        }
+    }
 
     private String[] getAddress() throws IllegalArgumentException {
         if(sensorRecord.getAlertgroup().isEmpty()) {

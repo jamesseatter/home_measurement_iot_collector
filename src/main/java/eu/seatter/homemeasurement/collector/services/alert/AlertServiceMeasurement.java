@@ -1,5 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.alert;
 
+import eu.seatter.homemeasurement.collector.model.GeneralAlertMessage;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertService;
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertServiceImpl;
@@ -17,22 +18,22 @@ import javax.mail.MessagingException;
  */
 @Slf4j
 @Service
-public class AlertServiceImpl implements AlertService {
+public class AlertServiceMeasurement implements AlertService {
 
     private final EmailAlertService emailAlertService;
     private final Boolean alertEmailEnabled;
 
-    public AlertServiceImpl(EmailAlertServiceImpl emailAlertService, @Value("#{new Boolean('${message.alert.email.enabled:false}')}") Boolean alertEmailEnabled) {
+    public AlertServiceMeasurement(EmailAlertServiceImpl emailAlertService, @Value("#{new Boolean('${message.alert.email.enabled:false}')}") Boolean alertEmailEnabled) {
         this.emailAlertService = emailAlertService;
         this.alertEmailEnabled = alertEmailEnabled;
     }
 
     @Override
-    public void sendAlert(SensorRecord sensorRecord) throws MessagingException {
+    public void sendAlert(SensorRecord sensorRecord, GeneralAlertMessage alertMessage) throws MessagingException {
 
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");
-            emailAlertService.sendAlert(sensorRecord);
+            emailAlertService.sendMeasurementAlert(sensorRecord);
         } else {
             log.info("Email alerts disabled.");
         }

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 public class SensorRecord {
     private String sensorid;
     private String title;
+    private boolean enabled;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime measureTimeUTC;

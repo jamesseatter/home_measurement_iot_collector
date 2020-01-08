@@ -1,9 +1,10 @@
 package eu.seatter.homemeasurement.collector.services;
 
+import eu.seatter.homemeasurement.collector.model.GeneralAlertMessage;
 import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
-import eu.seatter.homemeasurement.collector.services.alert.AlertServiceImpl;
+import eu.seatter.homemeasurement.collector.services.alert.AlertServiceMeasurement;
 import eu.seatter.homemeasurement.collector.services.cache.CacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
@@ -45,7 +46,7 @@ public class CollectorService implements CommandLineRunner {
     public CollectorService(
             SensorMeasurement sensorMeasurement,
             SensorListService sensorListService,
-            AlertServiceImpl alertService,
+            AlertServiceMeasurement alertService,
             RabbitMQService mqService,
             @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
             @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
@@ -128,8 +129,9 @@ public class CollectorService implements CommandLineRunner {
         if(sensorRecord.getValue() <= sensorRecord.getLow_threshold()) {
             log.debug("Sensor value below threshold. Measurement : " + sensorRecord.getValue() + " / Threshold : " + sensorRecord.getLow_threshold());
             try {
+                GeneralAlertMessage gam = new GeneralAlertMessage();
                 log.info("Sending alert email");
-                alertService.sendAlert(sensorRecord);
+                alertService.sendAlert(sensorRecord,gam);
             } catch (MessagingException e) {
                 log.error("Failed to send Email Alert : " + e.getLocalizedMessage());
             }

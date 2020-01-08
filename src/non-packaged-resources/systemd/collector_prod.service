@@ -3,10 +3,10 @@ Description = Home measurement collector service
 After = syslog.target
 
 [Service]
-WorkingDirectory=/home/iot/bin/collector_dev
+WorkingDirectory=/home/iot/bin/collector_prod
 Type = simple
 User = iot
-ExecStart = /usr/bin/java -jar -Dspring.profiles.active=dev collector.jar
+ExecStart = /usr/bin/java -jar -Dspring.profiles.active=prod collector.jar
 Restart=on-failure
 RestartSec=10
 
