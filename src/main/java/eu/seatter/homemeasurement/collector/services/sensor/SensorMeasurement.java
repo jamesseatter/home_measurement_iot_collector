@@ -29,6 +29,7 @@ public class SensorMeasurement {
         LocalDateTime measurementTime = LocalDateTime.now(ZoneOffset.UTC).withSecond(00); //all measurements will use the same time to make reporting easier.
         for (SensorRecord sensorRecord : sensorList) {
             if(sensorRecord.getSensorid() == null) {
+                log.error(sensorRecord.loggerFormat() + " : SensorId not found");
                 //todo improve handling of missing sensorId
                 continue;
             }
