@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>eu.seatter.homemeasurement</groupId>
 	<artifactId>collector</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.2.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>collector</name>
 	<description>Home Measurement IOT End Point Collector</description>

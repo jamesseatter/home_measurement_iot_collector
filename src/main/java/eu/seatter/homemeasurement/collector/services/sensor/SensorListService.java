@@ -43,16 +43,18 @@ public class SensorListService {
             @SuppressWarnings("unchecked")
             List<SensorRecord>  pi4jSensors = new ArrayList<>(pi4j.getSensors());
             //for each 1-wire sensor found validate that it is in the configuration file and can be measured.
-            boolean sensorFound = false;
             for (SensorRecord pi4jSensor : pi4jSensors) {
+                boolean sensorFound = false;
                 for (int srIndex = 0; srIndex < sensorRecordList.size(); srIndex++) {
                     if (sensorRecordList.get(srIndex).getSensorid().trim().equals(pi4jSensor.getSensorid().trim())) {
                         sensorFound = true;
+                        pi4jSensors.get(pi4jSensors.indexOf(pi4jSensor)).setEnabled(true);
                         log.info("Sensor " + pi4jSensors.get(srIndex).getSensorid().trim() + " found in main configuration");
                     }
                 }
                 if (!sensorFound) {
                     log.warn("Sensor " + pi4jSensor.getSensorid().trim() + " NOT found in main configuration and will not be measured. To measure the sensor value add it to the main configuration.");
+                    pi4jSensors.get(pi4jSensors.indexOf(pi4jSensor)).setEnabled(false);
                 }
             }
         } catch (Exception ex) {}

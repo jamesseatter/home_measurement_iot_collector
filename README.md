@@ -20,4 +20,4 @@ This code covers the end point that measures the temperature and sends it to the
 
 **Code/hardware Components**
    * Raspberry Pi Zero W with a DS18B20 temperature probe.
-   * Java 8 code base
+   * Java 10 code base

@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.when;
  * Time: 11:36
  */
 @RunWith(MockitoJUnitRunner.class)
+@ActiveProfiles("test")
 public class SensorListServiceTest {
 
     @Mock
@@ -39,12 +41,12 @@ public class SensorListServiceTest {
     @Test
     public void givenSensorFile_whenTwoSensors_thenReturnSensors() {
         //given
-        List<SensorRecord> sensorList = new ArrayList<>();
-        sensorList.add(SensorRecord.builder().sensorid("20-12345").familyid(40).build());
-        sensorList.add(SensorRecord.builder().sensorid("20-54321").familyid(40).build());
+        List<SensorRecord> sensorListJSON = new ArrayList<>();
+        sensorListJSON.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListJSON.add(SensorRecord.builder().sensorid("28-0000095cd28c").familyid(40).build());
 
         //when
-        when(sensorListManagerJSON.getSensors()).thenReturn(sensorList);
+        when(sensorListManagerJSON.getSensors()).thenReturn(sensorListJSON);
 
         //then
         List<SensorRecord> SensorListResults = sensorListService.getSensors();
@@ -55,12 +57,12 @@ public class SensorListServiceTest {
     @Test
     public void given1WireScan_whenNoSensorFile_thenReturnNoSensors() {
         //given
-        List<SensorRecord> sensorList = new ArrayList<>();
-        sensorList.add(SensorRecord.builder().sensorid("20-12345").familyid(40).build());
-        sensorList.add(SensorRecord.builder().sensorid("20-54321").familyid(40).build());
+        List<SensorRecord> sensorListJSON = new ArrayList<>();
+        sensorListJSON.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListJSON.add(SensorRecord.builder().sensorid("28-0000095cd28c").familyid(40).build());
 
         //when
-        when(sensorListManagerPi4Jl.getSensors()).thenReturn(sensorList);
+        when(sensorListManagerPi4Jl.getSensors()).thenReturn(sensorListJSON);
 
         //then
         List<SensorRecord> SensorListResults = sensorListService.getSensors();
@@ -71,16 +73,16 @@ public class SensorListServiceTest {
     @Test
     public void givenSensorFileAnd1WireScan_whenTwoSensors_thenReturnSensors() {
         //given
-        List<SensorRecord> sensorList = new ArrayList<>();
-        sensorList.add(SensorRecord.builder().sensorid("20-12345").familyid(40).build());
-        sensorList.add(SensorRecord.builder().sensorid("20-54321").familyid(40).build());
+        List<SensorRecord> sensorListJSON = new ArrayList<>();
+        sensorListJSON.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListJSON.add(SensorRecord.builder().sensorid("28-0000095cd28c").familyid(40).build());
 
         List<SensorRecord> sensorListPi4j = new ArrayList<>();
-        sensorListPi4j.add(SensorRecord.builder().sensorid("20-98763").familyid(30).build());
-        sensorListPi4j.add(SensorRecord.builder().sensorid("20-97654").familyid(30).build());
+        sensorListPi4j.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListPi4j.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
 
         //when
-        when(sensorListManagerJSON.getSensors()).thenReturn(sensorList);
+        when(sensorListManagerJSON.getSensors()).thenReturn(sensorListJSON);
         when(sensorListManagerPi4Jl.getSensors()).thenReturn(sensorListPi4j);
 
         //then
