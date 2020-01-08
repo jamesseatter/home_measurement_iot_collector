@@ -48,13 +48,12 @@ public class SensorListService {
                 for (int srIndex = 0; srIndex < sensorRecordList.size(); srIndex++) {
                     if (sensorRecordList.get(srIndex).getSensorid().trim().equals(pi4jSensor.getSensorid().trim())) {
                         sensorFound = true;
-                        pi4jSensors.get(pi4jSensors.indexOf(pi4jSensor)).setEnabled(true);
                         log.info("Sensor " + pi4jSensors.get(srIndex).getSensorid().trim() + " found in main configuration");
                     }
                 }
                 if (!sensorFound) {
                     log.warn("Sensor " + pi4jSensor.getSensorid().trim() + " NOT found in main configuration and will not be measured. To measure the sensor value add it to the main configuration.");
-                    pi4jSensors.get(pi4jSensors.indexOf(pi4jSensor)).setEnabled(false);
+                    pi4jSensors.remove(pi4jSensor);
                 }
             }
         } catch (Exception ex) {}
