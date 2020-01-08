@@ -39,7 +39,7 @@ public class SensorListServiceTest {
 
 
     @Test
-    public void givenSensorFile_whenTwoSensors_thenReturnSensors() {
+    public void givenSensorFile_whenTwoSensors_thenReturnNoSensors() {
         //given
         List<SensorRecord> sensorListJSON = new ArrayList<>();
         sensorListJSON.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
@@ -50,7 +50,7 @@ public class SensorListServiceTest {
 
         //then
         List<SensorRecord> SensorListResults = sensorListService.getSensors();
-        assertEquals(SensorListResults.size(),2);
+        assertEquals(0, SensorListResults.size());
         verify(sensorListManagerJSON).getSensors();
     }
 
@@ -66,7 +66,7 @@ public class SensorListServiceTest {
 
         //then
         List<SensorRecord> SensorListResults = sensorListService.getSensors();
-        assertEquals(SensorListResults.size(),0); // note, sensors are only listed in the json
+        assertEquals(0, SensorListResults.size()); // note, sensors are only listed in the json
         verify(sensorListManagerPi4Jl).getSensors();
     }
 
@@ -87,7 +87,7 @@ public class SensorListServiceTest {
 
         //then
         List<SensorRecord> SensorListResults = sensorListService.getSensors();
-        assertEquals(SensorListResults.size(),2); // note, sensors are only listed in the json so only 2 expected
+        assertEquals(2, SensorListResults.size()); // note, sensors are only listed in the json so only 2 expected
         verify(sensorListManagerJSON).getSensors();
         verify(sensorListManagerPi4Jl).getSensors();
     }

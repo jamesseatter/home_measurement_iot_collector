@@ -51,14 +51,14 @@ public class CollectorService implements CommandLineRunner {
             @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
             @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
             @Value("#{new Boolean('${message.alert.enabled:false}')}") Boolean alertEnabled, CacheService cacheService) {
-        this.sensorMeasurement = sensorMeasurement;
-        this.sensorListService = sensorListService;
-        this.alertService = alertService;
-        this.mqService = mqService;
-        this.mqEnabled = mqEnabled;
-        this.readIntervalSeconds = readIntervalSeconds;
-        this.cacheService = cacheService;
-    }
+                    this.sensorMeasurement = sensorMeasurement;
+                    this.sensorListService = sensorListService;
+                    this.alertService = alertService;
+                    this.mqService = mqService;
+                    this.mqEnabled = mqEnabled;
+                    this.readIntervalSeconds = readIntervalSeconds;
+                    this.cacheService = cacheService;
+                }
 
     @Override
     public void run(String... strings) {
@@ -72,28 +72,27 @@ public class CollectorService implements CommandLineRunner {
         log.info("Sensor Read Interval (seconds) : "+ readIntervalSeconds);
 
         List<SensorRecord> sensorList = Collections.emptyList();
-
-        try {
-            log.debug("Perform sensor search");
-            sensorList = sensorListService.getSensors();
-            log.debug("Sensor count : " + sensorList.size());
-        } catch (RuntimeException ex) {
-            log.warn("No sensors were connected to the system. Shutting down");
-            //throw new SensorNotFoundException("No sensors found",
-//                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
-        }
-
-
-
-        if(sensorList.size() > 0) {
-            running = true;
-            //todo Send sensor list to the Edge
-        } else {
-            log.info("No sensors connected to device. Exiting.");
-        }
-
         List<SensorRecord> measurements = new ArrayList<>();
+
         while(running) {
+            try {
+                log.debug("Perform sensor search");
+                sensorList = sensorListService.getSensors();
+                log.debug("Sensor count : " + sensorList.size());
+            } catch (RuntimeException ex) {
+                log.warn("No sensors were connected to the system. Shutting down");
+                //throw new SensorNotFoundException("No sensors found",
+//                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
+            }
+
+            if(sensorList.size() > 0) {
+                running = true;
+                //todo Send sensor list to the Edge
+            } else {
+                log.info("No sensors connected to device. Exiting.");
+                break;
+            }
+
             log.debug("Perform sensor measurements");
             measurements.clear();
             measurements = sensorMeasurement.collect(sensorList);
@@ -104,14 +103,10 @@ public class CollectorService implements CommandLineRunner {
 
             for (SensorRecord sr : measurements){
                 cacheService.add(sr);
-
                 if (mqEnabled) {
                     mqService.sendMeasurement(sr);
                 }
-
-
                 AlertOnThresholdExceeded(sr);
-
             }
 
             try {
