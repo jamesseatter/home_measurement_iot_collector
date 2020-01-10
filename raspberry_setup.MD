@@ -41,81 +41,24 @@ Description = Home measurement collector service
 After = syslog.target
 
 [Service]
-Type = forking
+WorkingDirectory=/home/iot/bin/collector_test
+Type = simple
 User = iot
-ExecStart = /home/iot/bin/collector_test/collectorservice.sh start
-ExecStop = /home/iot/bin/collector_test/collectorservice.sh stop
-ExecReload = /home/iot/bin/collector_test/collectorservice.sh reload
+ExecStart = /usr/bin/java -jar -Dspring.profiles.active=test collector.jar
+Restart=on-failure
+RestartSec=10
 
 [Install]
 WantedBy = multi-user.target
 ```
 
-###Step 2 - startup shell script
-
-  Location  - /home/iot/bin/\<collector or gateway>_\<env>.
-  
-  ex. `/home/iot/bin/collector_test`
- 
-  File Name - collectorservice.sh
-
-Content of Collector shell file for Test environment. Modify initial variables as needed for the environment
-
-```
-#!/bin/sh
-SERVICE_NAME=CollectorServiceTest
-CODEENV=test
-PATH_TO_JAR=/home/iot/bin/collector_$CODEENV/collectorservice.jar
-PATH_TO_STARTUP_LOG=/home/iot/bin/collector_$CODEENV/startup.log
-PID_PATH_NAME=/tmp/collectorservice_$CODEENV-pid
-SPRING_PROFILE=test
-
-case $1 in
-    start)
-        echo "Starting $SERVICE_NAME ..."
-        if [ ! -f $PID_PATH_NAME ]; then
-            #nohup java -jar $PATH_TO_JAR /tmp 2>> /dev/null >> /dev/null &  echo $! > $PID_PATH_NAME
-            nohup java -Dspring.profiles.active=$SPRING_PROFILE -jar $PATH_TO_JAR >> $PATH_TO_STARTUP_LOG 2>&1& echo $! > $PID_PATH_NAME
-            echo "$SERVICE_NAME starting ..."
-        else
-            echo "$SERVICE_NAME is already running ..."
-        fi
-    ;;
-    stop)
-        if [ -f $PID_PATH_NAME ]; then
-            PID=$(cat $PID_PATH_NAME);
-            echo "$SERVICE_NAME stoping ..."
-            kill $PID;
-            echo "$SERVICE_NAME stopped ..."
-            rm $PID_PATH_NAME
-        else
-            echo "$SERVICE_NAME is not running ..."
-        fi
-    ;;
-    restart)
-        if [ -f $PID_PATH_NAME ]; then
-            PID=$(cat $PID_PATH_NAME);
-            echo "$SERVICE_NAME stopping ...";
-            kill $PID;
-            echo "$SERVICE_NAME stopped ...";
-            rm $PID_PATH_NAME
-            echo "$SERVICE_NAME starting ..."
-            nohup java -jar $PATH_TO_JAR /tmp 2>> /dev/null >> /dev/null & echo $! > $PID_PATH_NAME
-            echo "$SERVICE_NAME started ..."
-        else
-            echo "$SERVICE_NAME is not running ..."
-        fi
-    ;;
-esac
-```
-
-###Step 3 - Security
+###Step 2 - Security
 
   sudo chmod +x /home/iot/bin/\<collector or gateway>_\<env>.   
   `sudo chmod +x /home/iot/bin/collector_dev/collectorservice.sh`
 
 
-###Step 4 - Configure SystemD
+###Step 3 - Configure SystemD
 `sudo systemctl daemon-reload`
 
 sudo systemctl enable \<collector or gateway>_\<env>

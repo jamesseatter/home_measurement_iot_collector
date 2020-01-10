@@ -1,3 +1,4 @@
+#!/bin/sh
 FILE=collector_test.service
 if test -f "$FILE"; then
     echo "Moving $FILE to /lib/systemd/system"

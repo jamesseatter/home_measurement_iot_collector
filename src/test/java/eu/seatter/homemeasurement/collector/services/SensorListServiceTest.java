@@ -79,7 +79,7 @@ public class SensorListServiceTest {
 
         List<SensorRecord> sensorListPi4j = new ArrayList<>();
         sensorListPi4j.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
-        sensorListPi4j.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListPi4j.add(SensorRecord.builder().sensorid("28-0000095cd28c").familyid(40).build());
 
         //when
         when(sensorListManagerJSON.getSensors()).thenReturn(sensorListJSON);

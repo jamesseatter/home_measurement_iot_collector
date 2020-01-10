@@ -1,6 +1,5 @@
 package eu.seatter.homemeasurement.collector.services.alert;
 
-import eu.seatter.homemeasurement.collector.model.GeneralAlertMessage;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 
 import javax.mail.MessagingException;
@@ -12,5 +11,5 @@ import javax.mail.MessagingException;
  * Time: 13:13
  */
 public interface AlertService {
-    void sendAlert(SensorRecord sensorRecord, GeneralAlertMessage alertMessage) throws MessagingException;
+    void sendAlert(SensorRecord sensorRecord, String alertMessage) throws MessagingException;
 }
