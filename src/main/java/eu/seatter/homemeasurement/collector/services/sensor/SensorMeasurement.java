@@ -24,6 +24,7 @@ public class SensorMeasurement {
 
     private final List<SensorRecord> measurements = new ArrayList<>();
 
+    @SuppressWarnings("OctalInteger")
     public List<SensorRecord> collect(List<SensorRecord> sensorList) {
         log.info("Start measurement collection");
         LocalDateTime measurementTime = LocalDateTime.now(ZoneOffset.UTC).withSecond(00); //all measurements will use the same time to make reporting easier.

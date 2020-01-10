@@ -62,9 +62,7 @@ public class MeasurementCacheImpl implements MeasurementCache {
     public List<SensorRecord> getAllSorted() {
         List<SensorRecord> sortedRecords = new ArrayList<>();
         for(List<SensorRecord> srList : cache.values()) {
-            for(SensorRecord sr : srList) {
-                sortedRecords.add(sr);
-            }
+            sortedRecords.addAll(srList);
         }
 
         sortedRecords.sort(Comparator.comparing(SensorRecord::getMeasureTimeUTC)
@@ -96,7 +94,7 @@ public class MeasurementCacheImpl implements MeasurementCache {
 //    }
 
     @Override
-    public ArrayList getSensorIds() {
+    public ArrayList<String> getSensorIds() {
         return new ArrayList<>(cache.keySet());
     }
 

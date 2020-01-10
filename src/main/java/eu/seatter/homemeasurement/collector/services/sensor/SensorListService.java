@@ -30,8 +30,8 @@ public class SensorListService {
     public List<SensorRecord> getSensors() {
         log.info("Getting sensor list");
         List<SensorRecord> jsonSensors = new ArrayList<>();
-        List<SensorRecord> pi4jSensors = new ArrayList<>();
         List<SensorRecord> finalSensorList = new ArrayList<>();
+        List<SensorRecord> pi4jSensors;
 
         //The json file defines a list of non-discoverable sensors
         //and configuration information for discoverable sensors.

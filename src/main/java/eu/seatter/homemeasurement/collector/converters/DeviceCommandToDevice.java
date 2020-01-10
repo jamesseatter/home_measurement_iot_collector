@@ -6,6 +6,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jas
@@ -17,10 +19,7 @@ public class DeviceCommandToDevice implements Converter<DeviceCommand, Device> {
 
     @Nullable
     @Override
-    public Device convert(DeviceCommand source) {
-        if (source == null) {
-            return null;
-        }
+    public Device convert(@NotNull DeviceCommand source) {
 
         final Device dest = new Device();
 

@@ -44,7 +44,7 @@ public class OneWirePi4JSensor implements Sensor {
         }
 
         if(w1device.isPresent()) {
-            Double measurement;
+            double measurement;
 
             try {
                 measurement = ((TemperatureSensor) w1device.get()).getTemperature();
