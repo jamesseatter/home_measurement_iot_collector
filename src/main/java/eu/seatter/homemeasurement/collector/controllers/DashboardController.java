@@ -25,6 +25,7 @@ public class DashboardController {
         this.cacheService = cache;
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping("/")
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");

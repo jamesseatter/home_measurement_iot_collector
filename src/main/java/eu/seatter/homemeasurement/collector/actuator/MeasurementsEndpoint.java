@@ -23,7 +23,7 @@ import java.util.Map;
 @Endpoint(id = "measurements")
 public class MeasurementsEndpoint {
 
-    CacheService cacheService;
+    final CacheService cacheService;
 
     public MeasurementsEndpoint(CacheService cacheService) {
         this.cacheService = cacheService;

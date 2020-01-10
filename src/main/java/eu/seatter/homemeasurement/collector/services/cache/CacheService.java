@@ -42,7 +42,7 @@ public class CacheService {
     }
 
     public ArrayList<String> getSensorIds() {
-        return new ArrayList<String>(measurementCache.getSensorIds());
+        return new ArrayList<>(measurementCache.getSensorIds());
     }
 
     public int getCacheMaxSizePerSensor() {

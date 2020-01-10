@@ -41,8 +41,10 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "utf-8");
         try {
             try {
-                String[] recipients = getRecipients(sensorRecord);
-                helper.setTo(recipients);
+                String recipients = getRecipients(sensorRecord);
+                if(recipients != null) {
+                    helper.setTo(recipients.split(";"));
+                }
             } catch (MessagingException ex) {
                 throw new MessagingException("Error adding mail recipients to mailer message");
             }
@@ -82,7 +84,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         }
     }
 
-    private String[] getRecipients(SensorRecord sr) throws IllegalArgumentException {
+    private String getRecipients(SensorRecord sr) throws IllegalArgumentException {
         if(sr.getAlertgroup().isEmpty()) {
             return null;
         }
@@ -93,7 +95,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
             throw new java.lang.IllegalArgumentException("No recipients found for alertgroup:" + alertGroup);
         }
         log.debug("Email recipients : " + ag.getAddress());
-        return (ag.getAddress().split(";"));
+        return (ag.getAddress());
     }
 
     private String getSubject(SensorRecord sr) {
