@@ -1,6 +1,5 @@
 package eu.seatter.homemeasurement.collector.services.alert;
 
-import eu.seatter.homemeasurement.collector.model.GeneralAlertMessage;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertService;
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertServiceImpl;
@@ -29,11 +28,11 @@ public class AlertServiceGeneralMessage implements AlertService {
     }
 
     @Override
-    public void sendAlert(SensorRecord sensorRecord, GeneralAlertMessage alertMessage) throws MessagingException {
+    public void sendAlert(SensorRecord sensorRecord, String alertMessage) throws MessagingException {
 
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");
-            emailAlertService.sendGeneralAlert(alertMessage);
+            emailAlertService.sendAlert(AlertType.Measurement,alertMessage,sensorRecord);
         } else {
             log.info("Email alerts disabled.");
         }

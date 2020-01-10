@@ -1,10 +1,11 @@
 package eu.seatter.homemeasurement.collector.services.alert.email;
 
 import eu.seatter.homemeasurement.collector.model.AlertContactGroup;
-import eu.seatter.homemeasurement.collector.model.GeneralAlertMessage;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.AlertContactJSON;
+import eu.seatter.homemeasurement.collector.services.alert.AlertType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -28,80 +29,64 @@ public class EmailAlertServiceImpl implements EmailAlertService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
 
-    private SensorRecord sensorRecord;
-
     public EmailAlertServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
     }
 
     @Override
-    public void sendMeasurementAlert(SensorRecord sensorRecord) throws MessagingException {
-        this.sensorRecord = sensorRecord;
+    public void sendAlert(AlertType alertType, String alertMessage, SensorRecord sensorRecord) throws MessagingException {
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "utf-8");
+        try {
+            try {
+                String[] recipients = getRecipients(sensorRecord);
+                helper.setTo(recipients);
+            } catch (MessagingException ex) {
+                throw new MessagingException("Error adding mail recipients to mailer message");
+            }
+            try {
+                helper.setSubject(getSubject(sensorRecord));
+            } catch (MessagingException ex) {
+                throw new MessagingException("No email recipients defined");
+            }
+            try {
+                if(alertType == AlertType.General) {
+                    message.setContent(getContent("AlertGeneralMessageEmailTemplate",sensorRecord, alertMessage), "text/html");
+                } else if(alertType == AlertType.Measurement) {
+                    message.setContent(getContent("AlertMeasurementEmailTemplate",sensorRecord, alertMessage), "text/html");
+                }
+            } catch (MessagingException ex) {
+                throw new MessagingException("Error occurred setting the email content");
+            }
 
-        try {
-            String[] recipients = getAddress();
-            helper.setTo(recipients);
-        } catch (MessagingException ex) {
-            throw new MessagingException("Error adding mail recipients to mailer message");
-        }
-        try {
-            helper.setSubject(getSubject());
-        } catch (MessagingException ex) {
-            throw new MessagingException("No email recipients defined");
-        }
-        try {
-            message.setContent(getContent(), "text/html");
-        } catch (MessagingException ex) {
-            throw new MessagingException("Error occurred setting the email content");
-        }
+            try {
+//                helper.addAttachment("cdbLogo", new ClassPathResource("templates/CdBLogo.webp"));
+                helper.addInline("cdbLogo", new ClassPathResource("templates/CdBLogo.webp"));
+            } catch (MessagingException ex) {
+                throw new MessagingException("Error occurred adding image to email template");
+            }
 
-        try {
-            mailSender.send(message);
-        } catch (MailException ex) {
-            throw new MessagingException("An error occurred sending the email : " + ex.getMessage());
+            try {
+                mailSender.send(message);
+            } catch (MailException ex) {
+                throw new MessagingException("An error occurred sending the email : " + ex.getMessage());
+            }
+
+
         }
-
-    }
-
-    @Override
-    public void sendGeneralAlert(GeneralAlertMessage alertMessage) throws MessagingException {
-
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "utf-8");
-
-        try {
-            String[] recipients = getAddress();
-            helper.setTo(recipients);
-        } catch (MessagingException ex) {
-            throw new MessagingException("Error adding mail recipients to mailer message");
-        }
-        try {
-            helper.setSubject(getSubject());
-        } catch (MessagingException ex) {
-            throw new MessagingException("No email recipients defined");
-        }
-        try {
-            message.setContent(getContent(), "text/html");
-        } catch (MessagingException ex) {
-            throw new MessagingException("Error occurred setting the email content");
-        }
-
-        try {
-            mailSender.send(message);
-        } catch (MailException ex) {
-            throw new MessagingException("An error occurred sending the email : " + ex.getMessage());
+        catch(Exception ex)
+        {
+            throw new MessagingException("A general error occurred sending the email : " + ex.getMessage());
         }
     }
 
-    private String[] getAddress() throws IllegalArgumentException {
-        if(sensorRecord.getAlertgroup().isEmpty()) {
+    private String[] getRecipients(SensorRecord sr) throws IllegalArgumentException {
+        if(sr.getAlertgroup().isEmpty()) {
             return null;
         }
-        String alertGroup = sensorRecord.getAlertgroup();
+        String alertGroup = sr.getAlertgroup();
         AlertContactGroup ag = AlertContactJSON.GetContactsForGroup(alertGroup).orElse(new AlertContactGroup());
 
         if(ag.getAddress().isEmpty()) {
@@ -111,16 +96,19 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         return (ag.getAddress().split(";"));
     }
 
-    private String getSubject() {
-        String subject = "Home Monitor Alert - " + sensorRecord.getTitle() + " - " + sensorRecord.getValue() + sensorRecord.getMeasurementUnit().toString();
+    private String getSubject(SensorRecord sr) {
+        String subject = "Home Monitor Alert - " + sr.getTitle() + " - " + sr.getValue() + sr.getMeasurementUnit().toString();
         log.debug("Email Subject : " + subject);
         return subject;
     }
 
-    private String getContent() {
+    private String getContent(String alertTemplate, SensorRecord sr, String alertMessage) {
         Context context = new Context();
-        context.setVariable("temperature", sensorRecord.getValue().toString() + sensorRecord.getMeasurementUnit().toString());
-        context.setVariable("date", sensorRecord.getMeasureTimeUTC());
-        return templateEngine.process("AlertEmailTemplate", context);
+        context.setVariable("temperature", sr.getValue().toString() + sr.getMeasurementUnit().toString());
+        context.setVariable("date", sr.getMeasureTimeUTC());
+        context.setVariable("message", alertMessage);
+        log.debug("Email message Template : " + alertTemplate);
+        log.debug("Email message text (optional)) : " + alertMessage);
+        return templateEngine.process(alertTemplate, context);
     }
 }

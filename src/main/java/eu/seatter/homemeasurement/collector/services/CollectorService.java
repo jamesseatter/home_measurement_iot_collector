@@ -1,6 +1,5 @@
 package eu.seatter.homemeasurement.collector.services;
 
-import eu.seatter.homemeasurement.collector.model.GeneralAlertMessage;
 import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
@@ -62,7 +61,7 @@ public class CollectorService implements CommandLineRunner {
 
     @Override
     public void run(String... strings) {
-        boolean running = false;
+        boolean running = true;
 //        try {
 //            deviceService.registerDevice();
 //        } catch (RuntimeException ex) {
@@ -121,14 +120,16 @@ public class CollectorService implements CommandLineRunner {
     }
 
     private void AlertOnThresholdExceeded(SensorRecord sensorRecord) {
+        //todo check getlow_threshold is defined
         if(sensorRecord.getValue() <= sensorRecord.getLow_threshold()) {
             log.debug("Sensor value below threshold. Measurement : " + sensorRecord.getValue() + " / Threshold : " + sensorRecord.getLow_threshold());
             try {
-                GeneralAlertMessage gam = new GeneralAlertMessage();
                 log.info("Sending alert email");
-                alertService.sendAlert(sensorRecord,gam);
+                alertService.sendAlert(sensorRecord,"Sensor Value below threshold");
             } catch (MessagingException e) {
                 log.error("Failed to send Email Alert : " + e.getLocalizedMessage());
+            } catch (Exception e) {
+                log.error("A general error occured : " + e.getLocalizedMessage());
             }
         }
 

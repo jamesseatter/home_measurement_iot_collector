@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,13 +29,14 @@ public class SensorListService {
 
     public List<SensorRecord> getSensors() {
         log.info("Getting sensor list");
-        List<SensorRecord> sensorRecordList = new ArrayList<>();
-        List<SensorRecord>  pi4jSensors = new ArrayList<>();
+        List<SensorRecord> jsonSensors = new ArrayList<>();
+        List<SensorRecord> pi4jSensors = new ArrayList<>();
+        List<SensorRecord> finalSensorList = new ArrayList<>();
 
         //The json file defines a list of non-discoverable sensors
         //and configuration information for discoverable sensors.
         try {
-            sensorRecordList.addAll(jsonFile.getSensors());
+            jsonSensors.addAll(jsonFile.getSensors());
         } catch (Exception ex) {
             log.error(ex.getLocalizedMessage());
         }
@@ -44,26 +44,26 @@ public class SensorListService {
         try {
             pi4jSensors = pi4j.getSensors();
             //for each 1-wire sensor found validate that it is in the configuration file and can be measured.
-            Iterator<SensorRecord> itr = pi4jSensors.iterator();
-            while(itr.hasNext()) {
-            //for (SensorRecord pi4jSensor : pi4jSensors) {
-                SensorRecord pi4jSensor = itr.next();
+            for (SensorRecord pi4jSensor : pi4jSensors) {
                 boolean sensorFound = false;
-                for (int srIndex = 0; srIndex < sensorRecordList.size(); srIndex++) {
-                    if (sensorRecordList.get(srIndex).getSensorid().trim().equals(pi4jSensor.getSensorid().trim())) {
+                for (SensorRecord jsonSensor : jsonSensors) {
+                    if (jsonSensor.getSensorid().trim().equals(pi4jSensor.getSensorid().trim())) {
                         sensorFound = true;
-                        log.info("Sensor " + pi4jSensors.get(srIndex).getSensorid().trim() + " found in main configuration");
+                        finalSensorList.add(jsonSensor);
+                        log.info("Sensor " + pi4jSensor.getSensorid().trim() + " found in main configuration");
+                        break;
                     }
                 }
                 if (!sensorFound) {
                     log.warn("Sensor " + pi4jSensor.getSensorid().trim() + " NOT found in main configuration and will not be measured. To measure the sensor value add it to the main configuration.");
-                    itr.remove();
                 }
             }
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            log.error(ex.getLocalizedMessage());
+        }
 
         log.info("Completed sensor list");
 
-        return pi4jSensors;
+        return finalSensorList;
     }
 }
