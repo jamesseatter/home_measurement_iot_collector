@@ -33,7 +33,7 @@ public class CacheService {
         return measurementCache.getAllBySensorId(sensorId);
     }
 
-    public List<SensorRecord> getAllSorted() {
+    public Map<String, List<SensorRecord>> getAllSorted() {
         return measurementCache.getAllSorted();
     }
 

@@ -8,28 +8,31 @@
     "measurementUnit": "C",
     "low_threshold": 45,
     "high_threshold": 60,
-    "alertgroup": "temperature_threshold_alerts_private"
+    "alertgroup": "temperature_threshold_alerts_private",
+    "alertdestination": "borry"
   },
   {
-    "sensorid": "28-0000095cd28c",
+    "sensorid": "28-0000095fcafb",
     "title" : "Température de l'eau de chaudière",
     "description" : "Returns the temperature of the hot water in the boiler.",
     "familyid": "40",
     "sensortype": "ONEWIRE",
     "measurementUnit": "C",
-    "low_threshold": 45,
+    "low_threshold": 35,
     "high_threshold": 60,
-    "alertgroup": "temperature_threshold_alerts_private"
+    "alertgroup": "temperature_threshold_alerts_private",
+    "alertdestination": "private"
   },
   {
-    "sensorid": "28-0000095fcafb",
-    "title" : "Température de l'eau de chaudière 2",
-    "description" : "Returns the temperature of the hot water in the boiler.",
+    "sensorid": "28-0000095cd28c",
+    "title" : "UNDEFINED",
+    "description" : "UNDEFINED",
     "familyid": "40",
     "sensortype": "ONEWIRE",
     "measurementUnit": "C",
     "low_threshold": 45,
     "high_threshold": 60,
-    "alertgroup": "temperature_threshold_alerts_private"
+    "alertgroup": "temperature_threshold_alerts_private",
+    "alertdestination": "private"
   }
 ]

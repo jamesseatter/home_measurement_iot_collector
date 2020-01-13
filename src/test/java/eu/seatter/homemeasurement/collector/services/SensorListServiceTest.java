@@ -1,5 +1,8 @@
 package eu.seatter.homemeasurement.collector.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerJSON;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerPi4J;
@@ -11,6 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,5 +96,15 @@ public class SensorListServiceTest {
         assertEquals(2, SensorListResults.size()); // note, sensors are only listed in the json so only 2 expected
         verify(sensorListManagerJSON).getSensors();
         verify(sensorListManagerPi4Jl).getSensors();
+    }
+
+    @Test
+    public void tt() throws IOException {
+        SensorRecord sensorRecord = SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).value(54.5).measureTimeUTC(ZonedDateTime.now(ZoneId.of("Europe/Zurich"))).build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        String json = objectMapper.writeValueAsString(sensorRecord);
+        System.out.println("asa");
     }
 }

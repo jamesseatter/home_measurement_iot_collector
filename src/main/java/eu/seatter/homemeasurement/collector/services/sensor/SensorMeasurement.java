@@ -6,8 +6,8 @@ import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +27,7 @@ public class SensorMeasurement {
     @SuppressWarnings("OctalInteger")
     public List<SensorRecord> collect(List<SensorRecord> sensorList) {
         log.info("Start measurement collection");
-        LocalDateTime measurementTime = LocalDateTime.now(ZoneOffset.UTC).withSecond(00); //all measurements will use the same time to make reporting easier.
+        ZonedDateTime measurementTime = ZonedDateTime.now(ZoneId.of("Etc/UTC")).withSecond(00); //all measurements will use the same time to make reporting easier.
         for (SensorRecord sensorRecord : sensorList) {
             if(sensorRecord.getSensorid() == null) {
                 log.error(sensorRecord.loggerFormat() + " : SensorId not found");

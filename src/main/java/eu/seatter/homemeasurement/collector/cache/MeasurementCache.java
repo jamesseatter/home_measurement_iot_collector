@@ -15,10 +15,11 @@ import java.util.Map;
 public interface MeasurementCache {
     void add(SensorRecord sensorRecord);
     Map<String, List<SensorRecord>> getAll();
+    Map<String,List<SensorRecord>> getAllSorted();
     List<SensorRecord> getAllBySensorId(String sensorId);
 //    List<SensorRecord> getLastBySensorId(String sensorId);
     List<SensorRecord> getLastBySensorId(String sensorId, int last);
-    List<SensorRecord> getAllSorted();
+
 
     ArrayList<String> getSensorIds();
     int getCacheMaxSizePerSensor();

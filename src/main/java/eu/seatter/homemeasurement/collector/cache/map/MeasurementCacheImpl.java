@@ -19,7 +19,7 @@ import java.util.*;
 @Component
 @Scope("singleton")
 public class MeasurementCacheImpl implements MeasurementCache {
-    private final Map<String,List<SensorRecord>> cache = new HashMap<>();
+    private final Map<String,List<SensorRecord>> cache = new LinkedHashMap <>();
 
     @Value("${measurement.cache.max_records_per_sensor:24}")
     private final int MAX_ENTRIES_PER_SENSOR=24;
@@ -50,6 +50,16 @@ public class MeasurementCacheImpl implements MeasurementCache {
     }
 
     @Override
+    public Map<String,List<SensorRecord>> getAllSorted() {
+        Map<String,List<SensorRecord>> cacheSorted = cache;
+        for(String id : cacheSorted.keySet()) {
+            Collections.sort(cacheSorted.get(id), Comparator.comparing(SensorRecord::getMeasureTimeUTC).reversed());
+        }
+
+        return cacheSorted;
+    }
+
+    @Override
     public List<SensorRecord> getAllBySensorId(String sensorId) {
         if(cache.containsKey(sensorId)) {
             return Collections.unmodifiableList(this.cache.get(sensorId));
@@ -58,19 +68,7 @@ public class MeasurementCacheImpl implements MeasurementCache {
         }
     }
 
-    @Override
-    public List<SensorRecord> getAllSorted() {
-        List<SensorRecord> sortedRecords = new ArrayList<>();
-        for(List<SensorRecord> srList : cache.values()) {
-            sortedRecords.addAll(srList);
-        }
 
-        sortedRecords.sort(Comparator.comparing(SensorRecord::getMeasureTimeUTC)
-                .thenComparing(SensorRecord::getSensorid));
-
-        return sortedRecords;
-
-    }
 
     @Override
     public List<SensorRecord> getLastBySensorId(String sensorId, int last) {

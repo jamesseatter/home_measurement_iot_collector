@@ -30,13 +30,9 @@ public class DashboardController {
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
-        Map<String, List<SensorRecord>> dataset = cacheService.getAll();
-        for(Map.Entry<String, List<SensorRecord>> entry: dataset.entrySet()) {
-            System.out.println(entry.getKey() + " => " + entry.getValue());
-            List<SensorRecord> sr = entry.getValue();
-            for(SensorRecord s : sr) {
-               s.setMeasureTimeUTC(s.getMeasureTimeUTC().atZone(zoneId).toLocalDateTime());
-            }
+        Map<String, List<SensorRecord>> dataset = cacheService.getAllSorted();
+        for(String id : dataset.keySet()) {
+            dataset.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
         }
 
         model.addAttribute("measurements", dataset);

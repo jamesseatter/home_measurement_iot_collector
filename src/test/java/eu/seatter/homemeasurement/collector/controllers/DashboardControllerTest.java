@@ -7,7 +7,7 @@ import eu.seatter.homemeasurement.collector.services.cache.CacheService;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,7 +47,7 @@ public class DashboardControllerTest {
 
     }
 
-    private SensorRecord createTestRecord(String sensorId,LocalDateTime dt) {
+    private SensorRecord createTestRecord(String sensorId, ZonedDateTime dt) {
         return new SensorRecord()
                 .toBuilder()
                 .familyid(10).description("Test sensor for testing json").low_threshold(35.0).high_threshold(70.0).measurementUnit(SensorMeasurementUnit.C).sensorType(SensorType.ONEWIRE).value(55.8).alertgroup("testalertgroup")

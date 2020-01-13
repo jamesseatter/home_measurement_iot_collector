@@ -2,6 +2,7 @@ package eu.seatter.homemeasurement.collector.services.messaging;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -107,7 +108,8 @@ public class RabbitMQService implements SensorMessaging {
 
     private String convertToJSONMesssage(SensorRecord sensorRecord) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper.writeValueAsString(sensorRecord);
-
     }
 }
