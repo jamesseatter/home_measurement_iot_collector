@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Title</title>
+</head>
+<body style="margin: 0; padding: 20px 0 30px 0;">
+<table style="width:600px; text-align:center; padding:0; border-spacing: 0; border-collapse: collapse; border: 1px solid #cccccc;">
+    <tr style="padding: 10px 10px 8px 5px;">
+        <td style="text-align:center; background-color: #70bbd9; padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
+<!--<img alt="CdB Logo image" src="cid:cdbLogo" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>-->
+<!--<img alt="CdB Logo image" src="@{/images/CdBLogo.webp}" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>-->
+            <b>Chauffage PPE Chavannes-des-Bois</b>
+            <b>Chauffage Central Communal Temperature Alert!!</b>
+        </td>
+    </tr>
+
+    <tr style="padding: 10px 10px 8px 5px;color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
+        <td style="background-color: #ee4c50; text-align:left; padding: 40px 30px 40px 30px;">
+            <table >
+                <tr><td><b>Température</b></td><td>:</td><td><span th:text="${temperature}"></span></td></tr>
+                <tr><td><b>Date (UTC)</b></td><td>:</td><td><span th:text="${#temporals.format(date,'dd/MMMM/yyyy hh:mm')}"></span></td></tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr  style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
+        <td style="background-color: #ffffff; padding: 40px 30px 40px 30px;">
+            <h3>Envoyez l'email suivant pour avertir Bory de l'échec.</h3>
+            <table style="text-align:left; color: #37474F; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px; padding: 10px 10px 10px 10px;">
+                <tr style="padding: 10px 0 0 0;">
+                    <td style="width:50px;"><b>TO:</b></td><td>e.pistotnik@bory.ch, e.naz@bory.ch</td>
+                </tr>
+                <tr style="padding: 10px 0 0 0;">
+                    <td style="width:50px;"><b>CC:</b></td><td>maradan@ecosys.com, i.martinelli@philippemarechal.ch, James.Seatter@gmail.com, laurent.oudin@bluewin.ch</td>
+                </tr>
+                <tr style="padding: 10px 0 0 0;">
+                    <td style="width:50px;"><b>Sujet:</b></td><td>Chauffage PPE Chavannes-des-Bois a échoué.</td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <td colspan="2">
+                        <p>Bonjour,</p>
+                        <p>Le système de chauffage central de le PPE est en panne.</p>
+                        <p>Date (UTC)  : <b><span th:text="${#temporals.format(date,'dd/MMMM/yyyy hh:mm')}">1/1/2019 00:00</span></b>
+                        <p>Température : <b><span th:text="${temperature}">25C</span></b>.</p>
+                        <br>
+                        <p>Pouvons-nous demander à un ingénieur de visiter le site s'il vous plaît.</p>
+                        <p>Cordialement</p>
+                        <p>Copropriétaires</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

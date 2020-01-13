@@ -7,8 +7,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static eu.seatter.homemeasurement.collector.TestUtility_SensorRecord.createTestRecord;
 import static org.junit.Assert.assertEquals;
@@ -35,7 +36,7 @@ public class MeasurementCacheImplTest {
     @Test
     public void givenAddOneEntry_thenGetAllReturnsOne() {
         //given
-        SensorRecord sr = createTestRecord("28-0000000001", LocalDateTime.now());
+        SensorRecord sr = createTestRecord("28-0000000001", ZonedDateTime.now());
         measurementCache.add(sr);
 
         //when
@@ -49,10 +50,10 @@ public class MeasurementCacheImplTest {
     @Test
     public void givenAddTwoCacheEntries_thenReturnTwoEntries() {
         //given
-        SensorRecord sr = createTestRecord("28-0000000001", LocalDateTime.now());
+        SensorRecord sr = createTestRecord("28-0000000001", ZonedDateTime.now());
         measurementCache.add(sr);
 
-        SensorRecord sr1 = createTestRecord("28-0000000001", LocalDateTime.now());
+        SensorRecord sr1 = createTestRecord("28-0000000001", ZonedDateTime.now());
         measurementCache.add(sr1);
 
         //when
@@ -68,7 +69,7 @@ public class MeasurementCacheImplTest {
         String sensorId = "28-000000000";
         SensorRecord sr;
         for (int i = 0; i < MAX_ENTRIES_PER_SENSOR + 5 ; i++) {
-            sr = createTestRecord(sensorId,LocalDateTime.now());
+            sr = createTestRecord(sensorId,ZonedDateTime.now());
             measurementCache.add(sr);
         }
 
@@ -108,7 +109,7 @@ public class MeasurementCacheImplTest {
         //given
         SensorRecord sr;
         for (int i = 0 ; i < 2 ; i++) {
-            sr = createTestRecord("28-000000000" + i, LocalDateTime.now());
+            sr = createTestRecord("28-000000000" + i, ZonedDateTime.now());
             measurementCache.add(sr);
         }
 
@@ -129,7 +130,7 @@ public class MeasurementCacheImplTest {
         String sensorId = "28-000000000";
         SensorRecord sr;
         for (int i = 0 ; i < 10 ; i++) {
-            sr = createTestRecord(sensorId,LocalDateTime.now());
+            sr = createTestRecord(sensorId,ZonedDateTime.now());
             sr.setValue((double)i);
             measurementCache.add(sr);
         }
@@ -148,7 +149,7 @@ public class MeasurementCacheImplTest {
         String sensorId = "28-000000000";
         SensorRecord sr;
         for (int i = 0 ; i < 10 ; i++) {
-            sr = createTestRecord(sensorId,LocalDateTime.now());
+            sr = createTestRecord(sensorId,ZonedDateTime.now());
             sr.setValue((double)i);
             measurementCache.add(sr);
         }
@@ -190,7 +191,7 @@ public class MeasurementCacheImplTest {
 
         SensorRecord sr;
         for (int i = 0 ; i < recordCount ; i++) {
-            sr = createTestRecord(sensorId,LocalDateTime.now());
+            sr = createTestRecord(sensorId,ZonedDateTime.now());
             sr.setValue((double)i);
             measurementCache.add(sr);
         }
@@ -202,30 +203,54 @@ public class MeasurementCacheImplTest {
     }
 
     @Test
-    public void givenSensorRecord_ReturnSortedList() {
-        //given
-        measurementCache.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,12,01)));
-        measurementCache.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,18,01)));
-        measurementCache.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,05,01)));
-        measurementCache.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,01,01)));
-        measurementCache.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,18,01)));
-        measurementCache.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,18,01)));
-        measurementCache.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,12,01)));
-        measurementCache.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,12,01)));
-        measurementCache.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,05,01)));
-        measurementCache.add(createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,01,01)));
-        measurementCache.add(createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,01,01)));
-        measurementCache.add(createTestRecord("SENSOR_3", LocalDateTime.of(2019,01,01,05,01)));
-
-        //when
-        List<SensorRecord> sortedRecords = measurementCache.getAllSorted();
-
-        //then
-        assertEquals(12,sortedRecords.size());
-        assertEquals("SENSOR_1", sortedRecords.get(0).getSensorid());
-        assertEquals(LocalDateTime.of(2019,01,01,01,01), sortedRecords.get(0).getMeasureTimeUTC());
+    public void add() {
     }
 
+    @Test
+    public void getAll() {
+    }
 
+    @Test
+    public void getAllBySensorId() {
+    }
 
+    @Test
+    public void givenAddRecords_thenReturnSortedByTime() {
+        String sensorId = "28-000000000";
+        String sensorId2 = "30-000000000";
+        SensorRecord sr;
+        measurementCache.add(createTestRecord(sensorId,ZonedDateTime.now().withHour(10).withMinute(10)));
+        measurementCache.add(createTestRecord(sensorId2,ZonedDateTime.now().withHour(10).withMinute(10)));
+        measurementCache.add(createTestRecord(sensorId,ZonedDateTime.now().withHour(10).withMinute(15)));
+        measurementCache.add(createTestRecord(sensorId2,ZonedDateTime.now().withHour(10).withMinute(15)));
+        measurementCache.add(createTestRecord(sensorId,ZonedDateTime.now().withHour(10).withMinute(20)));
+        measurementCache.add(createTestRecord(sensorId2,ZonedDateTime.now().withHour(10).withMinute(20)));
+        measurementCache.add(createTestRecord(sensorId,ZonedDateTime.now().withHour(10).withMinute(05)));
+        measurementCache.add(createTestRecord(sensorId2,ZonedDateTime.now().withHour(10).withMinute(05)));
+        measurementCache.add(createTestRecord(sensorId,ZonedDateTime.now().withHour(10).withMinute(25)));
+        measurementCache.add(createTestRecord(sensorId2,ZonedDateTime.now().withHour(10).withMinute(25)));
+        measurementCache.add(createTestRecord(sensorId,ZonedDateTime.now().withHour(10).withMinute(30)));
+        measurementCache.add(createTestRecord(sensorId2,ZonedDateTime.now().withHour(10).withMinute(30)));
+
+        //then
+        Map<String, List<SensorRecord>> sensorRecords = measurementCache.getAllSorted();
+        assertEquals(30, sensorRecords.get("30-000000000").get(0).getMeasureTimeUTC().getMinute());
+        assertEquals(5, sensorRecords.get("30-000000000").get(sensorRecords.get("30-000000000").size()-1).getMeasureTimeUTC().getMinute());
+    }
+
+    @Test
+    public void getLastBySensorId() {
+    }
+
+    @Test
+    public void getSensorIds() {
+    }
+
+    @Test
+    public void getCacheMaxSizePerSensor() {
+    }
+
+    @Test
+    public void getCacheSizeBySensorId() {
+    }
 }

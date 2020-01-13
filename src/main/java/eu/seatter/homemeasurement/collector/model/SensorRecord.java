@@ -1,12 +1,10 @@
 package eu.seatter.homemeasurement.collector.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,12 +17,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder=true)
-public class SensorRecord {
+public class SensorRecord implements Comparable<SensorRecord> {
     private String sensorid;
     private String title;
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime measureTimeUTC;
+//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = ZonedDateTimeSerializer.class)
+    private ZonedDateTime measureTimeUTC;
     private Double value;
 
     private String description;
@@ -35,6 +33,7 @@ public class SensorRecord {
     private Double low_threshold;
     private Double high_threshold;
     private String alertgroup;
+    private String alertdestination;
 
     public String loggerFormat() {
         return "[" + sensorid + "/" + sensorType + "/" + familyid + "]";
@@ -48,5 +47,10 @@ public class SensorRecord {
                 ", measureTimeUTC=" + measureTimeUTC +
                 ", value=" + value + " " + measurementUnit +
                 '}';
+    }
+
+    @Override
+    public int compareTo(SensorRecord that) {
+        return this.measureTimeUTC.compareTo(that.measureTimeUTC);
     }
 }

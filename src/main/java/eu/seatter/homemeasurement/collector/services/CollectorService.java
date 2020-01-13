@@ -15,7 +15,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -139,7 +139,7 @@ public class CollectorService implements CommandLineRunner {
         log.warn("Setting up test measurement data");
         for(SensorRecord srec : sensorList) {
             srec.setMeasurementUnit(SensorMeasurementUnit.C);
-            srec.setMeasureTimeUTC(LocalDateTime.now());
+            srec.setMeasureTimeUTC(ZonedDateTime.now());
             int val = ThreadLocalRandom.current().nextInt(35, 75);
             srec.setValue((double)val);
         }

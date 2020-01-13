@@ -12,7 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static eu.seatter.homemeasurement.collector.TestUtility_SensorRecord.createTestRecord;
@@ -50,8 +50,8 @@ public class CacheServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        sensorRecord1 = createTestRecord("SENSOR_1", LocalDateTime.of(2019,01,01,12,01));
-        sensorRecord2 = createTestRecord("SENSOR_2", LocalDateTime.of(2019,01,01,12,01));
+        sensorRecord1 = createTestRecord("SENSOR_1", ZonedDateTime.now());
+        sensorRecord2 = createTestRecord("SENSOR_2", ZonedDateTime.now());
 
     }
 
