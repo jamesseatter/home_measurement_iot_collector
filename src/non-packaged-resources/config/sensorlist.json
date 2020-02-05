@@ -9,7 +9,7 @@
     "low_threshold": 45,
     "high_threshold": 60,
     "alertgroup": "temperature_threshold_alerts_private",
-    "alertdestination": "borry"
+    "alertdestination": "BORRY"
   },
   {
     "sensorid": "28-0000095fcafb",
@@ -21,7 +21,7 @@
     "low_threshold": 35,
     "high_threshold": 60,
     "alertgroup": "temperature_threshold_alerts_private",
-    "alertdestination": "private"
+    "alertdestination": "PRIVATE"
   },
   {
     "sensorid": "28-0000095cd28c",
@@ -33,6 +33,6 @@
     "low_threshold": 45,
     "high_threshold": 60,
     "alertgroup": "temperature_threshold_alerts_private",
-    "alertdestination": "private"
+    "alertdestination": "PRIVATE"
   }
 ]

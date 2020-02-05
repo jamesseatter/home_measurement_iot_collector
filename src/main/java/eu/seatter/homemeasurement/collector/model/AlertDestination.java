@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.services.alert.email;
+package eu.seatter.homemeasurement.collector.model;
 
 /**
  * Created by IntelliJ IDEA.

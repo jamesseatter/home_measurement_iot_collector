@@ -30,12 +30,23 @@ public class DashboardController {
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
-        Map<String, List<SensorRecord>> dataset = cacheService.getAllSorted();
-        for(String id : dataset.keySet()) {
-            dataset.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
+        Map<String, List<SensorRecord>> allSortedMeasurements = cacheService.getAllSorted();
+        for(String id : allSortedMeasurements.keySet()) {
+            allSortedMeasurements.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
         }
 
-        model.addAttribute("measurements", dataset);
+//        Map<String, SensorRecord> lastMeasurementAllSensors = new HashMap<>();
+//        List<String> sensorIds = cacheService.getSensorIds();
+//        for(String id : cacheService.getSensorIds()) {
+//            lastMeasurementAllSensors.put(id, (cacheService.getLastBySensorId(id,1).get(0)));
+//        }
+//
+//        for(String id : lastMeasurementAllSensors.keySet()) {
+//            lastMeasurementAllSensors.get(id).setMeasureTimeUTC(lastMeasurementAllSensors.get(id).getMeasureTimeUTC().withZoneSameInstant(zoneId));
+//        }
+
+        model.addAttribute("allMeasurements", allSortedMeasurements);
+//        model.addAttribute("lastMeasurements", allSortedMeasurements);
         return "index";
     }
 }

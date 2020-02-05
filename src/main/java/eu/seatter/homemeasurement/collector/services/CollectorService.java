@@ -2,6 +2,7 @@ package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.SensorType;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.alert.AlertServiceMeasurement;
 import eu.seatter.homemeasurement.collector.services.cache.CacheService;
@@ -75,9 +76,15 @@ public class CollectorService implements CommandLineRunner {
 
         while(running) {
             try {
-                log.debug("Perform sensor search");
-                sensorList = sensorListService.getSensors();
+                if(activeProfile.equals("dev")) {
+                    log.warn("Add Dev sensor list");
+                    sensorList = testSensorList();
+                } else {
+                    log.debug("Perform sensor search");
+                    sensorList = sensorListService.getSensors();
+                }
                 log.debug("Sensor count : " + sensorList.size());
+
             } catch (RuntimeException ex) {
                 log.warn("No sensors were connected to the system. Shutting down");
                 //throw new SensorNotFoundException("No sensors found",
@@ -92,13 +99,15 @@ public class CollectorService implements CommandLineRunner {
                 break;
             }
 
-            log.debug("Perform sensor measurements");
-            measurements.clear();
-            measurements = sensorMeasurement.collect(sensorList);
-
             if(activeProfile.equals("dev")) {
+                log.warn("Add Dev sensor measurements");
                 measurements.addAll(testData(sensorList));
+            } else {
+                log.debug("Perform sensor measurements");
+                measurements.clear();
+                measurements = sensorMeasurement.collect(sensorList);
             }
+
 
             for (SensorRecord sr : measurements){
                 cacheService.add(sr);
@@ -135,8 +144,39 @@ public class CollectorService implements CommandLineRunner {
 
     }
 
+    private List<SensorRecord> testSensorList() {
+        log.warn("Test sensor list in use");
+        List<SensorRecord> list = new ArrayList<>();
+        SensorRecord sr = new SensorRecord();
+        list.add(SensorRecord.builder()
+                .sensorid("28-000000000001")
+                .title("Température de l'eau à l'arrivée")
+                .description("Returns the temperature of the hot water entering the house from the central heating system")
+                .familyid(40)
+                .sensorType(SensorType.ONEWIRE)
+                .low_threshold(45.0)
+                .high_threshold(60.0)
+                .alertgroup("temperature_threshold_alerts_private")
+                .alertdestination("BORRY")
+                .build());
+
+        list.add(SensorRecord.builder()
+                .sensorid("28-000000000002")
+                .title("Température de l'eau de chaudière")
+                .description("Returns the temperature of the hot water in the boiler")
+                .familyid(40)
+                .sensorType(SensorType.ONEWIRE)
+                .low_threshold(35.0)
+                .high_threshold(60.0)
+                .alertgroup("temperature_threshold_alerts_private")
+                .alertdestination("PRIVATE")
+                .build());
+
+        return list;
+    }
+
     private List<SensorRecord> testData(List<SensorRecord> sensorList) {
-        log.warn("Setting up test measurement data");
+        log.warn("Test measurement data in use");
         for(SensorRecord srec : sensorList) {
             srec.setMeasurementUnit(SensorMeasurementUnit.C);
             srec.setMeasureTimeUTC(ZonedDateTime.now());
