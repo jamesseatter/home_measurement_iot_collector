@@ -1,6 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.alert.email;
 
 import eu.seatter.homemeasurement.collector.model.AlertContactGroup;
+import eu.seatter.homemeasurement.collector.model.AlertDestination;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.services.alert.AlertContactJSON;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
