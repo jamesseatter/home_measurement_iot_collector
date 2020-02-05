@@ -1,6 +1,6 @@
 # home_measurement_iot_collector
 
-[![CircleCI](https://circleci.com/gh/jamesseatter/home_heating_iot_collector.svg?style=svg)](https://circleci.com/gh/jamesseatter/home_heating_iot_collector)
+[![CircleCI](https://circleci.com/gh/jamesseatter/home_measurement_iot_collector/tree/master.svg?style=svg)](https://circleci.com/gh/jamesseatter/home_measurement_iot_collector/tree/master)
 
 Home Measurement IOT Collector
 
