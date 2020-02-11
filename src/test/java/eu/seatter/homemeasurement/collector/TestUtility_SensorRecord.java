@@ -17,9 +17,18 @@ public class TestUtility_SensorRecord {
     public static SensorRecord createTestRecord(String sensorId, ZonedDateTime dt) {
         return new SensorRecord()
                 .toBuilder()
-                .familyid(10).description("Test sensor for testing json").low_threshold(35.0).high_threshold(70.0).measurementUnit(SensorMeasurementUnit.C).sensorType(SensorType.ONEWIRE).value(55.8).alertgroup("testalertgroup")
-                .sensorid(sensorId)
+                .alertdestination("PRIVATE")
+                .alertgroup("testalertgroup")
+                .description("Test sensor for testing json")
+                .familyid(10)
+                .high_threshold(70.0)
+                .low_threshold(35.0)
+                .measurementUnit(SensorMeasurementUnit.C)
                 .measureTimeUTC(dt)
+                .sensorType(SensorType.ONEWIRE)
+                .sensorid(sensorId)
+                .title("Test Sensor Record")
+                .value(55.8)
                 .build();
     }
 }

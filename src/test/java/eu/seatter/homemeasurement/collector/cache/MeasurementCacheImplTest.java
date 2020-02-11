@@ -231,7 +231,7 @@ public class MeasurementCacheImplTest {
         measurementCache.add(createTestRecord(sensorId2,ZonedDateTime.now().withHour(10).withMinute(25)));
         measurementCache.add(createTestRecord(sensorId,ZonedDateTime.now().withHour(10).withMinute(30)));
         measurementCache.add(createTestRecord(sensorId2,ZonedDateTime.now().withHour(10).withMinute(30)));
-
+SensorRecord sr22 = createTestRecord(sensorId,ZonedDateTime.now().withHour(10).withMinute(10));
         //then
         Map<String, List<SensorRecord>> sensorRecords = measurementCache.getAllSorted();
         assertEquals(30, sensorRecords.get("30-000000000").get(0).getMeasureTimeUTC().getMinute());

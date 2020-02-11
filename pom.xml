@@ -131,6 +131,11 @@
 			<artifactId>momentjs</artifactId>
 			<version>2.24.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>popper.js</artifactId>
+			<version>1.16.1</version>
+		</dependency>
 
 
 		<!-- used for the TemperatureSensor interface -->

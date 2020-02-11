@@ -7,131 +7,213 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/webjars/chartjs/2.9.3/Chart.min.css" />
-    <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
-    <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="/webjars/momentjs/2.24.0/min/moment.min.js"></script>
-    <script src="/webjars/chartjs/2.9.3/Chart.min.js"></script>
+
+    <!-- Custom styles for dashboard -->
+    <link href="css/dashboard.css" rel="stylesheet">
+    <style>
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
 </head>
 <body>
 <!--/*@thymesVar id="sensor" type="java.util.Map.Entry"*/-->
 <!--/*@thymesVar id="sensorrecord" type="eu.seatter.homemeasurement.collector.model.SensorRecord"*/-->
-    <div class="container-fluid" style="margin-top: 20px">
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="panel panel-primary">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CdB PPE</a>
+        <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+        <ul class="navbar-nav px-3">
+          <li class="nav-item text-nowrap">
+            <a class="nav-link" href="#">Sign out</a>
+          </li>
+        </ul> -->
+    </nav>
 
-                    <div class="panel-heading">
-                        <h1 class="panel-title">Sensor Measurements</h1>
-                    </div>
-                    <div class="panel-body">
-                        <div class="panel-content text-center" th:if="${not #lists.isEmpty(allMeasurements)}">
-                            <canvas id="measurementChart" class="chart"></canvas>
-                        </div>
-<!--                        <div class="panel-footer">A simple Line Chart with basic settings</div>-->
-                    </div>
-                </div>
-                <div class="panel panel-primary">
-
-                    <div class="panel-heading">
-                        <h1 class="panel-title">Sensor Measurements</h1>
-                    </div>
-                    <div class="panel-body">
-                        <div class="table-responsive" th:if="${not #lists.isEmpty(allMeasurements)}">
-                            <table class="table table-hover ">
-                                <thead class="thead-inverse">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>SensorID</th>
-                                    <th>Time</th>
-                                    <th>value</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    <th:block th:each="sensor : ${allMeasurements}">
-<!--                                        <tr>-->
-                                            <tr th:each="sensorrecord, iStat : ${sensor.value}" th:class="${sensorrecord.value > sensorrecord.low_threshold}? 'table-light' : 'table-danger'">
-                                                <td th:text="${iStat.index + 1}">index missing</td>
-                                                <td th:text="${sensorrecord.title}">title missing</td>
-                                                <td th:text="${sensorrecord.sensorid}">sensorid missing</td>
-                                                <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
-                                                <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
-                                            </tr>
-<!--                                        </tr>-->
-                                    </th:block>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+    <div class="container-fluid">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home"></span>
+                            Dashboard <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="alert-triangle"></span>
+                            Alerts <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
+        </nav>
+        <br>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <h1>System Measurements</h1>
 
+            <div class="panel-content text-center shadow" th:if="${not #lists.isEmpty(allMeasurements)}" style="margin-top: 20px">
+                <canvas id="measurementChart" class="chart"></canvas>
+            </div>
+
+            <div class="shadow table-responsive" th:if="${not #lists.isEmpty(allMeasurements)}">
+                <table class="table table-hover ">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>SensorID</th>
+                        <th>Time</th>
+                        <th>value</th>
+                        <th>Low Threshold</th>
+                        <th>High Threshold</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <th:block th:each="sensor : ${allMeasurements}">
+<!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
+<!--                                th:class="${sensorrecord.value > sensorrecord.low_threshold}? 'table-light' : 'table-danger'">-->
+
+
+                            <tr th:each="sensorrecord, iStat : ${sensor.value}"
+                                th:Style="${sensorrecord.value > sensorrecord.low_threshold} ?
+                                                (${sensorrecord.value > sensorrecord.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :
+                                                 'background-color: rgba(41, 128, 185,1.0)'">
+
+
+
+                                <!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
+<!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
+                                <td th:text="${iStat.index + 1}">index missing</td>
+                                <td th:text="${sensorrecord.title}">title missing</td>
+                                <td th:text="${sensorrecord.sensorid}">sensorid missing</td>
+                                <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
+                                <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
+                                <td th:text="${sensorrecord.low_threshold}">value missing</td>
+                                <td th:text="${sensorrecord.high_threshold}">value missing</td>
+                            </tr>
+                        </th:block>
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script>
+        feather.replace()
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<!--    <script src="/webjars/popper.js/1.16.1/dist/popper.min.js"></script>-->
+    <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="/webjars/momentjs/2.24.0/min/moment.min.js"></script>
+    <script src="/webjars/chartjs/2.9.3/Chart.min.js"></script>
+    <script th:inline="javascript">
+        let measurements = /*[[${allMeasurements}]]*/ 'default';
+        console.log(measurements);
+        let ctx = document.getElementById('measurementChart').getContext('2d');
+        let chart = new Chart(ctx, {
+            type: 'line',
+            options: {
+                responsive: true,
+                hoverMode: 'index',
+                stacked: false,
+                scales: {
+                    yAxes: [{
+                        type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                        display: true,
+                        position: 'left',
+                        id: 'y-axis-1',
+                        scaleLabel: {
+                            display:     true,
+                            labelString: 'Temp(C)'
+                        },
+                        gridLines: {
+                            drawOnChartArea: false, // only want the grid lines for one axis to show up
+                        },
+                        ticks: {
+                            reverse: false,
+                            suggestedMin: 40,
+                            suggestedMax: 60
+                        }
+                    }],
+                    xAxes: [{
+                        type:       "time",
+                        time:       {
+                            unit: 'minute',
+                            round: 'minute',
+                            tooltipFormat: 'll HH:mm',
+                            distribution: 'linear',
+                            displayFormats: {
+                                'minute': 'DD/MMM/YYYY hh:mm'
+                            }
+                        },
+                        scaleLabel: {
+                            display:     true,
+                            labelString: 'Temps de mesure'
+                        },
+                        ticks: {
+                            reverse: false,
+                            beginAtZero: true,
+                            source: "data"
+                        }
+                    }]
+                }
+            }
+        });
+
+        let dataSetColourScheme = [
+            {backgroundColor: 'rgba(22, 160, 133,1.0)', borderColor: 'rgba(22, 160, 133,1.0)', fill: false},
+            {backgroundColor: 'rgba(241, 196, 15,1.0)', borderColor: 'rgba(241, 196, 15,1.0)',fill: false},
+            {backgroundColor: 'rgba(155, 89, 182,1.0)', borderColor: 'rgba(155, 89, 182,1.0)',fill: false}]
+
+        let labelValues = Object.values(measurements)[0].map(sr => sr.measureTimeUTC);
+        chart.data.labels = labelValues;
+        let dataSetIndex = 0;
+        Object.keys(measurements).forEach(function (sensorId) {
+            let sensorData = measurements[sensorId];
+            let measurementValues = sensorData.map(sr => sr.value);
+            if (measurementValues) {
+                let sensorTitle = sensorData[0].title;
+                let sensorLowLimit = sensorData[0].low_threshold;
+                let sensorHighLimit = sensorData[0].high_threshold;
+                let dataSetColour = dataSetColourScheme[dataSetIndex].backgroundColor;
+                let dataSet = {
+                    label: sensorTitle,
+
+                    pointBackgroundColor: function(context) {
+                        var index = context.dataIndex;
+                        var value = context.dataset.data[index];
+                        return value < sensorLowLimit ? 'rgba(41, 128, 185,1.0)' :
+                                value > sensorHighLimit ? 'rgba(231, 76, 60,1.0)' :
+                                    dataSetColour;
+                    },
+                    pointBorderColor : function(context) {
+                        var index = context.dataIndex;
+                        var value = context.dataset.data[index];
+                        return value < sensorLowLimit ? 'rgba(41, 128, 185,1.0)' :
+                            value > sensorHighLimit ? 'rgba(231, 76, 60,1.0)' :
+                                dataSetColour;
+                    },
+                    backgroundColor: dataSetColourScheme[dataSetIndex].backgroundColor,
+                    borderColor: dataSetColourScheme[dataSetIndex].borderColor,
+                    fill: dataSetColourScheme[dataSetIndex].fill,
+                    data: measurementValues
+                }
+                chart.data.datasets.push(dataSet)
+            }
+            dataSetIndex ++
+        })
+        dataSetIndex = null
+        chart.update()
+
+        chart.render();
+    </script>
 </body>
-<script th:inline="javascript">
-    let measurements = /*[[${allMeasurements}]]*/ 'default';
-    console.log(measurements);
-    let ctx = document.getElementById('measurementChart').getContext('2d');
-    let chart = new Chart(ctx, {
-        type: 'line',
-        options: {
-            responsive: true,
-            hoverMode: 'index',
-            stacked: false,
-            scales: {
-                yAxes: [{
-                    type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
-                    display: true,
-                    position: 'left',
-                    id: 'y-axis-1',
-                    reverse: true,
-                    scaleLabel: {
-                        display:     true,
-                        labelString: 'Temp(C)'
-                    },
-                    gridLines: {
-                        drawOnChartArea: false, // only want the grid lines for one axis to show up
-                    }
-                }],
-                xAxes: [{
-                    scaleLabel: {
-                        display:     true,
-                        labelString: 'Time'
-                    },
-                    ticks: {
-                        reverse: true,
-                        beginAtZero: true
-                    }
-                }]
-            }
-        }
-    });
-
-    let dataSetColourScheme = [ {backgroundColor: 'rgb(255, 200, 132)', borderColor: 'rgb(255, 200, 132)', fill: false},
-                                {backgroundColor: 'rgb(100, 99, 132)', borderColor: 'rgb(100, 99, 132)',fill: false}]
-
-    let labelValues = Object.values(measurements)[0].map(sr => sr.measureTimeUTC);
-    chart.data.labels = labelValues;
-    let dataSetIndex = 0
-    Object.keys(measurements).forEach(function (sensorId) {
-        let sensorData = measurements[sensorId]
-        let sensorTitle = sensorData[0].title
-        let measurementValues = sensorData.map(sr => sr.value)
-        console.log(measurementValues)
-        if (measurementValues) {
-            let dataSet = {
-                label: sensorTitle,
-                backgroundColor: dataSetColourScheme[dataSetIndex].backgroundColor,
-                borderColor: dataSetColourScheme[dataSetIndex].borderColor,
-                fill: dataSetColourScheme[dataSetIndex].fill,
-                data: measurementValues
-            }
-            chart.data.datasets.push(dataSet)
-        }
-        dataSetIndex ++
-    })
-    chart.update()
-
-    chart.render();
-</script>
+</html>

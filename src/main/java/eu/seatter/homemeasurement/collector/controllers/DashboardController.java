@@ -26,7 +26,7 @@ public class DashboardController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping("/")
+    @RequestMapping(value="/")
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
@@ -35,18 +35,7 @@ public class DashboardController {
             allSortedMeasurements.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
         }
 
-//        Map<String, SensorRecord> lastMeasurementAllSensors = new HashMap<>();
-//        List<String> sensorIds = cacheService.getSensorIds();
-//        for(String id : cacheService.getSensorIds()) {
-//            lastMeasurementAllSensors.put(id, (cacheService.getLastBySensorId(id,1).get(0)));
-//        }
-//
-//        for(String id : lastMeasurementAllSensors.keySet()) {
-//            lastMeasurementAllSensors.get(id).setMeasureTimeUTC(lastMeasurementAllSensors.get(id).getMeasureTimeUTC().withZoneSameInstant(zoneId));
-//        }
-
         model.addAttribute("allMeasurements", allSortedMeasurements);
-//        model.addAttribute("lastMeasurements", allSortedMeasurements);
         return "index";
     }
 }

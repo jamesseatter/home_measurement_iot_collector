@@ -101,6 +101,7 @@ public class CollectorService implements CommandLineRunner {
 
             if(activeProfile.equals("dev")) {
                 log.warn("Add Dev sensor measurements");
+                measurements.clear();
                 measurements.addAll(testData(sensorList));
             } else {
                 log.debug("Perform sensor measurements");
