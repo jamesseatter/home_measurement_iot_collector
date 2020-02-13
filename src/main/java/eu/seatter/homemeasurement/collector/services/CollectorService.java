@@ -5,7 +5,8 @@ import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.model.SensorType;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.alert.AlertServiceMeasurement;
-import eu.seatter.homemeasurement.collector.services.cache.CacheService;
+import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
+import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
@@ -37,7 +38,8 @@ public class CollectorService implements CommandLineRunner {
     private final int readIntervalSeconds;
     private final Boolean mqEnabled;
 
-    private final CacheService cacheService;
+    private final MeasurementCacheService measurementCacheService;
+    private final AlertCacheService alertCacheService;
     private final SensorMeasurement sensorMeasurement;
     private final SensorListService sensorListService;
     private final AlertService alertService;
@@ -47,18 +49,21 @@ public class CollectorService implements CommandLineRunner {
             SensorMeasurement sensorMeasurement,
             SensorListService sensorListService,
             AlertServiceMeasurement alertService,
+            MeasurementCacheService measurementCacheService,
+            AlertCacheService alertCacheService,
             RabbitMQService mqService,
             @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
             @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
-            @Value("#{new Boolean('${message.alert.enabled:false}')}") Boolean alertEnabled, CacheService cacheService) {
+            @Value("#{new Boolean('${message.alert.enabled:false}')}") Boolean alertEnabled) {
                     this.sensorMeasurement = sensorMeasurement;
                     this.sensorListService = sensorListService;
                     this.alertService = alertService;
+                    this.alertCacheService = alertCacheService;
+                    this.measurementCacheService = measurementCacheService;
                     this.mqService = mqService;
                     this.mqEnabled = mqEnabled;
                     this.readIntervalSeconds = readIntervalSeconds;
-                    this.cacheService = cacheService;
-                }
+    }
 
     @Override
     public void run(String... strings) {
@@ -74,24 +79,24 @@ public class CollectorService implements CommandLineRunner {
         List<SensorRecord> sensorList = Collections.emptyList();
         List<SensorRecord> measurements = new ArrayList<>();
 
-        while(running) {
-            try {
-                if(activeProfile.equals("dev")) {
-                    log.warn("Add Dev sensor list");
-                    sensorList = testSensorList();
-                } else {
-                    log.debug("Perform sensor search");
-                    sensorList = sensorListService.getSensors();
-                }
-                log.debug("Sensor count : " + sensorList.size());
-
-            } catch (RuntimeException ex) {
-                log.warn("No sensors were connected to the system. Shutting down");
-                //throw new SensorNotFoundException("No sensors found",
-//                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
+        try {
+            if(activeProfile.equals("dev")) {
+                log.warn("Add Dev sensor list");
+                sensorList = testSensorList();
+            } else {
+                log.debug("Perform sensor search");
+                sensorList = sensorListService.getSensors();
             }
+            log.debug("Sensor count : " + sensorList.size());
 
-            if(sensorList.size() > 0) {
+        } catch (RuntimeException ex) {
+            log.warn("No sensors were connected to the system. Shutting down");
+            //throw new SensorNotFoundException("No sensors found",
+//                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
+        }
+
+        while(running) {
+           if(sensorList.size() > 0) {
                 running = true;
                 //todo Send sensor list to the Edge
             } else {
@@ -111,7 +116,7 @@ public class CollectorService implements CommandLineRunner {
 
 
             for (SensorRecord sr : measurements){
-                cacheService.add(sr);
+                measurementCacheService.add(sr);
                 if (mqEnabled) {
                     mqService.sendMeasurement(sr);
                 }
@@ -135,14 +140,14 @@ public class CollectorService implements CommandLineRunner {
             log.debug("Sensor value below threshold. Measurement : " + sensorRecord.getValue() + " / Threshold : " + sensorRecord.getLow_threshold());
             try {
                 log.info("Sending alert email");
+                alertCacheService.add(sensorRecord);
                 alertService.sendAlert(sensorRecord,"Sensor Value below threshold");
             } catch (MessagingException e) {
                 log.error("Failed to send Email Alert : " + e.getLocalizedMessage());
             } catch (Exception e) {
-                log.error("A general error occured : " + e.getLocalizedMessage());
+                log.error("A general error occurred : " + e.getLocalizedMessage());
             }
         }
-
     }
 
     private List<SensorRecord> testSensorList() {

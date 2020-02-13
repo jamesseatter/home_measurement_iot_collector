@@ -2,7 +2,7 @@ package eu.seatter.homemeasurement.collector.actuator;
 
 
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.services.cache.CacheService;
+import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.stereotype.Component;
@@ -23,9 +23,9 @@ import java.util.Map;
 @Endpoint(id = "measurements")
 public class MeasurementsEndpoint {
 
-    final CacheService cacheService;
+    final AlertCacheService cacheService;
 
-    public MeasurementsEndpoint(CacheService cacheService) {
+    public MeasurementsEndpoint(AlertCacheService cacheService) {
         this.cacheService = cacheService;
     }
 

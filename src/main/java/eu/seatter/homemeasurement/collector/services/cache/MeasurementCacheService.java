@@ -16,10 +16,9 @@ import java.util.Map;
  * Time: 17:55
  */
 @Service
-public class CacheService {
+public class MeasurementCacheService {
     @Autowired
     private MeasurementCacheImpl measurementCache;
-
 
     public void add(SensorRecord sensorRecord) {
         measurementCache.add(sensorRecord);

@@ -18,13 +18,13 @@ import java.util.*;
 @Slf4j
 @Component
 @Scope("singleton")
-public class MeasurementCacheImpl implements MeasurementCache {
+public class AlertCacheImpl implements MeasurementCache {
     private final Map<String,List<SensorRecord>> cache = new LinkedHashMap <>();
 
-    @Value("${measurement.cache.max_records_per_sensor:24}")
-    private final int MAX_ENTRIES_PER_SENSOR=24;
+    @Value("${alert.cache.max_records_per_sensor:100}")
+    private final int MAX_ENTRIES_PER_SENSOR=100;
 
-    public MeasurementCacheImpl() {}
+    public AlertCacheImpl() {}
 
     @Override
     public void add(SensorRecord sensorRecord) {
@@ -41,7 +41,7 @@ public class MeasurementCacheImpl implements MeasurementCache {
         }
         //cache.get(toCache.getSensorid()).add(toCache);
         cache.get(toCache.getSensorid()).add(0,toCache);
-        log.debug("Measurement cache Add : " + toCache.toString());
+        log.debug("Alert cache Add : " + toCache.toString());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class MeasurementCacheImpl implements MeasurementCache {
 
             return Collections.unmodifiableList(temp.subList(temp.size() - last, temp.size()));
         } else {
-            throw new java.lang.IllegalArgumentException("The sensor, " + sensorId + " has no records in the cache");
+            throw new IllegalArgumentException("The sensor, " + sensorId + " has no records in the cache");
         }
     }
 
