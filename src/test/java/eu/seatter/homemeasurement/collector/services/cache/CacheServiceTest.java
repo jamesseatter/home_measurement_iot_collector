@@ -36,13 +36,13 @@ public class CacheServiceTest {
     static class CacheServiceTestContextConfiguration {
 
         @Bean
-        public CacheService cacheService() {
-            return new CacheService();
+        public MeasurementCacheService cacheService() {
+            return new MeasurementCacheService();
         }
     }
 
     @Autowired
-    private CacheService cacheService;
+    private MeasurementCacheService cacheService;
 
     @MockBean
     private MeasurementCacheImpl measurementCache;

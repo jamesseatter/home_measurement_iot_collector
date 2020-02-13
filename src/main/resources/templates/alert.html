@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home Measurement Dashboard</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/webjars/chartjs/2.9.3/Chart.min.css" />
+
+    <!-- Custom styles for dashboard -->
+    <link href="css/dashboard.css" rel="stylesheet">
+    <style>
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+</head>
+<body>
+<!--/*@thymesVar id="sensor" type="java.util.Map.Entry"*/-->
+<!--/*@thymesVar id="sensorrecord" type="eu.seatter.homemeasurement.collector.model.SensorRecord"*/-->
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CdB PPE</a>
+    <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="#">Sign out</a>
+      </li>
+    </ul> -->
+</nav>
+
+<div class="container-fluid">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">
+                        <span data-feather="home"></span>
+                        Dashboard <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="alert">
+                        <span data-feather="alert-triangle"></span>
+                        Alerts <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <br>
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <h1>System Alerts</h1>
+
+        <div class="shadow table-responsive" th:if="${not #lists.isEmpty(allalerts)}">
+            <table class="table table-hover ">
+                <thead class="thead-inverse">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>SensorID</th>
+                    <th>Time</th>
+                    <th>value</th>
+                    <th>Low Threshold</th>
+                    <th>High Threshold</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="sensor : ${allalerts}">
+                    <!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
+                    <!--                                th:class="${sensorrecord.value > sensorrecord.low_threshold}? 'table-light' : 'table-danger'">-->
+
+
+                    <tr th:each="sensorrecord, iStat : ${sensor.value}"
+                        th:Style="${sensorrecord.value > sensorrecord.low_threshold} ?
+                                                (${sensorrecord.value > sensorrecord.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :
+                                                 'background-color: rgba(41, 128, 185,1.0)'">
+
+
+
+                        <!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
+                        <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
+                        <td th:text="${iStat.index + 1}">index missing</td>
+                        <td th:text="${sensorrecord.title}">title missing</td>
+                        <td th:text="${sensorrecord.sensorid}">sensorid missing</td>
+                        <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
+                        <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
+                        <td th:text="${sensorrecord.low_threshold}">value missing</td>
+                        <td th:text="${sensorrecord.high_threshold}">value missing</td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<!-- Icons -->
+<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+<script>
+    feather.replace()
+</script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<!--    <script src="/webjars/popper.js/1.16.1/dist/popper.min.js"></script>-->
+<script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="/webjars/momentjs/2.24.0/min/moment.min.js"></script>
+
+</body>
+</html>

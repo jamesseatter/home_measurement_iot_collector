@@ -3,7 +3,7 @@ package eu.seatter.homemeasurement.collector.controllers;
 import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import eu.seatter.homemeasurement.collector.model.SensorType;
-import eu.seatter.homemeasurement.collector.services.cache.CacheService;
+import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,11 +17,11 @@ import java.time.ZonedDateTime;
  */
 public class DashboardControllerTest {
 
-    private CacheService cacheService;
+    private AlertCacheService cacheService;
 
     @Before
     public void setUp() {
-        this.cacheService = new CacheService();
+        this.cacheService = new AlertCacheService();
     }
 
     @Test
