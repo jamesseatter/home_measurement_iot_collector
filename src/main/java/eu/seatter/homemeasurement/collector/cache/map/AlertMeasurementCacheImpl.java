@@ -18,13 +18,13 @@ import java.util.*;
 @Slf4j
 @Component
 @Scope("singleton")
-public class AlertCacheImpl implements MeasurementCache {
+public class AlertMeasurementCacheImpl implements MeasurementCache {
     private final Map<String,List<SensorRecord>> cache = new LinkedHashMap <>();
 
-    @Value("${alert.cache.max_records_per_sensor:100}")
+    @Value("${measurement.alert.cache.max_records_per_sensor:100}")
     private final int MAX_ENTRIES_PER_SENSOR=100;
 
-    public AlertCacheImpl() {}
+    public AlertMeasurementCacheImpl() {}
 
     @Override
     public void add(SensorRecord sensorRecord) {

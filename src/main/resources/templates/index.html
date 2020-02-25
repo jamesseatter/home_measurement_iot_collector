@@ -66,7 +66,6 @@
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>SensorID</th>
                         <th>Time</th>
                         <th>value</th>
                         <th>Low Threshold</th>
@@ -90,7 +89,6 @@
 <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
                                 <td th:text="${iStat.index + 1}">index missing</td>
                                 <td th:text="${sensorrecord.title}">title missing</td>
-                                <td th:text="${sensorrecord.sensorid}">sensorid missing</td>
                                 <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
                                 <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
                                 <td th:text="${sensorrecord.low_threshold}">value missing</td>

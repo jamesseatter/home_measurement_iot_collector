@@ -66,7 +66,7 @@ public class CollectorService implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... strings) {
+    public void run(String... strings) throws MessagingException {
         boolean running = true;
 //        try {
 //            deviceService.registerDevice();

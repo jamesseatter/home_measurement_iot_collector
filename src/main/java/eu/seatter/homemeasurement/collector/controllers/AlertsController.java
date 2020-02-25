@@ -1,6 +1,8 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
+import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,10 +21,12 @@ import java.util.Map;
 @Controller
 public class AlertsController {
 
-    private final AlertCacheService cacheService;
+    private final AlertCacheService alertCacheService;
+    private final AlertSystemCache alertSystemCache;
 
-    public AlertsController(AlertCacheService cache) {
-        this.cacheService = cache;
+    public AlertsController(AlertCacheService cache, AlertSystemCache alertSystemCache) {
+        this.alertCacheService = cache;
+        this.alertSystemCache = alertSystemCache;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -30,12 +34,16 @@ public class AlertsController {
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
-        Map<String, List<SensorRecord>> allSortedAlerts = cacheService.getAllSorted();
-        for(String id : allSortedAlerts.keySet()) {
-            allSortedAlerts.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
+        Map<String, List<SensorRecord>> allSortedMeasurementAlerts = alertCacheService.getAllSorted();
+        for(String id : allSortedMeasurementAlerts.keySet()) {
+            allSortedMeasurementAlerts.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
         }
 
-        model.addAttribute("allalerts", allSortedAlerts);
+        List<SystemAlert> systemAlerts = alertSystemCache.getAllSorted();
+        systemAlerts.forEach((srec) -> srec.setTime(srec.getTime().withZoneSameInstant(zoneId)));
+
+        model.addAttribute("systemalerts",systemAlerts);
+        model.addAttribute("measurementalerts", allSortedMeasurementAlerts);
         return "alert";
     }
 }

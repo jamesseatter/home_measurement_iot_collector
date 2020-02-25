@@ -12,7 +12,7 @@ import java.util.Map;
  * Date: 01/05/2019
  * Time: 16:01
  */
-public interface AlertCache {
+public interface AlertMeasurementCache {
     void add(SensorRecord sensorRecord);
     Map<String, List<SensorRecord>> getAll();
     Map<String,List<SensorRecord>> getAllSorted();

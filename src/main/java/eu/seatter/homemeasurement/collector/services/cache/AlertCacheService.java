@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.cache;
 
-import eu.seatter.homemeasurement.collector.cache.map.AlertCacheImpl;
+import eu.seatter.homemeasurement.collector.cache.map.AlertMeasurementCacheImpl;
 import eu.seatter.homemeasurement.collector.model.SensorRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.Map;
 @Service
 public class AlertCacheService {
     @Autowired
-    private AlertCacheImpl alertCache;
+    private AlertMeasurementCacheImpl alertCache;
 
     public void add(SensorRecord sensorRecord) {
         alertCache.add(sensorRecord);
