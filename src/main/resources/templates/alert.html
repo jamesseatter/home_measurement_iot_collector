@@ -20,7 +20,9 @@
 </head>
 <body>
 <!--/*@thymesVar id="sensor" type="java.util.Map.Entry"*/-->
+<!--/*@thymesVar id="alert" type="java.util.List.Entry"*/-->
 <!--/*@thymesVar id="sensorrecord" type="eu.seatter.homemeasurement.collector.model.SensorRecord"*/-->
+<!--/*@thymesVar id="systemalert" type="eu.seatter.homemeasurement.collector.model.SystemAlert"*/-->
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CdB PPE</a>
     <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
@@ -54,15 +56,14 @@
     </nav>
     <br>
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-        <h1>System Alerts</h1>
+        <h1>Measurement Alerts</h1>
 
-        <div class="shadow table-responsive" th:if="${not #lists.isEmpty(allalerts)}">
+        <div class="shadow table-responsive" th:if="${not #lists.isEmpty(measurementalerts)}">
             <table class="table table-hover ">
                 <thead class="thead-inverse">
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>SensorID</th>
                     <th>Time</th>
                     <th>value</th>
                     <th>Low Threshold</th>
@@ -70,7 +71,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:each="sensor : ${allalerts}">
+                <th:block th:each="sensor : ${measurementalerts}">
                     <!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
                     <!--                                th:class="${sensorrecord.value > sensorrecord.low_threshold}? 'table-light' : 'table-danger'">-->
 
@@ -79,20 +80,45 @@
                         th:Style="${sensorrecord.value > sensorrecord.low_threshold} ?
                                                 (${sensorrecord.value > sensorrecord.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :
                                                  'background-color: rgba(41, 128, 185,1.0)'">
-
-
-
-                        <!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
-                        <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
                         <td th:text="${iStat.index + 1}">index missing</td>
                         <td th:text="${sensorrecord.title}">title missing</td>
-                        <td th:text="${sensorrecord.sensorid}">sensorid missing</td>
                         <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
                         <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
                         <td th:text="${sensorrecord.low_threshold}">value missing</td>
                         <td th:text="${sensorrecord.high_threshold}">value missing</td>
                     </tr>
                 </th:block>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <h1>System Alerts</h1>
+
+        <div class="shadow table-responsive" th:if="${not #lists.isEmpty(systemalerts)}">
+            <table class="table table-hover ">
+                <thead class="thead-inverse">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Message</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="systemalert, iStat : ${systemalerts}">
+<!--                    <tr th:each="sensoralert, iStat : ${alert}"-->
+<!--                        th:Style="${sensorrecord.value > sensorrecord.low_threshold} ?-->
+<!--                                                (${sensorrecord.value > sensorrecord.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :-->
+<!--                                                 'background-color: rgba(41, 128, 185,1.0)'">-->
+
+
+
+                        <!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
+                        <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
+                        <td th:text="${iStat.index + 1}">index missing</td>
+                        <td th:text="${#temporals.format(systemalert.time, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
+                        <td th:text="${systemalert.alertMessage}">title missing</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

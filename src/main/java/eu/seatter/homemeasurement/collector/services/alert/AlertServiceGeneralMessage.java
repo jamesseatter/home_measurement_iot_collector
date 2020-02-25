@@ -32,7 +32,7 @@ public class AlertServiceGeneralMessage implements AlertService {
 
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");
-            emailAlertService.sendAlert(AlertType.Measurement,alertMessage,sensorRecord);
+            emailAlertService.sendAlert(AlertType.General,alertMessage,sensorRecord);
         } else {
             log.info("Email alerts disabled.");
         }
