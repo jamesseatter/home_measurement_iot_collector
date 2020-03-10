@@ -12,5 +12,5 @@ import javax.mail.MessagingException;
  * Time: 16:24
  */
 public interface EmailAlertService {
-    void sendAlert(AlertType alertType, String alertMessage, SensorRecord sensorRecord) throws MessagingException;
+    void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, SensorRecord sensorRecord) throws MessagingException;
 }

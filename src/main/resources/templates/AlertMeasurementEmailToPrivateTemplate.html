@@ -10,8 +10,13 @@
         <td style="text-align:center; background-color: #70bbd9; padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
 <!--<img alt="CdB Logo image" src="cid:cdbLogo" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>-->
 <!--<img alt="CdB Logo image" src="@{/images/CdBLogo.webp}" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>-->
-            <b>Home Monitor</b>
-            <b>Measurement Alert!!</b>
+            <b>Home Monitor</b></br>
+            <b>Measurement Alert!!</b></br>
+        </td>
+    </tr>
+    <tr th:unless="${environment == 'Production'}">
+        <td style="text-align:center; background-color: #e74c3c; padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
+            <b th:text="${environment}">Developement</b>
         </td>
     </tr>
 

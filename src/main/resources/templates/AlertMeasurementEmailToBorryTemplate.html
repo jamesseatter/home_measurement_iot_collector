@@ -10,9 +10,12 @@
         <td style="text-align:center; background-color: #70bbd9; padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
 <!--<img alt="CdB Logo image" src="cid:cdbLogo" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>-->
 <!--<img alt="CdB Logo image" src="@{/images/CdBLogo.webp}" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>-->
-            <b>Chauffage PPE Chavannes-des-Bois</b>
-            <b>Chauffage Central Communal Temperature Alert!!</b>
+            <b>Chauffage PPE Chavannes-des-Bois</b></br>
+            <b>Chauffage Central Communal Temperature Alert!!</b></br>
         </td>
+    </tr>
+    <tr th:unless="${environment == 'Production'}" style="text-align:center; background-color: #e74c3c; padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
+        <b th:text="${environment}">Developement</b>
     </tr>
 
     <tr style="padding: 10px 10px 8px 5px;color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">

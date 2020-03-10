@@ -35,7 +35,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
     }
 
     @Override
-    public void sendAlert(AlertType alertType, String alertMessage, SensorRecord sensorRecord) throws MessagingException {
+    public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, SensorRecord sensorRecord) throws MessagingException {
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "utf-8");
@@ -50,16 +50,16 @@ public class EmailAlertServiceImpl implements EmailAlertService {
             }
 
             try {
-                helper.setSubject(getSubject(sensorRecord));
+                helper.setSubject(getSubject(sensorRecord, alertTitle));
             } catch (MessagingException ex) {
                 throw new MessagingException("No email recipients defined");
             }
 
             try {
                 if(alertType == AlertType.General) {
-                    message.setContent(getContent("AlertGeneralMessageEmailTemplate",sensorRecord, alertMessage), "text/html");
+                    message.setContent(getContent("AlertGeneralMessageEmailTemplate", environment,alertTitle, sensorRecord, alertMessage), "text/html");
                 } else if(alertType == AlertType.Measurement) {
-                    message.setContent(getContent(getAlertDestination(sensorRecord),sensorRecord, alertMessage), "text/html");
+                    message.setContent(getContent(getAlertDestination(sensorRecord), environment,alertTitle, sensorRecord, alertMessage), "text/html");
                 }
             } catch (MessagingException ex) {
                 throw new MessagingException("Error occurred setting the email content");
@@ -99,8 +99,11 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         log.debug("Email recipients : " + ag.getAddress());
         return (ag.getAddress());
     }
-    private String getSubject(SensorRecord sr) {
+    private String getSubject(SensorRecord sr, String alertTitle) {
         String subject = "Home Monitor Alert - " + sr.getTitle() + " - " + sr.getValue() + sr.getMeasurementUnit().toString();
+        if(alertTitle != null || alertTitle != "") {
+            subject = alertTitle;
+        }
         log.debug("Email Subject : " + subject);
         return subject;
     }
@@ -124,8 +127,20 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         return alertDestination;
     }
 
-    private String getContent(String alertTemplate, SensorRecord sr, String alertMessage) {
+    private String formatSpringEnvironment(String environment) {
+        switch (environment) {
+            case "dev": return "Developement";
+            case "test": return "Test";
+            case "qa": return "Quality Assurance";
+            case "prod": return "Production";
+        }
+        return "Developement";
+    }
+
+    private String getContent(String alertTemplate, String environment, String title, SensorRecord sr, String alertMessage) {
         Context context = new Context();
+        context.setVariable("environment", formatSpringEnvironment(environment));
+        context.setVariable("title", title);
         context.setVariable("temperature", sr.getValue().toString() + sr.getMeasurementUnit().toString());
         context.setVariable("date", sr.getMeasureTimeUTC());
         context.setVariable("message", alertMessage);
