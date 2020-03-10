@@ -22,17 +22,19 @@ public class AlertServiceMeasurement implements AlertService {
     private final EmailAlertService emailAlertService;
     private final Boolean alertEmailEnabled;
 
+    @Value("${spring.profiles.active:dev}") String applicationEnvironment;
+
     public AlertServiceMeasurement(EmailAlertServiceImpl emailAlertService, @Value("#{new Boolean('${message.alert.email.enabled:false}')}") Boolean alertEmailEnabled) {
         this.emailAlertService = emailAlertService;
         this.alertEmailEnabled = alertEmailEnabled;
     }
 
     @Override
-    public void sendAlert(SensorRecord sensorRecord, String alertMessage) throws MessagingException {
-
+    public void sendAlert(SensorRecord sensorRecord, String alertTitle, String alertMessage) throws MessagingException {
+        if (alertTitle == null) alertTitle = "Temperature Alert";
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");
-            emailAlertService.sendAlert(AlertType.Measurement,"",sensorRecord);
+            emailAlertService.sendAlert(AlertType.Measurement, applicationEnvironment,"Temperature Alert","",sensorRecord);
         } else {
             log.info("Email alerts disabled.");
         }

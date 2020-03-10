@@ -17,7 +17,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -141,7 +143,7 @@ public class CollectorService implements CommandLineRunner {
             try {
                 log.info("Sending alert email");
                 alertCacheService.add(sensorRecord);
-                alertService.sendAlert(sensorRecord,"Sensor Value below threshold");
+                alertService.sendAlert(sensorRecord, null,"Sensor Value below threshold");
             } catch (MessagingException e) {
                 log.error("Failed to send Email Alert : " + e.getLocalizedMessage());
             } catch (Exception e) {
@@ -185,7 +187,7 @@ public class CollectorService implements CommandLineRunner {
         log.warn("Test measurement data in use");
         for(SensorRecord srec : sensorList) {
             srec.setMeasurementUnit(SensorMeasurementUnit.C);
-            srec.setMeasureTimeUTC(ZonedDateTime.now());
+            srec.setMeasureTimeUTC(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES));
             int val = ThreadLocalRandom.current().nextInt(35, 75);
             srec.setValue((double)val);
         }

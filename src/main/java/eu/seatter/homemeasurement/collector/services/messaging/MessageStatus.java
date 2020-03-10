@@ -20,9 +20,9 @@ public class MessageStatus {
 
     public void update (MessageStatusType status) {
         current_status = status;
-        lastUpdateDate = ZonedDateTime.now(ZoneId.of("Etc/UTC")).withSecond(00);
+        lastUpdateDate = ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES);
         if(status == MessageStatusType.GOOD) {
-            lastSuccessSentDate = ZonedDateTime.now(ZoneId.of("Etc/UTC")).withSecond(00);
+            lastSuccessSentDate = ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES);
         }
     }
 

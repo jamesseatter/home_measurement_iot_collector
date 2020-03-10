@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class AlertSystemCacheImpl implements AlertSystemCache {
     @Override
     public void add(String alertMessage) {
         SystemAlert sa = new SystemAlert().toBuilder()
-                                            .time(ZonedDateTime.now(ZoneId.of("Etc/UTC")).withSecond(00))
+                                            .time(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES))
                                             .alertMessage(alertMessage).build();
 
         if(cache.size() == MAX_ENTRIES) {

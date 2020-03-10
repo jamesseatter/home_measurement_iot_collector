@@ -134,6 +134,6 @@ public class RabbitMQService implements SensorMessaging {
         log.error(message);
         messageStatus.update(MessageStatusType.ERROR);
         alertSystemCache.add(message);
-        alertService.sendAlert(sensorRecord,message);
+        alertService.sendAlert(sensorRecord, "Rabbit MQ Message Send Fail Alert", message);
     }
 }
