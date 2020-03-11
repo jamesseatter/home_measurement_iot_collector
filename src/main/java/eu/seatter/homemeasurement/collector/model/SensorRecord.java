@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import lombok.*;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,6 +35,8 @@ public class SensorRecord implements Comparable<SensorRecord> {
     private Double high_threshold;
     private String alertgroup;
     private String alertdestination;
+
+    private UUID alertUUID; //updated when an alert is generated
 
     public String loggerFormat() {
         return "[" + sensorid + "/" + sensorType + "/" + familyid + "]";

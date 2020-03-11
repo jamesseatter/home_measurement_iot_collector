@@ -100,22 +100,7 @@ public class RabbitMQService implements SensorMessaging {
             }
             log.debug("Connected to MQ Server");
 
-            String messagesToEmit="";
-            try {
-                messagesToEmit = convertToJSONMesssage(sensorRecord);
-            } catch (JsonProcessingException ex) {
-                String errorMessage = "Converting SensorRecord to JSON failed : " + ex.getMessage();
-                messageSendFailed(errorMessage, sensorRecord);
-            }
-            try {
-                channel.basicPublish(MQ_EXCHANGE_NAME, MQ_MEASUREMENT_UNIQUE_ID, null, messagesToEmit.getBytes(StandardCharsets.UTF_8));
-                log.info("MQ Sent message");
-                log.debug("MQ Message : " + messagesToEmit);
-                messageStatus.update(MessageStatusType.GOOD);
-            } catch (IOException ex) {
-                String errorMessage = "Failed to publish message to RabbitMQ Exchange :" + MQ_EXCHANGE_NAME;
-                messageSendFailed(errorMessage, sensorRecord);
-            }
+            sendMeasurementRecord(channel, sensorRecord);
 
         } catch (Exception ex) {
             String errorMessage = "Failed to connect to RabbitMQ host : " + MQ_HOST + " on port " + MQ_PORT;
@@ -123,11 +108,55 @@ public class RabbitMQService implements SensorMessaging {
         }
     }
 
-    private String convertToJSONMesssage(SensorRecord sensorRecord) throws JsonProcessingException {
+    private void sendMeasurementRecord (Channel channel, SensorRecord sensorRecord) throws MessagingException {
+        String messagesToEmit="";
+        try {
+            messagesToEmit = convertToJSONMesssage(sensorRecord);
+        } catch (JsonProcessingException ex) {
+            String errorMessage = "Converting SensorRecord to JSON failed : " + ex.getMessage();
+            messageSendFailed(errorMessage, sensorRecord);
+            throw new MessagingException(errorMessage);
+        }
+        try {
+            channel.basicPublish(MQ_EXCHANGE_NAME, MQ_MEASUREMENT_UNIQUE_ID, null, messagesToEmit.getBytes(StandardCharsets.UTF_8));
+            log.info("MQ Sent message");
+            log.debug("MQ Message : " + messagesToEmit);
+            messageStatus.update(MessageStatusType.GOOD);
+        } catch (IOException ex) {
+            String errorMessage = "Failed to publish message to RabbitMQ Exchange :" + MQ_EXCHANGE_NAME;
+            messageSendFailed(errorMessage, sensorRecord);
+            throw new MessagingException(errorMessage);
+        }
+    }
+
+//    private void sendMeasurementAlertRecord (Channel channel, MeasurementAlert measurementAlert) throws MessagingException {
+//        String messagesToEmit="";
+//        try {
+//            messagesToEmit = convertToJSONMesssage(measurementAlert);
+//        } catch (JsonProcessingException ex) {
+//            String errorMessage = "Converting SensorRecord to JSON failed : " + ex.getMessage();
+//            messageSendFailed(errorMessage, measurementAlert);
+//            throw new MessagingException(errorMessage);
+//        }
+//        try {
+//            channel.basicPublish(MQ_EXCHANGE_NAME, MQ_MEASUREMENT_UNIQUE_ID, null, messagesToEmit.getBytes(StandardCharsets.UTF_8));
+//            log.info("MQ Sent message");
+//            log.debug("MQ Message : " + messagesToEmit);
+//            messageStatus.update(MessageStatusType.GOOD);
+//        } catch (IOException ex) {
+//            String errorMessage = "Failed to publish message to RabbitMQ Exchange :" + MQ_EXCHANGE_NAME;
+//            messageSendFailed(errorMessage, measurementAlert);
+//            throw new MessagingException(errorMessage);
+//        }
+//    }
+
+    private String convertToJSONMesssage(Object record) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        return mapper.writeValueAsString(sensorRecord);
+//        if(record.getClass() == "")
+
+        return mapper.writeValueAsString(record);
     }
 
     private void messageSendFailed(String message, SensorRecord sensorRecord) throws MessagingException {
