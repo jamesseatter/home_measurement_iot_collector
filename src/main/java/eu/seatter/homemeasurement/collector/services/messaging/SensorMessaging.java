@@ -12,6 +12,4 @@ import javax.mail.MessagingException;
  */
 public interface SensorMessaging {
     void sendMeasurement(SensorRecord sensorRecord) throws MessagingException;
-    //void registerDevice(Device device);
-    //void registerSensor(Sensor sensor);
 }
