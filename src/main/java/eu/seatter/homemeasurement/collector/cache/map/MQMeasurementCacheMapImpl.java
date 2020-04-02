@@ -26,6 +26,7 @@ import java.util.List;
  * Date: 25/03/2020
  * Time: 12:55
  */
+@SuppressWarnings("DuplicatedCode")
 @Slf4j
 @Component
 @Scope("singleton")
@@ -88,7 +89,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     }
 
     @Override
-    public boolean flushToFile() throws JsonMappingException, IOException {
+    public boolean flushToFile() throws IOException {
         File file = new File(CACHE_PATH);
         try {
             if(!Files.exists(Paths.get(CACHE_PATH))) {

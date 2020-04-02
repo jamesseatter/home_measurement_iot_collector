@@ -63,13 +63,10 @@ public class MeasurementsEndpoint {
 
     private String formatMeasurements(Measurement record) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(record.getMeasureTimeUTC().format(formatter));
-        sb.append(" UTC;");
-        sb.append(record.getValue());
-        sb.append(record.getMeasurementUnit());
-
-        return sb.toString();
+        return record.getMeasureTimeUTC().format(formatter) +
+                " UTC;" +
+                record.getValue() +
+                record.getMeasurementUnit();
     }
 
 }

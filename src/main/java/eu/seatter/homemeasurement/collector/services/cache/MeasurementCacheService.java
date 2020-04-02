@@ -1,9 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.cache;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheMapImpl;
 import eu.seatter.homemeasurement.collector.model.Measurement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,8 +17,11 @@ import java.util.Map;
  */
 @Service
 public class MeasurementCacheService {
-    @Autowired
-    private MeasurementCacheMapImpl measurementCache;
+    private final MeasurementCacheMapImpl measurementCache;
+
+    public MeasurementCacheService(MeasurementCacheMapImpl measurementCache) {
+        this.measurementCache = measurementCache;
+    }
 
     public void add(Measurement measurement) {
         measurementCache.add(measurement);
@@ -62,11 +63,11 @@ public class MeasurementCacheService {
         return measurementCache.getCacheSizeBySensorId(sensorId);
     }
 
-    public boolean flushToFile()  throws JsonMappingException, IOException {
+    public boolean flushToFile()  throws IOException {
         return measurementCache.flushToFile();
     }
 
-    public int readFromFile() throws JsonMappingException, IOException {
+    public int readFromFile() throws IOException {
         return measurementCache.readFromFile();
     }
 }

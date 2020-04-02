@@ -26,7 +26,6 @@ public class SensorMeasurement {
 
     private final List<Measurement> measurements = new ArrayList<>();
 
-    @SuppressWarnings("OctalInteger")
     public List<Measurement> collect(List<Measurement> sensorList) {
         log.info("Start measurement collection");
         ZonedDateTime measurementTime = ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES); //all measurements will use the same time to make reporting easier.

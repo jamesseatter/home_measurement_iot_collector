@@ -15,7 +15,6 @@ import eu.seatter.homemeasurement.collector.services.cache.MQMeasurementCacheSer
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -34,8 +33,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Service
 public class RabbitMQService implements SensorMessaging {
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
     //private final AlertService alertService;
 
@@ -45,10 +43,10 @@ public class RabbitMQService implements SensorMessaging {
     private final String MQ_EXCHANGE_NAME;
     private final String MQ_USERNAME;
     private final String MQ_USERPASSWORD;
-    private MessageStatus messageStatus;
-    private AlertSystemCache alertSystemCache;
-    private MeasurementCacheService measurementCacheService;
-    private MQMeasurementCacheService mqMeasurementCacheService;
+    private final MessageStatus messageStatus;
+    private final AlertSystemCache alertSystemCache;
+    private final MeasurementCacheService measurementCacheService;
+    private final MQMeasurementCacheService mqMeasurementCacheService;
 
     public RabbitMQService(//AlertService alertService,
                            @Value("${RabbitMQService.hostname:localhost}") String hostname,
@@ -60,7 +58,7 @@ public class RabbitMQService implements SensorMessaging {
                            MessageStatus messageStatus,
                            AlertSystemCacheMapImpl alertSystemCache,
                            MeasurementCacheService measurementCacheService,
-                           MQMeasurementCacheService mqMeasurementCacheService) {
+                           MQMeasurementCacheService mqMeasurementCacheService, Environment env) {
         //this.alertService = alertService;
         this.MQ_HOST = hostname;
         this.MQ_PORT = portnumber;
@@ -77,10 +75,11 @@ public class RabbitMQService implements SensorMessaging {
         log.debug("Port     :" + MQ_PORT);
         log.debug("VHost    :" + MQ_VHOST);
         log.debug("ExName   :" + MQ_EXCHANGE_NAME);
+        this.env = env;
     }
 
     @Override
-    public boolean sendMeasurement(Measurement measurement) throws MessagingException {
+    public boolean sendMeasurement(Measurement measurement) {
 
         try {
             String messagesToEmit = convertToJSONMessage(measurement);
@@ -88,10 +87,7 @@ public class RabbitMQService implements SensorMessaging {
             measurement.setMeasurementSentToMq(true);
             //measurementCacheService.measurementSentToMq(measurement.getRecordUID(), true);
             return true;
-        } catch (MessagingException ex) {
-            messageSendFailed(ex.getMessage(), measurement);
-            mqMeasurementCacheService.add(measurement);
-        } catch (JsonProcessingException ex) {
+        } catch (MessagingException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage(), measurement);
             mqMeasurementCacheService.add(measurement);
         }
@@ -104,20 +100,18 @@ public class RabbitMQService implements SensorMessaging {
             String messagesToEmit = convertToJSONMessage(measurementAlert);
             sendMessage(messagesToEmit, "alertmeasurement");
             //measurementCacheService.alertSentToMq(measurement.getRecordUID(), true);
-        } catch (MessagingException ex) {
-            messageSendFailed(ex.getMessage());
-        } catch (JsonProcessingException ex) {
+        } catch (MessagingException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage());
         }
         return true;
     }
 
     @Override
-    public boolean sendSystemAlert(SystemAlert systemAlert) throws MessagingException {
+    public boolean sendSystemAlert(SystemAlert systemAlert) {
         return false;
     }
 
-    private boolean sendMessage(String messagesToEmit, @NotNull String messageType) throws MessagingException {
+    private void sendMessage(String messagesToEmit, @NotNull String messageType) throws MessagingException {
         String MQ_QUEUE_NAME="CHANGE_ME";
         String MQ_ROUTING_KEY="CHANGE_ME";
         switch (messageType) {
@@ -173,7 +167,6 @@ public class RabbitMQService implements SensorMessaging {
             String errorMessage = "Failed to connect to RabbitMQ host : " + MQ_HOST + " on port " + MQ_PORT;
             throw new MessagingException(errorMessage);
         }
-        return true;
     }
 
     private <T> String convertToJSONMessage(T record) throws JsonProcessingException {
@@ -183,11 +176,11 @@ public class RabbitMQService implements SensorMessaging {
         return mapper.writeValueAsString(record);
     }
 
-    private void messageSendFailed(String message) throws MessagingException {
+    private void messageSendFailed(String message) {
         messageSendFailed(message,null);
     }
 
-    private void messageSendFailed(String message, Measurement measurement) throws MessagingException {
+    private void messageSendFailed(String message, Measurement measurement) {
         log.error(message);
         messageStatus.update(MessageStatusType.ERROR);
         alertSystemCache.add(message);

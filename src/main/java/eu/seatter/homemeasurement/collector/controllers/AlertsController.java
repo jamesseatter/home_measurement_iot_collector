@@ -39,6 +39,7 @@ public class AlertsController {
             allSortedMeasurementAlerts.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
         }
 
+        @SuppressWarnings("unchecked")
         List<SystemAlert> systemAlerts = alertSystemCache.getAllSorted();
         systemAlerts.forEach((srec) -> srec.setTime(srec.getTime().withZoneSameInstant(zoneId)));
 

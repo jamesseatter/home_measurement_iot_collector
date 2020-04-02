@@ -1,6 +1,5 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -28,11 +26,9 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     private final List<SystemAlert> cache = new ArrayList<>();
 
     private final int MAX_ENTRIES_PER_SENSOR;
-    private final String CACHE_PATH;
 
     public AlertSystemCacheMapImpl(@Value("${cache.mq.measurement.path}") String cachepath,
                                    @Value("${system.alert.cache.max_records_per_sensor:100}") int maxentriespersensor) {
-        this.CACHE_PATH = cachepath;
         this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
     }
 
@@ -50,12 +46,12 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     }
 
     @Override
-    public List getAll() {
+    public List<SystemAlert> getAll() {
         return cache;
     }
 
     @Override
-    public List getAllSorted() {
+    public List<SystemAlert> getAllSorted() {
         return cache;
     }
 
@@ -70,7 +66,7 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     }
 
     @Override
-    public boolean flushToFile() throws JsonMappingException, IOException {
+    public boolean flushToFile() {
 //        ObjectMapper mapper = new ObjectMapper();
 //        String jsonArray = mapper.writeValueAsString(cache);
 //
@@ -87,7 +83,7 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     }
 
     @Override
-    public int readFromFile() throws IOException {
+    public int readFromFile() {
 //        String content = "";
 //        try
 //        {

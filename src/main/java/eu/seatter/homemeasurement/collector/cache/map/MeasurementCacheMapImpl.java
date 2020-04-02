@@ -28,6 +28,7 @@ import java.util.*;
  * Date: 01/05/2019
  * Time: 16:02
  */
+@SuppressWarnings("DuplicatedCode")
 @Slf4j
 @Component
 @Scope("singleton")
@@ -76,7 +77,7 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     public Map<String,List<Measurement>> getAllSorted() {
         Map<String,List<Measurement>> cacheSorted = cache;
         for(String id : cacheSorted.keySet()) {
-            Collections.sort(cacheSorted.get(id), Comparator.comparing(Measurement::getMeasureTimeUTC).reversed());
+            cacheSorted.get(id).sort(Comparator.comparing(Measurement::getMeasureTimeUTC).reversed());
         }
 
         return cacheSorted;
