@@ -30,13 +30,6 @@ public class AlertService {
 
     @Value("${spring.profiles.active:dev}") String applicationEnvironment;
 
-    /**
-     * @param emailAlertService
-     * @param messageAlertService
-     * @param alertCacheService
-     * @param alertEmailEnabled
-     * @param alertMessagingEnabled
-     */
     public AlertService(EmailAlertServiceImpl emailAlertService,
                         MessageAlertServiceImpl messageAlertService,
                         AlertCacheService alertCacheService,

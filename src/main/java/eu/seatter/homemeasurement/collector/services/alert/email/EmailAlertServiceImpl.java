@@ -13,6 +13,7 @@ import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.
@@ -89,7 +90,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
 
     private String getSubject(Measurement sr, String alertTitle) {
         String subject = "Home Monitor Alert - " + sr.getTitle() + " - " + sr.getValue() + sr.getMeasurementUnit().toString();
-        if(alertTitle != null || alertTitle != "") {
+        if(alertTitle != null || !alertTitle.equals("")) {
             subject = alertTitle;
         }
         log.debug("Email Subject : " + subject);
@@ -101,7 +102,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         try {
             alertDestination = AlertDestination.valueOf(sr.getAlertdestination()).getTemplate();
         } catch (EnumConstantNotPresentException ex) {
-            String validValues = AlertDestination.values().toString();
+            String validValues = Arrays.toString(AlertDestination.values());
             log.error("The value of alertdestination in sensorlist.json for sensor : " + sr.getSensorid() + " is invalid.");
             log.error("Valid values are : " + validValues);
             alertDestination = "";

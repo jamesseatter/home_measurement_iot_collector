@@ -1,8 +1,7 @@
 package eu.seatter.homemeasurement.collector.cache;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
+import eu.seatter.homemeasurement.collector.model.SystemAlert;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -11,14 +10,15 @@ import java.util.List;
  * Date: 14/02/2020
  * Time: 13:44
  */
+@SuppressWarnings("SameReturnValue")
 public interface AlertSystemCache {
     void add(String alertMessage);
-    List getAll();
-    List getAllSorted();
+    List<SystemAlert> getAll();
+    List<SystemAlert> getAllSorted();
 
     int getCacheMaxSize();
     int getCacheSize();
 
-    boolean flushToFile() throws JsonMappingException, IOException ;
-    int readFromFile() throws IOException;
+    boolean flushToFile();
+    int readFromFile();
 }

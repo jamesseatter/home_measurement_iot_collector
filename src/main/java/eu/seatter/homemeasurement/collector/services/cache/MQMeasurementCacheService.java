@@ -1,9 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.cache;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import eu.seatter.homemeasurement.collector.cache.map.MQMeasurementCacheMapImpl;
 import eu.seatter.homemeasurement.collector.model.Measurement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -17,11 +15,14 @@ import java.util.List;
  */
 @Service
 public class MQMeasurementCacheService {
-    @Autowired
-    private MQMeasurementCacheMapImpl mqcache;
+    private final MQMeasurementCacheMapImpl mqcache;
 
-    public int add(Measurement measurement) {
-        return mqcache.add(measurement);
+    public MQMeasurementCacheService(MQMeasurementCacheMapImpl mqcache) {
+        this.mqcache = mqcache;
+    }
+
+    public void add(Measurement measurement) {
+        mqcache.add(measurement);
     }
 
 //    public void measurementSentToMq(UUID recordId, Boolean status) {
@@ -52,7 +53,7 @@ public class MQMeasurementCacheService {
         return mqcache.readFromFile();
     }
 
-    public boolean flushToFile()  throws JsonMappingException, IOException {
-        return mqcache.flushToFile();
+    public void flushToFile()  throws IOException {
+        mqcache.flushToFile();
     }
 }

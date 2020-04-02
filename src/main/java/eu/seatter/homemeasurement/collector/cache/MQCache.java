@@ -1,6 +1,5 @@
 package eu.seatter.homemeasurement.collector.cache;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 
 import java.io.IOException;
@@ -18,6 +17,6 @@ public interface MQCache {
         int removeAll(List<Measurement> measurement);
         List<Measurement> getAll();
         int getCacheSize();
-        boolean flushToFile() throws JsonMappingException, IOException ;
+        boolean flushToFile() throws IOException ;
         int readFromFile() throws IOException;
 }

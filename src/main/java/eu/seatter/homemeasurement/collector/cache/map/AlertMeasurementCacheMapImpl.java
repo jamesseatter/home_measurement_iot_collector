@@ -1,6 +1,5 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import eu.seatter.homemeasurement.collector.cache.MeasurementCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -17,6 +15,7 @@ import java.util.*;
  * Date: 01/05/2019
  * Time: 16:02
  */
+@SuppressWarnings("DuplicatedCode")
 @Slf4j
 @Component
 @Scope("singleton")
@@ -24,11 +23,9 @@ public class AlertMeasurementCacheMapImpl implements MeasurementCache {
     private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
     private final int MAX_ENTRIES_PER_SENSOR;
-    private final String CACHE_PATH;
 
     public AlertMeasurementCacheMapImpl(@Value("${cache.mq.measurement.path}") String cachepath,
                                    @Value("${measurement.alert.cache.max_records_per_sensor:100}") int maxentriespersensor) {
-        this.CACHE_PATH = cachepath;
         this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
     }
 
@@ -59,7 +56,7 @@ public class AlertMeasurementCacheMapImpl implements MeasurementCache {
     public Map<String,List<Measurement>> getAllSorted() {
         Map<String,List<Measurement>> cacheSorted = cache;
         for(String id : cacheSorted.keySet()) {
-            Collections.sort(cacheSorted.get(id), Comparator.comparing(Measurement::getMeasureTimeUTC).reversed());
+            cacheSorted.get(id).sort(Comparator.comparing(Measurement::getMeasureTimeUTC).reversed());
         }
 
         return cacheSorted;
@@ -113,7 +110,7 @@ public class AlertMeasurementCacheMapImpl implements MeasurementCache {
     }
 
     @Override
-    public boolean flushToFile() throws JsonMappingException, IOException {
+    public boolean flushToFile() {
 //        ObjectMapper mapper = new ObjectMapper();
 //        String jsonArray = mapper.writeValueAsString(cache);
 //
@@ -130,7 +127,7 @@ public class AlertMeasurementCacheMapImpl implements MeasurementCache {
     }
 
     @Override
-    public int readFromFile() throws IOException {
+    public int readFromFile() {
 //        String content = "";
 //        try
 //        {

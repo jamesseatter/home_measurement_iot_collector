@@ -109,5 +109,65 @@
       "name": "message.alert.messaging.enabled",
       "type": "java.lang.String",
       "description": "Description for message.alert.messaging.enabled."
+    },
+    {
+      "name": "RabbitMQService.routing_key.alert.system",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.routing_key.alert.system."
+    },
+    {
+      "name": "RabbitMQService.routing_key.alert.measurement",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.routing_key.alert.measurement."
+    },
+    {
+      "name": "RabbitMQService.routing_key.measurement",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.routing_key.measurement."
+    },
+    {
+      "name": "RabbitMQService.queue.alert.system",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.queue.alert.system."
+    },
+    {
+      "name": "RabbitMQService.queue.alert.measurement",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.queue.alert.measurement."
+    },
+    {
+      "name": "RabbitMQService.queue.measurement",
+      "type": "java.lang.String",
+      "description": "Description for RabbitMQService.queue.measurement."
+    },
+    {
+      "name": "cache.mq.alert.system.path",
+      "type": "java.lang.String",
+      "description": "Description for cache.mq.alert.system.path."
+    },
+    {
+      "name": "cache.mq.alert.measurement.path",
+      "type": "java.lang.String",
+      "description": "Description for cache.mq.alert.measurement.path."
+    },
+    {
+      "name": "cache.mq.measurement.path",
+      "type": "java.lang.String",
+      "description": "Description for cache.mq.measurement.path."
+    },
+    {
+      "name": "cache.alert.system.max_records_per_sensor",
+      "type": "java.lang.String",
+      "description": "Description for cache.alert.system.max_records_per_sensor."
+    },
+    {
+      "name": "cache.alert.measurement.max_records_per_sensor",
+      "type": "java.lang.String",
+      "description": "Description for cache.alert.measurement.max_records_per_sensor."
+    },
+    {
+      "name": "cache.measurement.max_records_per_sensor",
+      "type": "java.lang.String",
+      "description": "Description for cache.measurement.max_records_per_sensor."
     }
   ] }

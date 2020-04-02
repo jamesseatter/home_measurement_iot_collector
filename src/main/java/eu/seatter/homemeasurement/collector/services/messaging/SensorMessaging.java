@@ -13,7 +13,7 @@ import javax.mail.MessagingException;
  * Time: 12:13
  */
 public interface SensorMessaging {
-    boolean sendMeasurement(Measurement measurement) throws MessagingException;
+    boolean sendMeasurement(Measurement measurement);
     boolean sendMeasurementAlert(MeasurementAlert measurementAlert) throws MessagingException;
-    boolean sendSystemAlert(SystemAlert systemAlert) throws MessagingException;
+    boolean sendSystemAlert(SystemAlert systemAlert);
 }
