@@ -1,9 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.alert.email;
 
-import eu.seatter.homemeasurement.collector.model.AlertContactGroup;
 import eu.seatter.homemeasurement.collector.model.AlertDestination;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
-import eu.seatter.homemeasurement.collector.services.alert.AlertContactJSON;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
@@ -28,20 +26,22 @@ public class EmailAlertServiceImpl implements EmailAlertService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+    private final EmailAlertGroupRecipientService emailAlertGroupRecipientService;
 
-    public EmailAlertServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
+    public EmailAlertServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine, EmailAlertGroupRecipientService emailAlertGroupRecipientService) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
+        this.emailAlertGroupRecipientService = emailAlertGroupRecipientService;
     }
 
     @Override
-    public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, SensorRecord sensorRecord) throws MessagingException {
+    public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Measurement measurement) throws MessagingException {
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "utf-8");
         try {
             try {
-                String recipients = getRecipients(sensorRecord);
+                String recipients = emailAlertGroupRecipientService.getRecipients(measurement.getAlertgroup());
                 if(recipients != null) {
                     helper.setTo(recipients.split(";"));
                 }
@@ -50,16 +50,16 @@ public class EmailAlertServiceImpl implements EmailAlertService {
             }
 
             try {
-                helper.setSubject(getSubject(sensorRecord, alertTitle));
+                helper.setSubject(getSubject(measurement, alertTitle));
             } catch (MessagingException ex) {
                 throw new MessagingException("No email recipients defined");
             }
 
             try {
                 if(alertType == AlertType.General) {
-                    message.setContent(getContent("AlertGeneralMessageEmailTemplate", environment,alertTitle, sensorRecord, alertMessage), "text/html");
+                    message.setContent(getContent("AlertGeneralMessageEmailTemplate", environment,alertTitle, measurement, alertMessage), "text/html");
                 } else if(alertType == AlertType.Measurement) {
-                    message.setContent(getContent(getAlertDestination(sensorRecord), environment,alertTitle, sensorRecord, alertMessage), "text/html");
+                    message.setContent(getContent(getAlertDestination(measurement), environment,alertTitle, measurement, alertMessage), "text/html");
                 }
             } catch (MessagingException ex) {
                 throw new MessagingException("Error occurred setting the email content");
@@ -86,20 +86,8 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         }
     }
 
-    private String getRecipients(SensorRecord sr) throws IllegalArgumentException {
-        if(sr.getAlertgroup().isEmpty()) {
-            return null;
-        }
-        String alertGroup = sr.getAlertgroup();
-        AlertContactGroup ag = AlertContactJSON.GetContactsForGroup(alertGroup).orElse(new AlertContactGroup());
 
-        if(ag.getAddress().isEmpty()) {
-            throw new java.lang.IllegalArgumentException("No recipients found for alertgroup:" + alertGroup);
-        }
-        log.debug("Email recipients : " + ag.getAddress());
-        return (ag.getAddress());
-    }
-    private String getSubject(SensorRecord sr, String alertTitle) {
+    private String getSubject(Measurement sr, String alertTitle) {
         String subject = "Home Monitor Alert - " + sr.getTitle() + " - " + sr.getValue() + sr.getMeasurementUnit().toString();
         if(alertTitle != null || alertTitle != "") {
             subject = alertTitle;
@@ -108,7 +96,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         return subject;
     }
 
-    private String getAlertDestination(SensorRecord sr) {
+    private String getAlertDestination(Measurement sr) {
         String alertDestination = "";
         try {
             alertDestination = AlertDestination.valueOf(sr.getAlertdestination()).getTemplate();
@@ -137,7 +125,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         return "Developement";
     }
 
-    private String getContent(String alertTemplate, String environment, String title, SensorRecord sr, String alertMessage) {
+    private String getContent(String alertTemplate, String environment, String title, Measurement sr, String alertMessage) {
         Context context = new Context();
         context.setVariable("environment", formatSpringEnvironment(environment));
         context.setVariable("title", title);

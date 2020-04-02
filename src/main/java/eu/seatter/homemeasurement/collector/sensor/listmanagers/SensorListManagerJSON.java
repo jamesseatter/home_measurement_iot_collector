@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,7 @@ public class SensorListManagerJSON implements SensorList {
     }
 
     @Override
-    public List<SensorRecord> getSensors() {
+    public List<Measurement> getSensors() {
         log.info("Start JSON Sensor list import");
         File sensorFileLocation;
 
@@ -43,12 +43,12 @@ public class SensorListManagerJSON implements SensorList {
         }
         log.info("Loading sensors");
 
-        List<SensorRecord> sensorRecords;
+        List<Measurement> measurements;
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-        TypeReference<List<SensorRecord>> typeReference = new TypeReference<List<SensorRecord>>() {};
+        TypeReference<List<Measurement>> typeReference = new TypeReference<List<Measurement>>() {};
 
         InputStream inputStream;
         try {
@@ -59,14 +59,14 @@ public class SensorListManagerJSON implements SensorList {
         }
 
         try {
-            sensorRecords = mapper.readValue(inputStream, typeReference);
+            measurements = mapper.readValue(inputStream, typeReference);
 
         } catch (IOException ex) {
             log.error("Unable to read in JSON file: " + ex.getMessage());
             return Collections.emptyList();
         }
-        log.info("Complete JSON Sensor list import finished. Found " + sensorRecords.size() + " sensors");
-        return sensorRecords;
+        log.info("Complete JSON Sensor list import finished. Found " + measurements.size() + " sensors");
+        return measurements;
 
     }
 }

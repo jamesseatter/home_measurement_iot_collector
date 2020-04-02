@@ -1,6 +1,8 @@
 package eu.seatter.homemeasurement.collector.services.messaging;
 
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
+import eu.seatter.homemeasurement.collector.model.SystemAlert;
 
 import javax.mail.MessagingException;
 
@@ -11,5 +13,7 @@ import javax.mail.MessagingException;
  * Time: 12:13
  */
 public interface SensorMessaging {
-    void sendMeasurement(SensorRecord sensorRecord) throws MessagingException;
+    boolean sendMeasurement(Measurement measurement) throws MessagingException;
+    boolean sendMeasurementAlert(MeasurementAlert measurementAlert) throws MessagingException;
+    boolean sendSystemAlert(SystemAlert systemAlert) throws MessagingException;
 }

@@ -4,9 +4,9 @@
 //import eu.seatter.homemeasurement.collector.commands.RegistrationCommand;
 //import eu.seatter.homemeasurement.collector.commands.SensorCommand;
 //import eu.seatter.homemeasurement.collector.converters.DeviceToDeviceCommand;
-//import eu.seatter.homemeasurement.collector.converters.SensorRecordToSensorCommand;
+//import eu.seatter.homemeasurement.collector.converters.measurementToSensorCommand;
 //import eu.seatter.homemeasurement.collector.model.Device;
-//import eu.seatter.homemeasurement.collector.model.SensorRecord;
+//import eu.seatter.homemeasurement.collector.model.measurement;
 //import lombok.extern.slf4j.Slf4j;
 //import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.stereotype.Service;
@@ -37,11 +37,11 @@
 //    private String baseRegistrationURI;
 //
 //    private final DeviceToDeviceCommand converterDeviceToDeviceCommand;
-//    private final SensorRecordToSensorCommand converterSensorRecordToSensorCommand;
+//    private final measurementToSensorCommand convertermeasurementToSensorCommand;
 //
-//    public RegistrationService(DeviceToDeviceCommand converterDeviceToDeviceCommand, SensorRecordToSensorCommand converterSensorRecordToSensorCommand) {
+//    public RegistrationService(DeviceToDeviceCommand converterDeviceToDeviceCommand, measurementToSensorCommand convertermeasurementToSensorCommand) {
 //        this.converterDeviceToDeviceCommand = converterDeviceToDeviceCommand;
-//        this.converterSensorRecordToSensorCommand = converterSensorRecordToSensorCommand;
+//        this.convertermeasurementToSensorCommand = convertermeasurementToSensorCommand;
 //    }
 //
 //    public RegistrationCommand registerCollector(Device device) {
@@ -82,13 +82,13 @@
 //        return result.block();
 //    }
 //
-//    public SensorCommand registerSensors(List<SensorRecord> sensorRecordList) {
+//    public SensorCommand registerSensors(List<measurement> measurementList) {
 //
 //        final WebClient client = WebClient.builder().baseUrl(edgeURI).build();
 //
 //        List<SensorCommand> sensorCommandList = new ArrayList<>();
-//        for(SensorRecord sr : sensorRecordList) {
-//            sensorCommandList.add(converterSensorRecordToSensorCommand.convert(sr));
+//        for(measurement sr : measurementList) {
+//            sensorCommandList.add(convertermeasurementToSensorCommand.convert(sr));
 //        }
 //
 //        Mono<SensorCommand> result = client

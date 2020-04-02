@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector;
 
-import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.SensorType;
 
 import java.time.ZonedDateTime;
@@ -12,10 +12,10 @@ import java.time.ZonedDateTime;
  * Date: 21/05/2019
  * Time: 12:47
  */
-public class TestUtility_SensorRecord {
+public class TestUtility_Measurement {
 
-    public static SensorRecord createTestRecord(String sensorId, ZonedDateTime dt) {
-        return new SensorRecord()
+    public static Measurement createTestRecord(String sensorId, ZonedDateTime dt) {
+        return new Measurement()
                 .toBuilder()
                 .alertdestination("PRIVATE")
                 .alertgroup("testalertgroup")
@@ -23,7 +23,7 @@ public class TestUtility_SensorRecord {
                 .familyid(10)
                 .high_threshold(70.0)
                 .low_threshold(35.0)
-                .measurementUnit(SensorMeasurementUnit.C)
+                .measurementUnit(MeasurementUnit.C)
                 .measureTimeUTC(dt)
                 .sensorType(SensorType.ONEWIRE)
                 .sensorid(sensorId)

@@ -3,7 +3,7 @@ package eu.seatter.homemeasurement.collector.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerJSON;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerPi4J;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
@@ -47,15 +47,15 @@ public class SensorListServiceTest {
     @Test
     public void givenSensorFile_whenTwoSensors_thenReturnNoSensors() {
         //given
-        List<SensorRecord> sensorListJSON = new ArrayList<>();
-        sensorListJSON.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
-        sensorListJSON.add(SensorRecord.builder().sensorid("28-0000095cd28c").familyid(40).build());
+        List<Measurement> sensorListJSON = new ArrayList<>();
+        sensorListJSON.add(Measurement.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListJSON.add(Measurement.builder().sensorid("28-0000095cd28c").familyid(40).build());
 
         //when
         when(sensorListManagerJSON.getSensors()).thenReturn(sensorListJSON);
 
         //then
-        List<SensorRecord> SensorListResults = sensorListService.getSensors();
+        List<Measurement> SensorListResults = sensorListService.getSensors();
         assertEquals(0, SensorListResults.size());
         verify(sensorListManagerJSON).getSensors();
     }
@@ -63,15 +63,15 @@ public class SensorListServiceTest {
     @Test
     public void given1WireScan_whenNoSensorFile_thenReturnNoSensors() {
         //given
-        List<SensorRecord> sensorListJSON = new ArrayList<>();
-        sensorListJSON.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
-        sensorListJSON.add(SensorRecord.builder().sensorid("28-0000095cd28c").familyid(40).build());
+        List<Measurement> sensorListJSON = new ArrayList<>();
+        sensorListJSON.add(Measurement.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListJSON.add(Measurement.builder().sensorid("28-0000095cd28c").familyid(40).build());
 
         //when
         when(sensorListManagerPi4Jl.getSensors()).thenReturn(sensorListJSON);
 
         //then
-        List<SensorRecord> SensorListResults = sensorListService.getSensors();
+        List<Measurement> SensorListResults = sensorListService.getSensors();
         assertEquals(0, SensorListResults.size()); // note, sensors are only listed in the json
         verify(sensorListManagerPi4Jl).getSensors();
     }
@@ -79,20 +79,20 @@ public class SensorListServiceTest {
     @Test
     public void givenSensorFileAnd1WireScan_whenTwoSensors_thenReturnSensors() {
         //given
-        List<SensorRecord> sensorListJSON = new ArrayList<>();
-        sensorListJSON.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
-        sensorListJSON.add(SensorRecord.builder().sensorid("28-0000095cd28c").familyid(40).build());
+        List<Measurement> sensorListJSON = new ArrayList<>();
+        sensorListJSON.add(Measurement.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListJSON.add(Measurement.builder().sensorid("28-0000095cd28c").familyid(40).build());
 
-        List<SensorRecord> sensorListPi4j = new ArrayList<>();
-        sensorListPi4j.add(SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).build());
-        sensorListPi4j.add(SensorRecord.builder().sensorid("28-0000095cd28c").familyid(40).build());
+        List<Measurement> sensorListPi4j = new ArrayList<>();
+        sensorListPi4j.add(Measurement.builder().sensorid("28-000008d2fdb9").familyid(40).build());
+        sensorListPi4j.add(Measurement.builder().sensorid("28-0000095cd28c").familyid(40).build());
 
         //when
         when(sensorListManagerJSON.getSensors()).thenReturn(sensorListJSON);
         when(sensorListManagerPi4Jl.getSensors()).thenReturn(sensorListPi4j);
 
         //then
-        List<SensorRecord> SensorListResults = sensorListService.getSensors();
+        List<Measurement> SensorListResults = sensorListService.getSensors();
         assertEquals(2, SensorListResults.size()); // note, sensors are only listed in the json so only 2 expected
         verify(sensorListManagerJSON).getSensors();
         verify(sensorListManagerPi4Jl).getSensors();
@@ -100,11 +100,11 @@ public class SensorListServiceTest {
 
     @Test
     public void tt() throws IOException {
-        SensorRecord sensorRecord = SensorRecord.builder().sensorid("28-000008d2fdb9").familyid(40).value(54.5).measureTimeUTC(ZonedDateTime.now(ZoneId.of("Europe/Zurich"))).build();
+        Measurement measurement = Measurement.builder().sensorid("28-000008d2fdb9").familyid(40).value(54.5).measureTimeUTC(ZonedDateTime.now(ZoneId.of("Europe/Zurich"))).build();
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        String json = objectMapper.writeValueAsString(sensorRecord);
+        String json = objectMapper.writeValueAsString(measurement);
         System.out.println("asa");
     }
 }

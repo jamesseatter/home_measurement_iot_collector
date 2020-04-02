@@ -104,5 +104,10 @@
       "name": "message.mq.rabbitmq.enabled",
       "type": "java.lang.String",
       "description": "Description for message.mq.rabbitmq.enabled."
+    },
+    {
+      "name": "message.alert.messaging.enabled",
+      "type": "java.lang.String",
+      "description": "Description for message.alert.messaging.enabled."
     }
   ] }

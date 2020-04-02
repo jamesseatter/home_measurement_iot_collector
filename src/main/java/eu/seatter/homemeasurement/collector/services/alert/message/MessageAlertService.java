@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.services.alert.email;
+package eu.seatter.homemeasurement.collector.services.alert.message;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
@@ -8,9 +8,9 @@ import javax.mail.MessagingException;
 /**
  * Created by IntelliJ IDEA.
  * User: jas
- * Date: 13/05/2019
- * Time: 16:24
+ * Date: 31/03/2020
+ * Time: 12:29
  */
-public interface EmailAlertService {
+public interface MessageAlertService {
     void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Measurement measurement) throws MessagingException;
 }

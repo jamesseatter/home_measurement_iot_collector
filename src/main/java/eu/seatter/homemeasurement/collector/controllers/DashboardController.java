@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,12 +30,13 @@ public class DashboardController {
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
-        Map<String, List<SensorRecord>> allSortedMeasurements = cacheService.getAllSorted();
+        Map<String, List<Measurement>> allSortedMeasurements = cacheService.getAllSorted();
         for(String id : allSortedMeasurements.keySet()) {
             allSortedMeasurements.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
         }
 
         model.addAttribute("allMeasurements", allSortedMeasurements);
+        model.addAttribute("view_days","");
         return "index";
     }
 }

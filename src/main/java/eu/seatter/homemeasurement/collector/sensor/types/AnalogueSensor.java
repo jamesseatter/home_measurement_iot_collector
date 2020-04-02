@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.sensor.types;
 
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 public class AnalogueSensor implements Sensor {
 
     @Override
-    public Double readSensorData(SensorRecord sensorRecord) {
+    public Double readSensorData(Measurement measurement) {
         Double value=0D;
-        String sensorDescription = "sensor [" + sensorRecord.getSensorid() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyid() + "]";
+        String sensorDescription = "sensor [" + measurement.getSensorid() + "/" + measurement.getSensorType() + "/" + measurement.getFamilyid() + "]";
         log.warn("ANALOGUE SENSOR READING NOT IMPLEMENTED for sensor : " + sensorDescription);
         return value;
     }
