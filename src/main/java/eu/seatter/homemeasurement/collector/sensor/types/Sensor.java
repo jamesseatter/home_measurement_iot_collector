@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.sensor.types;
 
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,5 +9,5 @@ import eu.seatter.homemeasurement.collector.model.SensorRecord;
  * Time: 13:25
  */
 public interface Sensor {
-    Double readSensorData(SensorRecord sensorRecord);
+    Double readSensorData(Measurement measurement);
 }

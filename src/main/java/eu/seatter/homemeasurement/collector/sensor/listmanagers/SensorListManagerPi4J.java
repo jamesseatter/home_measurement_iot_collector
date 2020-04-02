@@ -2,7 +2,7 @@ package eu.seatter.homemeasurement.collector.sensor.listmanagers;
 
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.SensorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,23 +21,23 @@ import java.util.List;
 public class SensorListManagerPi4J implements SensorList {
 
     @Override
-    public List<SensorRecord> getSensors() {
+    public List<Measurement> getSensors() {
         log.info("Start 1-Wire sensor scan");
-        List<SensorRecord> sensorRecords = new ArrayList<>();
+        List<Measurement> measurements = new ArrayList<>();
 
         W1Master w1Master = new W1Master();
         List<W1Device> w1DeviceList = w1Master.getDevices();
         log.info("Found : " + w1DeviceList.size());
         for (W1Device w1d : w1DeviceList) {
             log.debug("1 wire device : " + w1d.getName());
-            SensorRecord sensor = new SensorRecord();
+            Measurement sensor = new Measurement();
             sensor.setSensorid(w1d.getId().trim());
             sensor.setFamilyid(w1d.getFamilyId());
             sensor.setSensorType(SensorType.ONEWIRE);
-            sensorRecords.add(sensor);
+            measurements.add(sensor);
             log.info("  Found sensor : " + sensor.loggerFormat());
         }
-        log.info("Completed 1-Wire sensor scan. Found " + sensorRecords.size() + " sensors");
-        return sensorRecords;
+        log.info("Completed 1-Wire sensor scan. Found " + measurements.size() + " sensors");
+        return measurements;
     }
 }

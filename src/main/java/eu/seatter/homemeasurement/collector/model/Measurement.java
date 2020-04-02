@@ -18,7 +18,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder=true)
-public class SensorRecord implements Comparable<SensorRecord> {
+public class Measurement implements Comparable<Measurement> {
+    private UUID recordUID;
     private String sensorid;
     private String title;
 //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -27,16 +28,18 @@ public class SensorRecord implements Comparable<SensorRecord> {
     private Double value;
 
     private String description;
-    private SensorMeasurementUnit measurementUnit;
+    private MeasurementUnit measurementUnit;
     private SensorType sensorType;
     private int familyid;
 
     private Double low_threshold;
     private Double high_threshold;
+
+    private Boolean measurementSentToMq = false;
+
+    private String alertId;
     private String alertgroup;
     private String alertdestination;
-
-    private UUID alertUUID; //updated when an alert is generated
 
     public String loggerFormat() {
         return "[" + sensorid + "/" + sensorType + "/" + familyid + "]";
@@ -44,7 +47,7 @@ public class SensorRecord implements Comparable<SensorRecord> {
 
     @Override
     public String toString() {
-        return "SensorRecord{" +
+        return "measurement{" +
                 "sensorid='" + sensorid + '\'' +
                 ", sensorType=" + sensorType +
                 ", measureTimeUTC=" + measureTimeUTC +
@@ -53,7 +56,7 @@ public class SensorRecord implements Comparable<SensorRecord> {
     }
 
     @Override
-    public int compareTo(SensorRecord that) {
+    public int compareTo(Measurement that) {
         return this.measureTimeUTC.compareTo(that.measureTimeUTC);
     }
 }

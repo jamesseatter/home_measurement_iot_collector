@@ -20,19 +20,22 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder(toBuilder=true)
 public class MeasurementAlert  implements Comparable<MeasurementAlert> {
-        private UUID alertUUID;
+    private UUID alertUID;
     private String title;
     //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = ZonedDateTimeSerializer.class)
-    private ZonedDateTime alertTimeUTC; // equals the SensorRecord measurementTimeUTC
+    private ZonedDateTime alertTimeUTC; // equals the measurement measurementTimeUTC
 
     private Double value;
-    private SensorMeasurementUnit measurementUnit;
+    private MeasurementUnit measurementUnit;
 
     private String message;
 
     private boolean alertSentEmail;
     private String alertSentEmailTO;
+    private boolean alertSentMQ;
+
+    private String environment;
 
     public String loggerFormat() {
         return "[" + title + "]";
@@ -40,7 +43,7 @@ public class MeasurementAlert  implements Comparable<MeasurementAlert> {
 
     @Override
     public String toString() {
-        return "SensorRecord{" +
+        return "measurement{" +
                 "title='" + title + '\'' +
                 ", value=" + value + " " + measurementUnit.toString() +
                 ", measureTimeUTC=" + alertTimeUTC +

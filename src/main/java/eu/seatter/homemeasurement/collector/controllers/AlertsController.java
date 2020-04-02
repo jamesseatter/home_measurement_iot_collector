@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
 import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
 import org.springframework.stereotype.Controller;
@@ -34,7 +34,7 @@ public class AlertsController {
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
-        Map<String, List<SensorRecord>> allSortedMeasurementAlerts = alertCacheService.getAllSorted();
+        Map<String, List<Measurement>> allSortedMeasurementAlerts = alertCacheService.getAllSorted();
         for(String id : allSortedMeasurementAlerts.keySet()) {
             allSortedMeasurementAlerts.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
         }

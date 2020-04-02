@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.sensor.SensorFactory;
 import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,26 +24,27 @@ import java.util.Objects;
 @Slf4j
 public class SensorMeasurement {
 
-    private final List<SensorRecord> measurements = new ArrayList<>();
+    private final List<Measurement> measurements = new ArrayList<>();
 
     @SuppressWarnings("OctalInteger")
-    public List<SensorRecord> collect(List<SensorRecord> sensorList) {
+    public List<Measurement> collect(List<Measurement> sensorList) {
         log.info("Start measurement collection");
         ZonedDateTime measurementTime = ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES); //all measurements will use the same time to make reporting easier.
-        for (SensorRecord sensorRecord : sensorList) {
-            if(sensorRecord.getSensorid() == null) {
-                log.error(sensorRecord.loggerFormat() + " : SensorId not found");
+        for (Measurement measurement : sensorList) {
+            if(measurement.getSensorid() == null) {
+                log.error(measurement.loggerFormat() + " : SensorId not found");
                 //todo improve handling of missing sensorId
                 continue;
             }
-            SensorRecord srWithMeasurement;
+            Measurement srWithMeasurement;
             try {
-                readSensorValue(sensorRecord);
-                sensorRecord.setMeasureTimeUTC(measurementTime);
-                measurements.add(sensorRecord);
-                log.debug(sensorRecord.loggerFormat() + " : Value returned - " + sensorRecord.getValue());
+                readSensorValue(measurement);
+                measurement.setMeasureTimeUTC(measurementTime);
+                measurement.setRecordUID(UUID.randomUUID());
+                measurements.add(measurement);
+                log.debug(measurement.loggerFormat() + " : Value returned - " + measurement.getValue());
             } catch (Exception ex) {
-                log.error(sensorRecord.loggerFormat() + " : Error reading sensor. " + ex.getMessage());
+                log.error(measurement.loggerFormat() + " : Error reading sensor. " + ex.getMessage());
                 break;
             }
         }
@@ -50,18 +52,15 @@ public class SensorMeasurement {
         return measurements;
     }
 
-    private void readSensorValue(SensorRecord sensorRecord) {
-        Sensor sensorReader = SensorFactory.getSensor(sensorRecord.getSensorType());
+    private void readSensorValue(Measurement measurement) {
+        Sensor sensorReader = SensorFactory.getSensor(measurement.getSensorType());
         try {
-            sensorRecord.setValue(Objects.requireNonNull(sensorReader).readSensorData(sensorRecord));
-
+            measurement.setValue(Objects.requireNonNull(sensorReader).readSensorData(measurement));
         }
         catch (RuntimeException ex) {
             //todo improve exception handling
-            log.error(sensorRecord.loggerFormat() + " : " + ex.getLocalizedMessage());
+            log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
             throw ex;
         }
     }
-
-
 }

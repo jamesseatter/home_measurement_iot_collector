@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.cache;
 
-import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheImpl;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheMapImpl;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static eu.seatter.homemeasurement.collector.TestUtility_SensorRecord.createTestRecord;
+import static eu.seatter.homemeasurement.collector.TestUtility_Measurement.createTestRecord;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -29,8 +29,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(SpringRunner.class)
 public class CacheServiceTest {
 
-    private SensorRecord sensorRecord1;
-    private SensorRecord sensorRecord2;
+    private Measurement measurement1;
+    private Measurement measurement2;
 
     @TestConfiguration
     static class CacheServiceTestContextConfiguration {
@@ -45,25 +45,25 @@ public class CacheServiceTest {
     private MeasurementCacheService cacheService;
 
     @MockBean
-    private MeasurementCacheImpl measurementCache;
+    private MeasurementCacheMapImpl measurementCache;
 
 
     @Before
     public void setUp() throws Exception {
-        sensorRecord1 = createTestRecord("SENSOR_1", ZonedDateTime.now());
-        sensorRecord2 = createTestRecord("SENSOR_2", ZonedDateTime.now());
+        measurement1 = createTestRecord("SENSOR_1", ZonedDateTime.now());
+        measurement2 = createTestRecord("SENSOR_2", ZonedDateTime.now());
 
     }
 
     @Test
     public void whenGetAll_thenReturnTwoSensors() {
         //given
-        Map<String,List<SensorRecord>> sensorRecordMap = new HashMap<>();
-        sensorRecordMap.putIfAbsent("SENSOR_1", Arrays.asList(sensorRecord1));
-        sensorRecordMap.putIfAbsent("SENSOR_2", Arrays.asList(sensorRecord2));
+        Map<String,List<Measurement>> measurementMap = new HashMap<>();
+        measurementMap.putIfAbsent("SENSOR_1", Arrays.asList(measurement1));
+        measurementMap.putIfAbsent("SENSOR_2", Arrays.asList(measurement2));
 
         //when
-        Mockito.when(measurementCache.getAll()).thenReturn(sensorRecordMap);
+        Mockito.when(measurementCache.getAll()).thenReturn(measurementMap);
 
         //then
         assertEquals(2, cacheService.getAll().size());
@@ -73,10 +73,10 @@ public class CacheServiceTest {
     @Test
     public void whenGetAllBySensorId_thenReturnOneSensor() {
         //given
-        List<SensorRecord> sensorRecordList = Arrays.asList(sensorRecord1);
+        List<Measurement> measurementList = Arrays.asList(measurement1);
 
         //when
-        Mockito.when(measurementCache.getAllBySensorId(any(String.class))).thenReturn(sensorRecordList);
+        Mockito.when(measurementCache.getAllBySensorId(any(String.class))).thenReturn(measurementList);
 
         //then
         assertEquals(1, cacheService.getAllBySensorId("SENSOR_1").size());
@@ -90,10 +90,10 @@ public class CacheServiceTest {
     @Test
     public void whenGetLastBySensorId_thenReturn1Sensor() {
         //given
-        List<SensorRecord> sensorRecordList = Arrays.asList(sensorRecord1);
+        List<Measurement> measurementList = Arrays.asList(measurement1);
 
         //when
-        Mockito.when(measurementCache.getLastBySensorId(any(String.class),any(int.class))).thenReturn(sensorRecordList);
+        Mockito.when(measurementCache.getLastBySensorId(any(String.class),any(int.class))).thenReturn(measurementList);
 
         //then
         assertEquals(1, cacheService.getLastBySensorId("SENSOR_1",1).size());
@@ -128,8 +128,8 @@ public class CacheServiceTest {
     @Test
     public void whenGetCacheSizeBySensorId_returnOne() {
         //then
-        Map<String,List<SensorRecord>> sensorRecordMap = new HashMap<>();
-        sensorRecordMap.putIfAbsent("SENSOR_1", Arrays.asList(sensorRecord1));
+        Map<String,List<Measurement>> measurementMap = new HashMap<>();
+        measurementMap.putIfAbsent("SENSOR_1", Arrays.asList(measurement1));
 
         //when
         Mockito.when(measurementCache.getCacheSizeBySensorId(any(String.class))).thenReturn(1);

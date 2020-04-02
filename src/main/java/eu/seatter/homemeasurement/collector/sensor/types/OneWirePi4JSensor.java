@@ -5,8 +5,8 @@ import com.pi4j.component.temperature.impl.TmpDS18B20DeviceType;
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
 import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
-import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -25,37 +25,37 @@ public class OneWirePi4JSensor implements Sensor {
     private final W1Master w1master = new W1Master();
 
     @Override
-    public Double readSensorData(SensorRecord sensorRecord) {
-        log.info("Processing : " + sensorRecord.loggerFormat());
-        if(sensorRecord.getSensorid().isEmpty()) {
-            throw new RuntimeException(sensorRecord.loggerFormat() + " : ID not set");
+    public Double readSensorData(Measurement measurement) {
+        log.info("Processing : " + measurement.loggerFormat());
+        if(measurement.getSensorid().isEmpty()) {
+            throw new RuntimeException(measurement.loggerFormat() + " : ID not set");
         }
-        String sensorID = sensorRecord.getSensorid();
+        String sensorID = measurement.getSensorid();
         Optional<W1Device> w1device;
 
-        if(sensorRecord.getFamilyid() == TmpDS18B20DeviceType.FAMILY_CODE) {
+        if(measurement.getFamilyid() == TmpDS18B20DeviceType.FAMILY_CODE) {
             log.debug("Sensor Family - DS18B20");
             w1device = getTmpDS18B20(sensorID);
-            sensorRecord.setMeasurementUnit(SensorMeasurementUnit.C);
+            measurement.setMeasurementUnit(MeasurementUnit.C);
         } else {
-            log.warn("Sensor Family " + sensorRecord.getFamilyid() + " NOT SUPPORTED");
+            log.warn("Sensor Family " + measurement.getFamilyid() + " NOT SUPPORTED");
             return 0.0D;
             //todo convert to a throw
         }
 
         if(w1device.isPresent()) {
-            double measurement;
+            double value;
 
             try {
-                measurement = ((TemperatureSensor) w1device.get()).getTemperature();
-                log.debug(sensorRecord.loggerFormat() + " : Measurement - " + measurement);
+                value = ((TemperatureSensor) w1device.get()).getTemperature();
+                log.debug(measurement.loggerFormat() + " : Measurement - " + value);
             } catch (Exception e) {
-                throw new RuntimeException(sensorRecord.loggerFormat() + " : Unable to get measurement from sensor");
+                throw new RuntimeException(measurement.loggerFormat() + " : Unable to get measurement from sensor");
             }
-            return measurement;
+            return value;
 
         } else {
-            throw new SensorNotFoundException("Sensor no longer connected : " + sensorRecord.loggerFormat(),
+            throw new SensorNotFoundException("Sensor no longer connected : " + measurement.loggerFormat(),
                     "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
         }
     }

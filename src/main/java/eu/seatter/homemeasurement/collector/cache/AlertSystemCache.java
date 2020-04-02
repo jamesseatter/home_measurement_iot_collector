@@ -1,5 +1,8 @@
 package eu.seatter.homemeasurement.collector.cache;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,4 +18,7 @@ public interface AlertSystemCache {
 
     int getCacheMaxSize();
     int getCacheSize();
+
+    boolean flushToFile() throws JsonMappingException, IOException ;
+    int readFromFile() throws IOException;
 }

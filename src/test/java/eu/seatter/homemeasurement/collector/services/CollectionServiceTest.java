@@ -1,7 +1,7 @@
 //package eu.seatter.homemeasurement.collector.services;
 //
-//import SensorRecord;
-//import eu.seatter.homemeasurement.collector.model.SensorRecord;
+//import measurement;
+//import eu.seatter.homemeasurement.collector.model.measurement;
 //import eu.seatter.homemeasurement.collector.services.device.DeviceService;
 //import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
 //import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
@@ -33,8 +33,8 @@
 //
 //    private CollectorService iotService;
 //
-//    private List<SensorRecord> sensorList = new ArrayList<>();
-//    private SensorRecord mockData;
+//    private List<measurement> sensorList = new ArrayList<>();
+//    private measurement mockData;
 //
 //
 //    @Before

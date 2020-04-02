@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
-import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.SensorType;
 import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
 import org.junit.Before;
@@ -47,10 +47,10 @@ public class DashboardControllerTest {
 
     }
 
-    private SensorRecord createTestRecord(String sensorId, ZonedDateTime dt) {
-        return new SensorRecord()
+    private Measurement createTestRecord(String sensorId, ZonedDateTime dt) {
+        return new Measurement()
                 .toBuilder()
-                .familyid(10).description("Test sensor for testing json").low_threshold(35.0).high_threshold(70.0).measurementUnit(SensorMeasurementUnit.C).sensorType(SensorType.ONEWIRE).value(55.8).alertgroup("testalertgroup")
+                .familyid(10).description("Test sensor for testing json").low_threshold(35.0).high_threshold(70.0).measurementUnit(MeasurementUnit.C).sensorType(SensorType.ONEWIRE).value(55.8).alertgroup("testalertgroup")
                 .sensorid(sensorId)
                 .measureTimeUTC(dt)
                 .build();

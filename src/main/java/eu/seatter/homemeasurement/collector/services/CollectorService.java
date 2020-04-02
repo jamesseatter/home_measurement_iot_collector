@@ -1,11 +1,10 @@
 package eu.seatter.homemeasurement.collector.services;
 
-import eu.seatter.homemeasurement.collector.model.SensorMeasurementUnit;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorType;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
-import eu.seatter.homemeasurement.collector.services.alert.AlertServiceMeasurement;
-import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
+import eu.seatter.homemeasurement.collector.services.cache.MQMeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
@@ -17,12 +16,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -41,7 +39,7 @@ public class CollectorService implements CommandLineRunner {
     private final Boolean mqEnabled;
 
     private final MeasurementCacheService measurementCacheService;
-    private final AlertCacheService alertCacheService;
+    private final MQMeasurementCacheService mqMeasurementCacheService;
     private final SensorMeasurement sensorMeasurement;
     private final SensorListService sensorListService;
     private final AlertService alertService;
@@ -50,36 +48,29 @@ public class CollectorService implements CommandLineRunner {
     public CollectorService(
             SensorMeasurement sensorMeasurement,
             SensorListService sensorListService,
-            AlertServiceMeasurement alertService,
+            AlertService alertService,
             MeasurementCacheService measurementCacheService,
-            AlertCacheService alertCacheService,
             RabbitMQService mqService,
             @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
             @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
-            @Value("#{new Boolean('${message.alert.enabled:false}')}") Boolean alertEnabled) {
+            MQMeasurementCacheService mqMeasurementCacheService) {
                     this.sensorMeasurement = sensorMeasurement;
                     this.sensorListService = sensorListService;
                     this.alertService = alertService;
-                    this.alertCacheService = alertCacheService;
                     this.measurementCacheService = measurementCacheService;
                     this.mqService = mqService;
                     this.mqEnabled = mqEnabled;
                     this.readIntervalSeconds = readIntervalSeconds;
+                    this.mqMeasurementCacheService = mqMeasurementCacheService;
     }
 
     @Override
     public void run(String... strings) throws MessagingException {
         boolean running = true;
-//        try {
-//            deviceService.registerDevice();
-//        } catch (RuntimeException ex) {
-//
-//        }
-
         log.info("Sensor Read Interval (seconds) : "+ readIntervalSeconds);
 
-        List<SensorRecord> sensorList = Collections.emptyList();
-        List<SensorRecord> measurements = new ArrayList<>();
+        List<Measurement> sensorList = Collections.emptyList();
+        List<Measurement> measurements = new ArrayList<>();
 
         try {
             if(activeProfile.equals("dev")) {
@@ -97,8 +88,47 @@ public class CollectorService implements CommandLineRunner {
 //                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
         }
 
+        //load cache's
+        try {
+            log.info("Load mq cache");
+            int count = mqMeasurementCacheService.readFromFile();
+            log.info("Loaded " + count + " mq records");
+        } catch (Exception ex) {
+            log.error("Error loading cached mq entries from file. No cached data will be loaded : " + ex.getMessage());
+        }
+        try {
+            log.info("Load measurement cache");
+            int count = measurementCacheService.readFromFile();
+            log.info("Loaded " + count + " measurement records");
+        } catch (Exception ex) {
+            log.error("Error loading cached measurement entries from file. No cached data will be loaded : " + ex.getMessage());
+        }
+
+
         while(running) {
-           if(sensorList.size() > 0) {
+            //If the mqcache has entries, try to sent them to MQ
+            if(mqEnabled) {
+                if (mqMeasurementCacheService.getCacheSize() > 0) {
+                    log.warn("MQ cache has entries that must be sent to the MQ server.");
+                    List<Measurement> mqmeasurements = mqMeasurementCacheService.getAll();
+                    log.warn("MQ cache has " + mqmeasurements.size() + " entries that must be sent to the MQ server.");
+                    Iterator iter = mqmeasurements.iterator();
+                    while(iter.hasNext()) {
+                        Measurement m = (Measurement) iter.next();
+                        boolean result = mqService.sendMeasurement(m);
+                        if (result) {
+                            iter.remove();
+                            log.info("Record " +  m.getRecordUID() + " sent to MQ");
+                        }
+                    }
+                    try {
+                        mqMeasurementCacheService.flushToFile();
+                    } catch (IOException ex) {
+                        log.error("Error flushing the MQ Cache to disk : " + ex.getMessage());
+                    }
+                }
+            }
+            if(sensorList.size() > 0) {
                 running = true;
                 //todo Send sensor list to the Edge
             } else {
@@ -116,8 +146,7 @@ public class CollectorService implements CommandLineRunner {
                 measurements = sensorMeasurement.collect(sensorList);
             }
 
-
-            for (SensorRecord sr : measurements){
+            for (Measurement sr : measurements){
                 measurementCacheService.add(sr);
                 if (mqEnabled) {
                     mqService.sendMeasurement(sr);
@@ -136,14 +165,16 @@ public class CollectorService implements CommandLineRunner {
         log.info("Execution stopping");
     }
 
-    private void AlertOnThresholdExceeded(SensorRecord sensorRecord) {
+    private void AlertOnThresholdExceeded(Measurement measurement) {
         //todo check getlow_threshold is defined
-        if(sensorRecord.getValue() <= sensorRecord.getLow_threshold()) {
-            log.debug("Sensor value below threshold. Measurement : " + sensorRecord.getValue() + " / Threshold : " + sensorRecord.getLow_threshold());
+        if(measurement.getLow_threshold() != null && measurement.getValue() <= measurement.getLow_threshold()) {
+            log.debug("Sensor value below threshold. Measurement : " + measurement.getValue() + " / Threshold : " + measurement.getLow_threshold());
             try {
                 log.info("Sending alert email");
-                alertCacheService.add(sensorRecord);
-                alertService.sendAlert(sensorRecord, null,"Sensor Value below threshold");
+                String alertTitle = "Sensor below threshold";
+                String alertMessage = "The sensor \"" + measurement.getDescription() + "\" has a reading of " + measurement.getValue()+measurement.getMeasurementUnit() + " which is below " + measurement.getLow_threshold();
+
+                alertService.sendMeasurementAlert(measurement, alertTitle, alertMessage);
             } catch (MessagingException e) {
                 log.error("Failed to send Email Alert : " + e.getLocalizedMessage());
             } catch (Exception e) {
@@ -152,11 +183,12 @@ public class CollectorService implements CommandLineRunner {
         }
     }
 
-    private List<SensorRecord> testSensorList() {
+    private List<Measurement> testSensorList() {
         log.warn("Test sensor list in use");
-        List<SensorRecord> list = new ArrayList<>();
-        SensorRecord sr = new SensorRecord();
-        list.add(SensorRecord.builder()
+        List<Measurement> list = new ArrayList<>();
+//        Measurement sr = new Measurement();
+        list.add(Measurement.builder()
+                .recordUID(UUID.randomUUID())
                 .sensorid("28-000000000001")
                 .title("Température de l'eau à l'arrivée")
                 .description("Returns the temperature of the hot water entering the house from the central heating system")
@@ -166,9 +198,13 @@ public class CollectorService implements CommandLineRunner {
                 .high_threshold(60.0)
                 .alertgroup("temperature_threshold_alerts_private")
                 .alertdestination("BORRY")
+//                .alertSentToMQ(false)
+//                .alertSent_MeasurementTolerance(false)
+//                .measurementSentToMq(false)
                 .build());
 
-        list.add(SensorRecord.builder()
+        list.add(Measurement.builder()
+                .recordUID(UUID.randomUUID())
                 .sensorid("28-000000000002")
                 .title("Température de l'eau de chaudière")
                 .description("Returns the temperature of the hot water in the boiler")
@@ -178,15 +214,18 @@ public class CollectorService implements CommandLineRunner {
                 .high_threshold(60.0)
                 .alertgroup("temperature_threshold_alerts_private")
                 .alertdestination("PRIVATE")
+//                .alertSentToMQ(false)
+//                .alertSent_MeasurementTolerance(false)
+//                .measurementSentToMq(false)
                 .build());
 
         return list;
     }
 
-    private List<SensorRecord> testData(List<SensorRecord> sensorList) {
+    private List<Measurement> testData(List<Measurement> sensorList) {
         log.warn("Test measurement data in use");
-        for(SensorRecord srec : sensorList) {
-            srec.setMeasurementUnit(SensorMeasurementUnit.C);
+        for(Measurement srec : sensorList) {
+            srec.setMeasurementUnit(MeasurementUnit.C);
             srec.setMeasureTimeUTC(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES));
             int val = ThreadLocalRandom.current().nextInt(35, 75);
             srec.setValue((double)val);

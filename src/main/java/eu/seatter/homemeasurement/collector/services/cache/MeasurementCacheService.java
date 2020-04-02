@@ -1,10 +1,12 @@
 package eu.seatter.homemeasurement.collector.services.cache;
 
-import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheImpl;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheMapImpl;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,25 +20,33 @@ import java.util.Map;
 @Service
 public class MeasurementCacheService {
     @Autowired
-    private MeasurementCacheImpl measurementCache;
+    private MeasurementCacheMapImpl measurementCache;
 
-    public void add(SensorRecord sensorRecord) {
-        measurementCache.add(sensorRecord);
+    public void add(Measurement measurement) {
+        measurementCache.add(measurement);
     }
 
-    public Map<String, List<SensorRecord>> getAll() {
+//    public void measurementSentToMq(UUID recordId, Boolean status) {
+//        measurementCache.measurementSentToMq(recordId, status);
+//    }
+//
+//    public void alertSentToMq(UUID recordId, Boolean status) {
+//        measurementCache.alertSentToMq(recordId, status);
+//    }
+
+    public Map<String, List<Measurement>> getAll() {
         return measurementCache.getAll();
     }
 
-    public List<SensorRecord> getAllBySensorId(String sensorId) {
+    public List<Measurement> getAllBySensorId(String sensorId) {
         return measurementCache.getAllBySensorId(sensorId);
     }
 
-    public Map<String, List<SensorRecord>> getAllSorted() {
+    public Map<String, List<Measurement>> getAllSorted() {
         return measurementCache.getAllSorted();
     }
 
-    public List<SensorRecord> getLastBySensorId(String sensorId, int last) {
+    public List<Measurement> getLastBySensorId(String sensorId, int last) {
         return measurementCache.getLastBySensorId(sensorId,last);
     }
 
@@ -50,5 +60,13 @@ public class MeasurementCacheService {
 
     public int getCacheSizeBySensorId(String sensorId) {
         return measurementCache.getCacheSizeBySensorId(sensorId);
+    }
+
+    public boolean flushToFile()  throws JsonMappingException, IOException {
+        return measurementCache.flushToFile();
+    }
+
+    public int readFromFile() throws JsonMappingException, IOException {
+        return measurementCache.readFromFile();
     }
 }

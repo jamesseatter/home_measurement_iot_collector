@@ -21,109 +21,127 @@
 <body>
 <!--/*@thymesVar id="sensor" type="java.util.Map.Entry"*/-->
 <!--/*@thymesVar id="alert" type="java.util.List.Entry"*/-->
-<!--/*@thymesVar id="sensorrecord" type="eu.seatter.homemeasurement.collector.model.SensorRecord"*/-->
+<!--/*@thymesVar id="measurement" type="eu.seatter.homemeasurement.collector.model.Measurement"*/-->
 <!--/*@thymesVar id="systemalert" type="eu.seatter.homemeasurement.collector.model.SystemAlert"*/-->
-<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CdB PPE</a>
-    <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-    <ul class="navbar-nav px-3">
-      <li class="nav-item text-nowrap">
-        <a class="nav-link" href="#">Sign out</a>
-      </li>
-    </ul> -->
-</nav>
+<!--    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">-->
+<!--        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CdB PPE</a>-->
+<!--        &lt;!&ndash; <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">-->
+<!--        <ul class="navbar-nav px-3">-->
+<!--          <li class="nav-item text-nowrap">-->
+<!--            <a class="nav-link" href="#">Sign out</a>-->
+<!--          </li>-->
+<!--        </ul> &ndash;&gt;-->
+<!--    </nav>-->
 
-<div class="container-fluid">
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-        <div class="sidebar-sticky">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/">
-                        <span data-feather="home"></span>
-                        Dashboard <span class="sr-only">(current)</span>
-                    </a>
-                </li>
-            </ul>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="alert">
-                        <span data-feather="alert-triangle"></span>
-                        Alerts <span class="sr-only">(current)</span>
-                    </a>
-                </li>
-            </ul>
+<body>
+<!--/*@thymesVar id="sensor" type="java.util.Map.Entry"*/-->
+<!--/*@thymesVar id="measurement" type="eu.seatter.homemeasurement.collector.model.Measurement"*/-->
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading">CdB PPE</div>
+            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">
+                                <span data-feather="home"></span>
+                                Dashboard <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="alert">
+                                <span data-feather="alert-triangle"></span>
+                                Alerts <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
         </div>
-    </nav>
-    <br>
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-        <h1>Measurement Alerts</h1>
+        <!-- /#sidebar-wrapper -->
 
-        <div class="shadow table-responsive" th:if="${not #lists.isEmpty(measurementalerts)}">
-            <table class="table table-hover ">
-                <thead class="thead-inverse">
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Time</th>
-                    <th>value</th>
-                    <th>Low Threshold</th>
-                    <th>High Threshold</th>
-                </tr>
-                </thead>
-                <tbody>
-                <th:block th:each="sensor : ${measurementalerts}">
-                    <!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
-                    <!--                                th:class="${sensorrecord.value > sensorrecord.low_threshold}? 'table-light' : 'table-danger'">-->
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                    <h1>Measurement Alerts</h1>
+
+                    <div class="shadow table-responsive" th:if="${not #lists.isEmpty(measurementalerts)}">
+                        <table class="table table-hover ">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Time</th>
+                                <th>value</th>
+                                <th>Low Threshold</th>
+                                <th>High Threshold</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <th:block th:each="sensor : ${measurementalerts}">
+                                <!--                            <tr th:each="measurement, iStat : ${sensor.value}"-->
+                                <!--                                th:class="${measurement.value > measurement.low_threshold}? 'table-light' : 'table-danger'">-->
 
 
-                    <tr th:each="sensorrecord, iStat : ${sensor.value}"
-                        th:Style="${sensorrecord.value > sensorrecord.low_threshold} ?
-                                                (${sensorrecord.value > sensorrecord.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :
-                                                 'background-color: rgba(41, 128, 185,1.0)'">
-                        <td th:text="${iStat.index + 1}">index missing</td>
-                        <td th:text="${sensorrecord.title}">title missing</td>
-                        <td th:text="${#temporals.format(sensorrecord.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
-                        <td th:text="${sensorrecord.value + ' ' + sensorrecord.measurementUnit.toString()}">value missing</td>
-                        <td th:text="${sensorrecord.low_threshold}">value missing</td>
-                        <td th:text="${sensorrecord.high_threshold}">value missing</td>
-                    </tr>
-                </th:block>
-                </tbody>
-            </table>
+                                <tr th:each="measurement, iStat : ${sensor.value}"
+                                    th:Style="${measurement.value > measurement.low_threshold} ?
+                                                            (${measurement.value > measurement.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :
+                                                             'background-color: rgba(41, 128, 185,1.0)'">
+                                    <td th:text="${iStat.index + 1}">index missing</td>
+                                    <td th:text="${measurement.title}">title missing</td>
+                                    <td th:text="${#temporals.format(measurement.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
+                                    <td th:text="${measurement.value + ' ' + measurement.measurementUnit.toString()}">value missing</td>
+                                    <td th:text="${measurement.low_threshold}">value missing</td>
+                                    <td th:text="${measurement.high_threshold}">value missing</td>
+                                </tr>
+                            </th:block>
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                    <h1>System Alerts</h1>
+
+                    <div class="shadow table-responsive" th:if="${not #lists.isEmpty(systemalerts)}">
+                        <table class="table table-hover ">
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Message</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="systemalert, iStat : ${systemalerts}">
+            <!--                    <tr th:each="sensoralert, iStat : ${alert}"-->
+            <!--                        th:Style="${measurement.value > measurement.low_threshold} ?-->
+            <!--                                                (${measurement.value > measurement.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :-->
+            <!--                                                 'background-color: rgba(41, 128, 185,1.0)'">-->
+
+
+
+                                    <!--                            <tr th:each="measurement, iStat : ${sensor.value}"-->
+                                    <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
+                                    <td th:text="${iStat.index + 1}">index missing</td>
+                                    <td th:text="${#temporals.format(systemalert.time, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
+                                    <td th:text="${systemalert.alertMessage}">title missing</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+            </div>
         </div>
-    </main>
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-        <h1>System Alerts</h1>
+        <!-- /#page-content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+<!-- Icons -->
+<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
 
-        <div class="shadow table-responsive" th:if="${not #lists.isEmpty(systemalerts)}">
-            <table class="table table-hover ">
-                <thead class="thead-inverse">
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Message</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="systemalert, iStat : ${systemalerts}">
-<!--                    <tr th:each="sensoralert, iStat : ${alert}"-->
-<!--                        th:Style="${sensorrecord.value > sensorrecord.low_threshold} ?-->
-<!--                                                (${sensorrecord.value > sensorrecord.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :-->
-<!--                                                 'background-color: rgba(41, 128, 185,1.0)'">-->
-
-
-
-                        <!--                            <tr th:each="sensorrecord, iStat : ${sensor.value}"-->
-                        <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
-                        <td th:text="${iStat.index + 1}">index missing</td>
-                        <td th:text="${#temporals.format(systemalert.time, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
-                        <td th:text="${systemalert.alertMessage}">title missing</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </main>
-</div>
 
 <!-- Icons -->
 <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>

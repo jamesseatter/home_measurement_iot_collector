@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.sensor.types;
 
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 public class DigitalSensor implements Sensor {
 
     @Override
-    public Double readSensorData(SensorRecord sensorRecord) {
-        String sensorDescription = "sensor [" + sensorRecord.getSensorid() + "/" + sensorRecord.getSensorType() + "/" + sensorRecord.getFamilyid() + "]";
+    public Double readSensorData(Measurement measurement) {
+        String sensorDescription = "sensor [" + measurement.getSensorid() + "/" + measurement.getSensorType() + "/" + measurement.getFamilyid() + "]";
         log.warn("DIGITAL SENSOR READING NOT IMPLEMENTED for sensor : " + sensorDescription);
         throw new RuntimeException("DIGITAL SENSOR NOT IMPLEMENTED");
         //return value;

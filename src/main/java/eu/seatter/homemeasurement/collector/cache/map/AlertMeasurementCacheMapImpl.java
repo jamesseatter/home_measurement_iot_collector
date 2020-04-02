@@ -1,12 +1,14 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import eu.seatter.homemeasurement.collector.cache.MeasurementCache;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -18,18 +20,22 @@ import java.util.*;
 @Slf4j
 @Component
 @Scope("singleton")
-public class AlertMeasurementCacheImpl implements MeasurementCache {
-    private final Map<String,List<SensorRecord>> cache = new LinkedHashMap <>();
+public class AlertMeasurementCacheMapImpl implements MeasurementCache {
+    private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
-    @Value("${measurement.alert.cache.max_records_per_sensor:100}")
-    private final int MAX_ENTRIES_PER_SENSOR=100;
+    private final int MAX_ENTRIES_PER_SENSOR;
+    private final String CACHE_PATH;
 
-    public AlertMeasurementCacheImpl() {}
+    public AlertMeasurementCacheMapImpl(@Value("${cache.mq.measurement.path}") String cachepath,
+                                   @Value("${measurement.alert.cache.max_records_per_sensor:100}") int maxentriespersensor) {
+        this.CACHE_PATH = cachepath;
+        this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
+    }
 
     @Override
-    public void add(SensorRecord sensorRecord) {
-        SensorRecord toCache = sensorRecord.toBuilder().build();
-        System.out.println(sensorRecord.hashCode() + "   /   " + toCache.hashCode());
+    public void add(Measurement measurement) {
+        Measurement toCache = measurement.toBuilder().build();
+        System.out.println(measurement.hashCode() + "   /   " + toCache.hashCode());
 
         if(!cache.containsKey(toCache.getSensorid())) {
             // initialize new map entry for sensor
@@ -45,22 +51,22 @@ public class AlertMeasurementCacheImpl implements MeasurementCache {
     }
 
     @Override
-    public Map<String, List<SensorRecord>> getAll() {
+    public Map<String, List<Measurement>> getAll() {
         return cache;
     }
 
     @Override
-    public Map<String,List<SensorRecord>> getAllSorted() {
-        Map<String,List<SensorRecord>> cacheSorted = cache;
+    public Map<String,List<Measurement>> getAllSorted() {
+        Map<String,List<Measurement>> cacheSorted = cache;
         for(String id : cacheSorted.keySet()) {
-            Collections.sort(cacheSorted.get(id), Comparator.comparing(SensorRecord::getMeasureTimeUTC).reversed());
+            Collections.sort(cacheSorted.get(id), Comparator.comparing(Measurement::getMeasureTimeUTC).reversed());
         }
 
         return cacheSorted;
     }
 
     @Override
-    public List<SensorRecord> getAllBySensorId(String sensorId) {
+    public List<Measurement> getAllBySensorId(String sensorId) {
         if(cache.containsKey(sensorId)) {
             return Collections.unmodifiableList(this.cache.get(sensorId));
         } else {
@@ -71,14 +77,14 @@ public class AlertMeasurementCacheImpl implements MeasurementCache {
 
 
     @Override
-    public List<SensorRecord> getLastBySensorId(String sensorId, int last) {
+    public List<Measurement> getLastBySensorId(String sensorId, int last) {
         if(cache.containsKey(sensorId)) {
             if(cache.get(sensorId).size() < last) {
                 throw new IllegalArgumentException("The number of values requested, " + last + ", is greater then the number of records cached for the sensor " + cache.get(sensorId).size());
             }
 
             //return Collections.unmodifiableList(this.cache.get(sensorId).stream().limit(last).collect(Collectors.toList()));
-            List<SensorRecord> temp = this.cache.get(sensorId);
+            List<Measurement> temp = this.cache.get(sensorId);
 
             return Collections.unmodifiableList(temp.subList(temp.size() - last, temp.size()));
         } else {
@@ -87,7 +93,7 @@ public class AlertMeasurementCacheImpl implements MeasurementCache {
     }
 
 //    @Override
-//    public List<SensorRecord> getLastBySensorId(String sensorId) {
+//    public List<measurement> getLastBySensorId(String sensorId) {
 //        return getLastBySensorId(sensorId,1);
 //    }
 
@@ -104,5 +110,40 @@ public class AlertMeasurementCacheImpl implements MeasurementCache {
     @Override
     public int getCacheSizeBySensorId(String sensorId) {
         return this.cache.get(sensorId).size();
+    }
+
+    @Override
+    public boolean flushToFile() throws JsonMappingException, IOException {
+//        ObjectMapper mapper = new ObjectMapper();
+//        String jsonArray = mapper.writeValueAsString(cache);
+//
+//        //write to file
+//        try (FileWriter file = new FileWriter(CACHE_PATH)) {
+//            file.write(jsonArray);
+//            file.flush();
+//            return true;
+//        } catch (IOException e) {
+//            //TODO Update error handling
+//            e.printStackTrace();
+//        }
+        return false;
+    }
+
+    @Override
+    public int readFromFile() throws IOException {
+//        String content = "";
+//        try
+//        {
+//            content = new String ( Files.readAllBytes( Paths.get(CACHE_PATH) ) );
+//        }
+//        catch (IOException e)
+//        {
+//            //TODO Update error handling
+//            e.printStackTrace();
+//        }
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        cache = mapper.readValue(content, List.class);
+        return 0;
     }
 }

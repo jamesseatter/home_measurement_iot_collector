@@ -1,0 +1,23 @@
+DROP TABLE IF EXISTS measurement;
+
+CREATE TABLE IF NOT EXISTS measurement (
+       id int NOT NULL,
+       record_uid varchar(45) DEFAULT NULL,
+       date_measured_utc datetime NOT NULL,
+       sensor_type varchar(20) NOT NULL,
+       sensor_id varchar(45) NOT NULL,
+       title varchar(45) DEFAULT NULL,
+       description varchar(100) DEFAULT NULL,
+       measurement_unit varchar(20) NOT NULL,
+       value double NOT NULL,
+       low_threshold double DEFAULT NULL,
+       high_threshold double DEFAULT NULL,
+       measurementsenttomq int DEFAULT 0,
+       alert_uid varchar(45) DEFAULT NULL,
+       alert_group varchar(255) DEFAULT NULL,
+       alert_destination varchar(255) DEFAULT NULL,
+       alertsent_failedmq tinyint DEFAULT 0,
+       alertsent_measurementtolerance tinyint DEFAULT 0,
+       PRIMARY KEY (id,date_measured_utc),
+       UNIQUE (id)
+);

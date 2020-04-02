@@ -1,7 +1,9 @@
 package eu.seatter.homemeasurement.collector.cache;
 
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,15 +15,17 @@ import java.util.Map;
  * Time: 16:01
  */
 public interface MeasurementCache {
-    void add(SensorRecord sensorRecord);
-    Map<String, List<SensorRecord>> getAll();
-    Map<String,List<SensorRecord>> getAllSorted();
-    List<SensorRecord> getAllBySensorId(String sensorId);
-//    List<SensorRecord> getLastBySensorId(String sensorId);
-    List<SensorRecord> getLastBySensorId(String sensorId, int last);
-
+    void add(Measurement measurement);
+    Map<String, List<Measurement>> getAll();
+    Map<String,List<Measurement>> getAllSorted();
+    List<Measurement> getAllBySensorId(String sensorId);
+    //    List<measurement> getLastBySensorId(String sensorId);
+    List<Measurement> getLastBySensorId(String sensorId, int last);
 
     ArrayList<String> getSensorIds();
     int getCacheMaxSizePerSensor();
     int getCacheSizeBySensorId(String sensorId);
+
+    boolean flushToFile() throws JsonMappingException, IOException;
+    int readFromFile() throws IOException;
 }

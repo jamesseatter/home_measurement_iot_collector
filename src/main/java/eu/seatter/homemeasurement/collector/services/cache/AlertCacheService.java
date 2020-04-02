@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.cache;
 
-import eu.seatter.homemeasurement.collector.cache.map.AlertMeasurementCacheImpl;
-import eu.seatter.homemeasurement.collector.model.SensorRecord;
+import eu.seatter.homemeasurement.collector.cache.map.AlertMeasurementCacheMapImpl;
+import eu.seatter.homemeasurement.collector.model.Measurement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,25 +18,25 @@ import java.util.Map;
 @Service
 public class AlertCacheService {
     @Autowired
-    private AlertMeasurementCacheImpl alertCache;
+    private AlertMeasurementCacheMapImpl alertCache;
 
-    public void add(SensorRecord sensorRecord) {
-        alertCache.add(sensorRecord);
+    public void add(Measurement measurement) {
+        alertCache.add(measurement);
     }
 
-    public Map<String, List<SensorRecord>> getAll() {
+    public Map<String, List<Measurement>> getAll() {
         return alertCache.getAll();
     }
 
-    public List<SensorRecord> getAllBySensorId(String sensorId) {
+    public List<Measurement> getAllBySensorId(String sensorId) {
         return alertCache.getAllBySensorId(sensorId);
     }
 
-    public Map<String, List<SensorRecord>> getAllSorted() {
+    public Map<String, List<Measurement>> getAllSorted() {
         return alertCache.getAllSorted();
     }
 
-    public List<SensorRecord> getLastBySensorId(String sensorId, int last) {
+    public List<Measurement> getLastBySensorId(String sensorId, int last) {
         return alertCache.getLastBySensorId(sensorId,last);
     }
 

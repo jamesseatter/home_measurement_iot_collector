@@ -6,13 +6,13 @@ package eu.seatter.homemeasurement.collector.model;
  * Date: 07/12/2018
  * Time: 13:21
  */
-public enum SensorMeasurementUnit {
+public enum MeasurementUnit {
     C ("C"),
     F ("F");
 
     private final String displayName;
 
-    SensorMeasurementUnit(String displayName) {
+    MeasurementUnit(String displayName) {
         this.displayName = displayName;
     }
 
