@@ -1,7 +1,10 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.seatter.homemeasurement.collector.cache.MQCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
@@ -14,7 +17,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -33,10 +35,11 @@ import java.util.List;
 public class MQMeasurementCacheMapImpl implements MQCache {
     private List<Measurement> cache = new ArrayList<>();
 
-    private final String CACHE_PATH;
+    private final File CACHE_FILE;
 
-    public MQMeasurementCacheMapImpl(@Value("${cache.mq.measurement.path}") String cachepath) {
-        this.CACHE_PATH = cachepath;
+    public MQMeasurementCacheMapImpl(@Value("${cache.root.path}") String cache_path,
+                                     @Value("${cache.alert.system.file}") String cache_file) {
+        this.CACHE_FILE = new File(cache_path, cache_file);
     }
 
     @Override
@@ -90,22 +93,27 @@ public class MQMeasurementCacheMapImpl implements MQCache {
 
     @Override
     public boolean flushToFile() throws IOException {
-        File file = new File(CACHE_PATH);
+        //File file = new File(CACHE_FILE);
+        File directory = new File(CACHE_FILE.getParent());
+        log.debug("File = " + CACHE_FILE.toString());
+        log.debug("Directory = " + directory.toString());
         try {
-            if(!Files.exists(Paths.get(CACHE_PATH))) {
-                if (!file.getParentFile().mkdirs()) {
-                    throw new FileSystemException("Unable to create folder file.getParentFile()");
-                }
+            if(!directory.exists()) {
+                directory.mkdir();
             }
         } catch(SecurityException ex) {
-            throw new SecurityException("Unable to create folder due to security issues : " + ex.getMessage());
+            log.error("Security Exception, unable to create directory due to security issues : " + ex.getMessage());
+            return false;
+        } catch (Exception ex) {
+            log.error("Exception detected : " + ex.getMessage());
+            return false;
         }
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonArray = mapper.writeValueAsString(cache);
 
         //write to file
-        try (FileWriter fileWriter = new FileWriter(file)) {
+        try (FileWriter fileWriter = new FileWriter(CACHE_FILE)) {
             fileWriter.write(jsonArray);
             fileWriter.flush();
             fileWriter.close();
@@ -119,11 +127,11 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     @Override
     public int readFromFile() throws IOException {
         String content = "";
-        if(!Files.exists(Paths.get(CACHE_PATH))) {
-            throw new FileNotFoundException("The file " + CACHE_PATH + " was not found");
+        if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
+            throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
         }
         try {
-            content = new String(Files.readAllBytes(Paths.get(CACHE_PATH)));
+            content = new String(Files.readAllBytes(Paths.get(CACHE_FILE.getPath())));
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

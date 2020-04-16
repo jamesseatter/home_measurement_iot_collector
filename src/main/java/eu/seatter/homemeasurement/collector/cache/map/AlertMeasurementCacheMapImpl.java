@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -23,10 +24,13 @@ public class AlertMeasurementCacheMapImpl implements MeasurementCache {
     private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
     private final int MAX_ENTRIES_PER_SENSOR;
+    private final File CACHE_FILE;
 
-    public AlertMeasurementCacheMapImpl(@Value("${cache.mq.measurement.path}") String cachepath,
-                                   @Value("${measurement.alert.cache.max_records_per_sensor:100}") int maxentriespersensor) {
+    public AlertMeasurementCacheMapImpl(@Value("${cache.root.path}") String cache_path,
+                                        @Value("${cache.alert.measurement.file}")String cache_file,
+                                        @Value("${measurement.alert.cache.max_records_per_sensor:100}") int maxentriespersensor) {
         this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
+        this.CACHE_FILE = new File(cache_path, cache_file);
     }
 
     @Override

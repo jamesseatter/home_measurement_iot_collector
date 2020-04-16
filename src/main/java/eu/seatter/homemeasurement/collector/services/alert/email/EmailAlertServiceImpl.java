@@ -57,8 +57,9 @@ public class EmailAlertServiceImpl implements EmailAlertService {
             }
 
             try {
-                if(alertType == AlertType.General) {
-                    message.setContent(getContent("AlertGeneralMessageEmailTemplate", environment,alertTitle, measurement, alertMessage), "text/html");
+                //todo Cleanup the templates, this is now a system alert.
+                if(alertType == AlertType.System) {
+                    message.setContent(getContent("AlertSystemMessageEmailTemplate", environment,alertTitle, measurement, alertMessage), "text/html");
                 } else if(alertType == AlertType.Measurement) {
                     message.setContent(getContent(getAlertDestination(measurement), environment,alertTitle, measurement, alertMessage), "text/html");
                 }
@@ -109,8 +110,8 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         }
         if (alertDestination == null || alertDestination.length() == 0) {
             log.error("No Alert Destination defined in sensorlist.json for sensor : " + sr.getSensorid());
-            log.info("Using default Alert Template : AlertGeneralEmailTemplate.html");
-            alertDestination = "AlertGeneralEmailTemplate.html";
+            log.info("Using default Alert Template : AlertSystemEmailTemplate.html");
+            alertDestination = "AlertSystemEmailTemplate.html";
         }
 
         return alertDestination;
