@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -36,12 +35,17 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
     private final int MAX_ENTRIES_PER_SENSOR;
-    private final String CACHE_PATH;
+//    private final String CACHE_PATH;
+//    private final String CACHE_FILENAME;
+    private final File CACHE_FILE;
 
-    public MeasurementCacheMapImpl(@Value("${cache.mq.measurement.path}") String cachepath,
+    public MeasurementCacheMapImpl(@Value("${cache.root.path}") String cache_path,
+                                   @Value("${cache.measurement.file}")String cache_file,
                                    @Value("${measurement.cache.max_records_per_sensor:24}") int maxentriespersensor) {
-        this.CACHE_PATH = cachepath;
+//        this.CACHE_PATH = cache_path;
+//        this.CACHE_FILENAME = cache_file;
         this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
+        this.CACHE_FILE = new File(cache_path, cache_file);
     }
 
     @Override
@@ -139,23 +143,29 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
 
     @Override
     public boolean flushToFile() throws  IOException {
-        File file = new File(CACHE_PATH);
+        //File file = new File(CACHE_FILE);
+        File directory = new File(CACHE_FILE.getParent());
+        log.debug("File = " + CACHE_FILE.toString());
+        log.debug("Directory = " + directory.toString());
         try {
-            if(!Files.exists(Paths.get(CACHE_PATH))) {
-                if (!file.getParentFile().mkdirs()) {
-                    throw new FileSystemException("Unable to create folder file.getParentFile()");
-                }
+            if(!directory.exists()) {
+                directory.mkdir();
             }
         } catch(SecurityException ex) {
-            throw new SecurityException("Unable to create folder due to security issues : " + ex.getMessage());
+            log.error("Security Exception, unable to create directory due to security issues : " + ex.getMessage());
+            return false;
+        } catch (Exception ex) {
+            log.error("Exception detected : " + ex.getMessage());
+            return false;
         }
+
         List<Measurement> measurements = getListOfMeasurements();
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonArray = mapper.writeValueAsString(measurements);
 
         //write to file
-        try (FileWriter fileWriter = new FileWriter(file)) {
+        try (FileWriter fileWriter = new FileWriter(CACHE_FILE)) {
             fileWriter.write(jsonArray);
             fileWriter.flush();
             return true;
@@ -168,11 +178,11 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     @Override
     public int readFromFile() throws IOException {
         String content = "";
-        if(!Files.exists(Paths.get(CACHE_PATH))) {
-            throw new FileNotFoundException("The file " + CACHE_PATH + " was not found");
+        if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
+            throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
         }
         try {
-            content = new String(Files.readAllBytes(Paths.get(CACHE_PATH)));
+            content = new String(Files.readAllBytes(Paths.get(CACHE_FILE.getPath())));
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

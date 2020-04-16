@@ -61,17 +61,17 @@ public class AlertService {
         }
     }
 
-    public void sendGeneralAlert(String alertTitle, String alertMessage) throws MessagingException {
-        if (alertTitle == null) alertTitle = "General Alert";
+    public void sendSystemAlert(String alertTitle, String alertMessage) throws MessagingException {
+        if (alertTitle == null) alertTitle = "System Alert";
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");
-            emailAlertService.sendAlert(AlertType.General, applicationEnvironment, alertTitle, alertMessage, null);
+            emailAlertService.sendAlert(AlertType.System, applicationEnvironment, alertTitle, alertMessage, null);
         } else {
             log.info("Email alerts disabled.");
         }
         if(alertMessagingEnabled) {
             log.info("Messaging alerts enabled.");
-            messageAlertService.sendAlert(AlertType.General, applicationEnvironment,alertTitle,alertMessage,null);
+            messageAlertService.sendAlert(AlertType.System, applicationEnvironment,alertTitle,alertMessage,null);
             //measurement.setAlertSent_MeasurementTolerance(true);
         } else {
             log.info("Messaging alerts disabled.");

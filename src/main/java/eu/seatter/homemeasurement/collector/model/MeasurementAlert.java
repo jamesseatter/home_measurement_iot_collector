@@ -43,7 +43,7 @@ public class MeasurementAlert  implements Comparable<MeasurementAlert> {
 
     @Override
     public String toString() {
-        return "measurement{" +
+        return "measurementAlert{" +
                 "title='" + title + '\'' +
                 ", value=" + value + " " + measurementUnit.toString() +
                 ", measureTimeUTC=" + alertTimeUTC +

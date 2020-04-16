@@ -108,7 +108,14 @@ public class RabbitMQService implements SensorMessaging {
 
     @Override
     public boolean sendSystemAlert(SystemAlert systemAlert) {
-        return false;
+        try {
+            String messagesToEmit = convertToJSONMessage(systemAlert);
+            sendMessage(messagesToEmit, "a");
+            //measurementCacheService.alertSentToMq(measurement.getRecordUID(), true);
+        } catch (MessagingException | JsonProcessingException ex) {
+            messageSendFailed(ex.getMessage());
+        }
+        return true;
     }
 
     private void sendMessage(String messagesToEmit, @NotNull String messageType) throws MessagingException {

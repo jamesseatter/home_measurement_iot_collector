@@ -41,7 +41,7 @@ public class AlertsController {
 
         @SuppressWarnings("unchecked")
         List<SystemAlert> systemAlerts = alertSystemCache.getAllSorted();
-        systemAlerts.forEach((srec) -> srec.setTime(srec.getTime().withZoneSameInstant(zoneId)));
+        systemAlerts.forEach((srec) -> srec.setAlertTimeUTC(srec.getAlertTimeUTC().withZoneSameInstant(zoneId)));
 
         model.addAttribute("systemalerts",systemAlerts);
         model.addAttribute("measurementalerts", allSortedMeasurementAlerts);

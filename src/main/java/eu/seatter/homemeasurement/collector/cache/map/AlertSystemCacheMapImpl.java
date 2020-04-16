@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -26,17 +27,21 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     private final List<SystemAlert> cache = new ArrayList<>();
 
     private final int MAX_ENTRIES_PER_SENSOR;
+    private final File CACHE_FILE;
 
-    public AlertSystemCacheMapImpl(@Value("${cache.mq.measurement.path}") String cachepath,
+    public AlertSystemCacheMapImpl(@Value("${cache.root.path}") String cache_path,
+                                   @Value("${cache.alert.system.file}")String cache_file,
                                    @Value("${system.alert.cache.max_records_per_sensor:100}") int maxentriespersensor) {
         this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
+        this.CACHE_FILE = new File(cache_path, cache_file);
     }
 
     @Override
     public void add(String alertMessage) {
         SystemAlert sa = new SystemAlert().toBuilder()
-                                            .time(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES))
-                                            .alertMessage(alertMessage).build();
+                                            .alertTimeUTC(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES))
+                                            .title("")
+                                            .message(alertMessage).build();
 
         if(cache.size() == MAX_ENTRIES_PER_SENSOR) {
             cache.remove(-1);

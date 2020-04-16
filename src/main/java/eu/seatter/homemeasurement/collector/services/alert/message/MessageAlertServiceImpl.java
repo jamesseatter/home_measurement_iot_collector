@@ -2,6 +2,7 @@ package eu.seatter.homemeasurement.collector.services.alert.message;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
+import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertGroupRecipientService;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
@@ -9,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,12 +34,23 @@ public class MessageAlertServiceImpl implements MessageAlertService {
 
     @Override
     public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Measurement measurement) throws MessagingException {
-        MeasurementAlert measurementAlert = convertmeasurementToMeasurementAlert(measurement);
-        measurementAlert.setTitle(alertTitle);
-        measurementAlert.setMessage(alertMessage);
-        measurementAlert.setEnvironment(environment);
+        if(alertType == AlertType.Measurement) {
+            MeasurementAlert measurementAlert = convertmeasurementToMeasurementAlert(measurement);
+            measurementAlert.setTitle(alertTitle);
+            measurementAlert.setMessage(alertMessage);
+            measurementAlert.setEnvironment(environment);
 
-        rabbitMQService.sendMeasurementAlert(measurementAlert);
+            rabbitMQService.sendMeasurementAlert(measurementAlert);
+
+        } else if(alertType == AlertType.System) {
+            SystemAlert systemAlert = new SystemAlert();
+            systemAlert.setAlertUID(UUID.randomUUID());
+            systemAlert.setAlertTimeUTC(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.SECONDS));
+            systemAlert.setTitle(alertTitle);
+            systemAlert.setMessage(alertMessage);
+
+            rabbitMQService.sendSystemAlert(systemAlert);
+        }
     }
 
     private MeasurementAlert convertmeasurementToMeasurementAlert(Measurement sr) {
