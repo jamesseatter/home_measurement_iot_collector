@@ -27,7 +27,7 @@ public class DashboardController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/")
+    @RequestMapping(value={"/", "/index"})
     public String index(final Model model) {
         ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
