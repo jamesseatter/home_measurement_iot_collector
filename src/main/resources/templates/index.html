@@ -1,124 +1,74 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE HTML>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main_layout}" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Home Measurement Dashboard</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/webjars/chartjs/2.9.3/Chart.min.css" />
-
-    <!-- Custom styles for dashboard -->
-    <link href="../static/css/dashboard.css" rel="stylesheet">
-    <style>
-        canvas {
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-        }
-    </style>
+    <title>Home Measurement Dashboard Heating System</title>
 </head>
 <body>
-<!--/*@thymesVar id="sensor" type="java.util.Map.Entry"*/-->
-<!--/*@thymesVar id="measurement" type="eu.seatter.homemeasurement.collector.model.Measurement"*/-->
-    <div class="d-flex" id="wrapper">
-        <!-- Sidebar -->
-        <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="sidebar-heading"><h2>CdB PPE</h2></div>
-            <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                <div class="sidebar-sticky">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="/">
-                                <span data-feather="home"></span>
-                                Dashboard <span class="sr-only">(current)</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="alert">
-                                <span data-feather="alert-triangle"></span>
-                                Alerts <span class="sr-only">(current)</span>
-                            </a>
-                        </li>
-                    </ul>
+<div class="container" layout:fragment="content">
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <h1>Heating System</h1>
+                <!--                    <select th:field="*{view_days}">-->
+                <!--                        <option th:value="7" th:text="7 Days"></option>-->
+                <!--                        <option th:value="30" th:text="30 Days"></option>-->
+                <!--                    </select>-->
+                <div class="panel-content text-center shadow" th:if="${not #lists.isEmpty(allMeasurements)}" style="margin-top: 20px">
+                    <canvas id="measurementChart" class="chart"></canvas>
                 </div>
-            </nav>
-        </div>
-        <!-- /#sidebar-wrapper -->
 
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <div class="container-fluid">
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                    <h1>System Measurements</h1>
-<!--                    <select th:field="*{view_days}">-->
-<!--                        <option th:value="7" th:text="7 Days"></option>-->
-<!--                        <option th:value="30" th:text="30 Days"></option>-->
-<!--                    </select>-->
-                    <div class="panel-content text-center shadow" th:if="${not #lists.isEmpty(allMeasurements)}" style="margin-top: 20px">
-                        <canvas id="measurementChart" class="chart"></canvas>
-                    </div>
-
-                    <div class="shadow table-responsive" th:if="${not #lists.isEmpty(allMeasurements)}">
-                        <table class="table table-hover ">
-                            <thead class="thead-inverse">
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Time</th>
-                                <th>value</th>
-                                <th>Low Threshold</th>
-                                <th>High Threshold</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <th:block th:each="sensor : ${allMeasurements}">
-        <!--                            <tr th:each="measurement, iStat : ${sensor.value}"-->
-        <!--                                th:class="${measurement.value > measurement.low_threshold}? 'table-light' : 'table-danger'">-->
+                <div class="shadow table-responsive" th:if="${not #lists.isEmpty(allMeasurements)}">
+                    <table class="table table-hover ">
+                        <thead class="thead-inverse">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>value</th>
+                            <th>Time</th>
+                            <th>Low Threshold</th>
+                            <th>High Threshold</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="sensor : ${allMeasurements}">
+                            <!--                            <tr th:each="measurement, iStat : ${sensor.value}"-->
+                            <!--                                th:class="${measurement.value > measurement.low_threshold}? 'table-light' : 'table-danger'">-->
 
 
-                                    <tr th:each="measurement, iStat : ${sensor.value}"
-                                        th:Style="${measurement.value > measurement.low_threshold} ?
+                            <tr th:each="measurement, iStat : ${sensor.value}"
+                                th:Style="${measurement.value > measurement.low_threshold} ?
                                                         (${measurement.value > measurement.high_threshold} ? 'background-color: rgba(231, 76, 60,1.0)' ) :
                                                          'background-color: rgba(41, 128, 185,1.0)'">
 
 
 
-                                        <!--                            <tr th:each="measurement, iStat : ${sensor.value}"-->
-        <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
-                                        <td th:text="${iStat.index + 1}">index missing</td>
-                                        <td th:text="${measurement.title}">title missing</td>
-                                        <td th:text="${#temporals.format(measurement.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
-                                        <td th:text="${measurement.value + ' ' + measurement.measurementUnit.toString()}">value missing</td>
-                                        <td th:text="${measurement.low_threshold}">value missing</td>
-                                        <td th:text="${measurement.high_threshold}">value missing</td>
-                                    </tr>
-                                </th:block>
-                            </tbody>
-                        </table>
-                    </div>
-                </main>
-            </div>
+                                <!--                            <tr th:each="measurement, iStat : ${sensor.value}"-->
+                                <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
+                                <td th:text="${iStat.index + 1}">index missing</td>
+                                <td th:text="${measurement.title}">title missing</td>
+                                <td th:text="${measurement.value + ' ' + measurement.measurementUnit.toString()}">value missing</td>
+                                <td th:text="${#temporals.format(measurement.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
+                                <td th:text="${measurement.low_threshold}">value missing</td>
+                                <td th:text="${measurement.high_threshold}">value missing</td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
-        <!-- /#page-content-wrapper -->
     </div>
+    <!-- /#page-content-wrapper -->
     <!-- /#wrapper -->
-    <!-- Icons -->
-    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-    <script>
-        feather.replace()
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<!--    <script src="/webjars/popper.js/1.16.1/dist/popper.min.js"></script>-->
-    <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
-    <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!--Charting    -->
     <script src="/webjars/momentjs/2.24.0/min/moment.min.js"></script>
     <script src="/webjars/chartjs/2.9.3/Chart.min.js"></script>
+    <!--    <script th:inline="javascript">-->
     <script th:inline="javascript">
         let measurements = /*[[${allMeasurements}]]*/ 'default';
-        console.log(measurements);
+        // console.log(measurements);
         let ctx = document.getElementById('measurementChart').getContext('2d');
         let chart = new Chart(ctx, {
             type: 'line',
@@ -170,10 +120,14 @@
             }
         });
 
+        // https://flatuicolors.com/
         let dataSetColourScheme = [
             {backgroundColor: 'rgba(22, 160, 133,1.0)', borderColor: 'rgba(22, 160, 133,1.0)', fill: false},
             {backgroundColor: 'rgba(241, 196, 15,1.0)', borderColor: 'rgba(241, 196, 15,1.0)',fill: false},
-            {backgroundColor: 'rgba(155, 89, 182,1.0)', borderColor: 'rgba(155, 89, 182,1.0)',fill: false}]
+            {backgroundColor: 'rgba(155, 89, 182,1.0)', borderColor: 'rgba(155, 89, 182,1.0)',fill: false},
+            {backgroundColor: 'rgba(149, 165, 166,1.0)', borderColor: 'rgba(149, 165, 166,1.0)',fill: false},
+            {backgroundColor: 'rgba(211, 84, 0,1.0)', borderColor: 'rgba(211, 84, 0,1.0)',fill: false},
+            {backgroundColor: 'rgba(39, 60, 117,1.0)', borderColor: 'rgba(39, 60, 117,1.0)',fill: false}];
 
         let labelValues = Object.values(measurements)[0].map(sr => sr.measureTimeUTC);
         chart.data.labels = labelValues;
@@ -193,8 +147,8 @@
                         var index = context.dataIndex;
                         var value = context.dataset.data[index];
                         return value < sensorLowLimit ? 'rgba(41, 128, 185,1.0)' :
-                                value > sensorHighLimit ? 'rgba(231, 76, 60,1.0)' :
-                                    dataSetColour;
+                            value > sensorHighLimit ? 'rgba(231, 76, 60,1.0)' :
+                                dataSetColour;
                     },
                     pointBorderColor : function(context) {
                         var index = context.dataIndex;
@@ -207,15 +161,16 @@
                     borderColor: dataSetColourScheme[dataSetIndex].borderColor,
                     fill: dataSetColourScheme[dataSetIndex].fill,
                     data: measurementValues
-                }
-                chart.data.datasets.push(dataSet)
+                };
+                chart.data.datasets.push(dataSet);
             }
-            dataSetIndex ++
-        })
-        dataSetIndex = null
-        chart.update()
+            dataSetIndex ++;
+        });
+        dataSetIndex = null;
+        chart.update();
 
         chart.render();
     </script>
+</div>
 </body>
 </html>
