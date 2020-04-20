@@ -17,15 +17,16 @@
                 <div class="panel-content text-center shadow" th:if="${not #lists.isEmpty(allMeasurements)}" style="margin-top: 20px">
                     <canvas id="measurementChart" class="chart"></canvas>
                 </div>
-
-                <div class="shadow table-responsive" th:if="${not #lists.isEmpty(allMeasurements)}">
+                <p></p>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="TableShow()">Show Measurements</button>
+                <p></p>
+                <div id="measurementtable" style="display:none" class="shadow table-responsive" th:if="${not #lists.isEmpty(allMeasurements)}">
                     <table class="table table-hover ">
                         <thead class="thead-inverse">
                         <tr>
-                            <th>#</th>
+                            <th>Time</th>
                             <th>Name</th>
                             <th>value</th>
-                            <th>Time</th>
                             <th>Low Threshold</th>
                             <th>High Threshold</th>
                         </tr>
@@ -45,12 +46,11 @@
 
                                 <!--                            <tr th:each="measurement, iStat : ${sensor.value}"-->
                                 <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
-                                <td th:text="${iStat.index + 1}">index missing</td>
+                                <td th:text="${#temporals.format(measurement.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
                                 <td th:text="${measurement.title}">title missing</td>
                                 <td th:text="${measurement.value + ' ' + measurement.measurementUnit.toString()}">value missing</td>
-                                <td th:text="${#temporals.format(measurement.measureTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
-                                <td th:text="${measurement.low_threshold}">value missing</td>
-                                <td th:text="${measurement.high_threshold}">value missing</td>
+                                <td d-none d-sm-table-cell th:text="${measurement.low_threshold}">value missing</td>
+                                <td d-none d-sm-table-cell th:text="${measurement.high_threshold}">value missing</td>
                             </tr>
                         </th:block>
                         </tbody>
@@ -170,6 +170,16 @@
         chart.update();
 
         chart.render();
+    </script>
+    <script>
+        function TableShow() {
+            var x = document.getElementById("measurementtable");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
     </script>
 </div>
 </body>
