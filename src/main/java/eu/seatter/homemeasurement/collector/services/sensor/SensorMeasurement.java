@@ -6,8 +6,8 @@ import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class SensorMeasurement {
 
     public List<Measurement> collect(List<Measurement> sensorList) {
         log.info("Start measurement collection");
-        ZonedDateTime measurementTime = ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES); //all measurements will use the same time to make reporting easier.
+        LocalDateTime measurementTime = getTimeDateNowInUTC(); //all measurements will use the same time to make reporting easier.
         for (Measurement measurement : sensorList) {
             if(measurement.getSensorid() == null) {
                 log.error(measurement.loggerFormat() + " : SensorId not found");
@@ -61,5 +61,10 @@ public class SensorMeasurement {
             log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
             throw ex;
         }
+    }
+
+    private LocalDateTime getTimeDateNowInUTC() {
+        LocalDateTime ldt = LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime().truncatedTo(ChronoUnit.MINUTES);
+        return ldt;
     }
 }

@@ -1,11 +1,9 @@
 package eu.seatter.homemeasurement.collector.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -22,9 +20,8 @@ import java.util.UUID;
 public class SystemAlert implements Comparable<SystemAlert> {
     private UUID alertUID;
     private String title;
-    //    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = ZonedDateTimeSerializer.class)
-    private ZonedDateTime alertTimeUTC; // equals the measurement measurementTimeUTC
+
+    private LocalDateTime alertTimeUTC;
     private String message;
 
     public String loggerFormat() {

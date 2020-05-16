@@ -1,10 +1,8 @@
 package eu.seatter.homemeasurement.collector.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -22,9 +20,8 @@ public class Measurement implements Comparable<Measurement> {
     private UUID recordUID;
     private String sensorid;
     private String title;
-//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = ZonedDateTimeSerializer.class)
-    private ZonedDateTime measureTimeUTC;
+
+    private LocalDateTime measureTimeUTC;
     private Double value;
 
     private String description;
