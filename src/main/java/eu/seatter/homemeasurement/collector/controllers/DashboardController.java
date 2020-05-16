@@ -33,7 +33,8 @@ public class DashboardController {
 
         Map<String, List<Measurement>> allSortedMeasurements = cacheService.getAllSorted();
         for(String id : allSortedMeasurements.keySet()) {
-            allSortedMeasurements.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
+            //allSortedMeasurements.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
+            allSortedMeasurements.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC()));
         }
 
         model.addAttribute("allMeasurements", allSortedMeasurements);

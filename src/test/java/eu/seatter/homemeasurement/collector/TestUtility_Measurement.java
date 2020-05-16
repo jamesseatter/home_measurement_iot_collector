@@ -1,10 +1,10 @@
 package eu.seatter.homemeasurement.collector;
 
-import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorType;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
  */
 public class TestUtility_Measurement {
 
-    public static Measurement createTestRecord(String sensorId, ZonedDateTime dt) {
+    public static Measurement createTestRecord(String sensorId, LocalDateTime dt) {
         return new Measurement()
                 .toBuilder()
                 .alertdestination("PRIVATE")

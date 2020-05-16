@@ -2,15 +2,13 @@ package eu.seatter.homemeasurement.collector.cache.map;
 
 import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
+import eu.seatter.homemeasurement.collector.utils.UtilDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +37,10 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     @Override
     public void add(String alertMessage) {
         SystemAlert sa = new SystemAlert().toBuilder()
-                                            .alertTimeUTC(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES))
-                                            .title("")
-                                            .message(alertMessage).build();
+                .alertTimeUTC(UtilDateTime.getTimeDateNowNoSecondsInUTC())
+                .title("")
+                .message(alertMessage)
+                .build();
 
         if(cache.size() == MAX_ENTRIES_PER_SENSOR) {
             cache.remove(-1);

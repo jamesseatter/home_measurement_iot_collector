@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -32,16 +31,18 @@ public class AlertsController {
     @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="/alert")
     public String index(final Model model) {
-        ZoneId zoneId= ZoneId.of("Europe/Zurich");
+//        ZoneId zoneId= ZoneId.systemDefault();
 
         Map<String, List<Measurement>> allSortedMeasurementAlerts = alertCacheService.getAllSorted();
         for(String id : allSortedMeasurementAlerts.keySet()) {
-            allSortedMeasurementAlerts.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
+//            allSortedMeasurementAlerts.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
+            allSortedMeasurementAlerts.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC()));
         }
 
         @SuppressWarnings("unchecked")
         List<SystemAlert> systemAlerts = alertSystemCache.getAllSorted();
-        systemAlerts.forEach((srec) -> srec.setAlertTimeUTC(srec.getAlertTimeUTC().withZoneSameInstant(zoneId)));
+//        systemAlerts.forEach((srec) -> srec.setAlertTimeUTC(srec.getAlertTimeUTC().withZoneSameInstant(ZoneId.systemDefault())));
+        systemAlerts.forEach((srec) -> srec.setAlertTimeUTC(srec.getAlertTimeUTC()));
 
         model.addAttribute("systemalerts",systemAlerts);
         model.addAttribute("measurementalerts", allSortedMeasurementAlerts);
