@@ -14,7 +14,7 @@ import java.util.Map;
  * Time: 16:01
  */
 public interface MeasurementCache {
-    void add(Measurement measurement);
+    void add(Measurement measurement, boolean noFlush);
     Map<String, List<Measurement>> getAll();
     Map<String,List<Measurement>> getAllSorted();
     List<Measurement> getAllBySensorId(String sensorId);

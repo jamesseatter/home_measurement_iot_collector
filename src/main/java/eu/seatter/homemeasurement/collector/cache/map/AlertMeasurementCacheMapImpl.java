@@ -1,6 +1,8 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
-import eu.seatter.homemeasurement.collector.cache.MeasurementCache;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.seatter.homemeasurement.collector.cache.AlertMeasurementCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -20,8 +27,8 @@ import java.util.*;
 @Slf4j
 @Component
 @Scope("singleton")
-public class AlertMeasurementCacheMapImpl implements MeasurementCache {
-    private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
+public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
+    private Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
     private final int MAX_ENTRIES_PER_SENSOR;
     private final File CACHE_FILE;
@@ -114,37 +121,59 @@ public class AlertMeasurementCacheMapImpl implements MeasurementCache {
     }
 
     @Override
-    public boolean flushToFile() {
-//        ObjectMapper mapper = new ObjectMapper();
-//        String jsonArray = mapper.writeValueAsString(cache);
-//
-//        //write to file
-//        try (FileWriter file = new FileWriter(CACHE_PATH)) {
-//            file.write(jsonArray);
-//            file.flush();
-//            return true;
-//        } catch (IOException e) {
-//            //TODO Update error handling
-//            e.printStackTrace();
-//        }
-        return false;
+    public boolean flushToFile() throws IOException {
+        //File file = new File(CACHE_FILE);
+        File directory = new File(CACHE_FILE.getParent());
+        log.debug("File = " + CACHE_FILE.toString());
+        try {
+            if(!directory.exists()) {
+                directory.mkdir();
+            }
+        } catch(SecurityException ex) {
+            log.error("Security Exception, unable to create directory due to security issues : " + ex.getMessage());
+            return false;
+        } catch (Exception ex) {
+            log.error("Exception detected : " + ex.getMessage());
+            return false;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        String jsonArray = mapper.writeValueAsString(cache);
+
+        //write to file
+        try (FileWriter fileWriter = new FileWriter(CACHE_FILE)) {
+            fileWriter.write(jsonArray);
+            fileWriter.flush();
+            fileWriter.close();
+            return true;
+        } catch (IOException ex) {
+            log.error("Unable to write to file : " + ex.getMessage());
+            throw new IOException(ex);
+        }
     }
 
     @Override
-    public int readFromFile() {
-//        String content = "";
-//        try
-//        {
-//            content = new String ( Files.readAllBytes( Paths.get(CACHE_PATH) ) );
-//        }
-//        catch (IOException e)
-//        {
-//            //TODO Update error handling
-//            e.printStackTrace();
-//        }
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//        cache = mapper.readValue(content, List.class);
-        return 0;
+    public int readFromFile() throws IOException {
+        if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
+            throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        try {
+            cache = mapper.readValue(new File(CACHE_FILE.getPath()), new TypeReference<List<Measurement>>() { });
+        } catch (IOException ex) {
+            log.error("Unable to read from file : " + ex.getMessage());
+            throw new IOException(ex);
+        }
+
+        return cache.size();
     }
 }

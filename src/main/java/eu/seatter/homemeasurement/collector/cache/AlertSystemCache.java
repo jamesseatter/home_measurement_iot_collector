@@ -2,6 +2,7 @@ package eu.seatter.homemeasurement.collector.cache;
 
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -19,6 +20,6 @@ public interface AlertSystemCache {
     int getCacheMaxSize();
     int getCacheSize();
 
-    boolean flushToFile();
-    int readFromFile();
+    boolean flushToFile() throws IOException;
+    int readFromFile() throws IOException;
 }

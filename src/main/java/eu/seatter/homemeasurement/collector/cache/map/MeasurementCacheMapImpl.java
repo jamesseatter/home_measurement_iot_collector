@@ -1,11 +1,7 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.seatter.homemeasurement.collector.cache.MeasurementCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +28,7 @@ import java.util.*;
 @Component
 @Scope("singleton")
 public class MeasurementCacheMapImpl implements MeasurementCache {
-    private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
+    private Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
     private final int MAX_ENTRIES_PER_SENSOR;
 //    private final String CACHE_PATH;
@@ -49,9 +45,8 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     }
 
     @Override
-    public void add(Measurement measurement) {
+    public void add(Measurement measurement, boolean noFlush) {
         Measurement toCache = measurement.toBuilder().build();
-        System.out.println(measurement.hashCode() + "   /   " + toCache.hashCode());
 
         if(!cache.containsKey(toCache.getSensorid())) {
             // initialize new map entry for sensor
@@ -63,12 +58,14 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
         }
         //cache.get(toCache.getSensorid()).add(toCache);
         cache.get(toCache.getSensorid()).add(0,toCache);
-        log.debug("Measurement cache Add : " + toCache.toString());
-        try {
-            flushToFile();
-        } catch (IOException e) {
-            //TODO Update error handling
-            e.printStackTrace();
+        if(!noFlush) {
+            log.debug("Measurement cache Add : " + toCache.toString());
+            try {
+                flushToFile();
+            } catch (IOException e) {
+                //TODO Update error handling
+                e.printStackTrace();
+            }
         }
     }
 
@@ -177,26 +174,25 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
 
     @Override
     public int readFromFile() throws IOException {
-        String content = "";
         if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
             throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
         }
+
+        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        List<Measurement> measurements;
         try {
-            content = new String(Files.readAllBytes(Paths.get(CACHE_FILE.getPath())));
+            measurements = mapper.readValue(new File(CACHE_FILE.getPath()), new TypeReference<List<Measurement>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        List<Measurement> measurements = mapper.readValue(content, new TypeReference<List<Measurement>>() { });
-
         for(Measurement measurement : measurements) {
-            add(measurement);
+            add(measurement, true);
         }
         return measurements.size();
     }

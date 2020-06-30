@@ -142,7 +142,6 @@
 			<version>1.16.1</version>
 		</dependency>
 
-
 		<!-- used for the TemperatureSensor interface -->
 		<dependency>
 			<groupId>com.pi4j</groupId>
