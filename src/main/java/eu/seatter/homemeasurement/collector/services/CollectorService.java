@@ -2,7 +2,7 @@ package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
-import eu.seatter.homemeasurement.collector.services.cache.AlertMeasurementCacheService;
+import eu.seatter.homemeasurement.collector.services.cache.CacheLoad;
 import eu.seatter.homemeasurement.collector.services.cache.MQMeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
@@ -39,15 +39,16 @@ public class CollectorService implements CommandLineRunner {
     private final int readIntervalSeconds;
     private final Boolean mqEnabled;
 
+    private final CacheLoad cacheLoad;
     private final MeasurementCacheService measurementCacheService;
     private final MQMeasurementCacheService mqMeasurementCacheService;
-    private final AlertMeasurementCacheService alertMeasurementCacheService;
     private final SensorMeasurement sensorMeasurement;
     private final SensorListService sensorListService;
     private final AlertService alertService;
     private final SensorMessaging mqService;
 
     public CollectorService(
+            CacheLoad cacheLoad,
             SensorMeasurement sensorMeasurement,
             SensorListService sensorListService,
             AlertService alertService,
@@ -55,7 +56,8 @@ public class CollectorService implements CommandLineRunner {
             RabbitMQService mqService,
             @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
             @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
-            MQMeasurementCacheService mqMeasurementCacheService, AlertMeasurementCacheService alertMeasurementCacheService) {
+            MQMeasurementCacheService mqMeasurementCacheService) {
+                    this.cacheLoad = cacheLoad;
                     this.sensorMeasurement = sensorMeasurement;
                     this.sensorListService = sensorListService;
                     this.alertService = alertService;
@@ -64,7 +66,6 @@ public class CollectorService implements CommandLineRunner {
                     this.mqEnabled = mqEnabled;
                     this.readIntervalSeconds = readIntervalSeconds;
                     this.mqMeasurementCacheService = mqMeasurementCacheService;
-        this.alertMeasurementCacheService = alertMeasurementCacheService;
     }
 
     @Override
@@ -92,7 +93,7 @@ public class CollectorService implements CommandLineRunner {
         }
 
         //load cache's
-        loadCaches();
+        cacheLoad.load();
 
         while(running) {
             //If the mqcache has entries, try to send them to MQ
@@ -170,30 +171,6 @@ public class CollectorService implements CommandLineRunner {
             } catch (Exception e) {
                 log.error("A general error occurred : " + e.getLocalizedMessage());
             }
-        }
-    }
-
-    private void loadCaches() {
-        try {
-            log.info("Load mq cache");
-            int count = mqMeasurementCacheService.readFromFile();
-            log.info("Loaded " + count + " mq records");
-        } catch (Exception ex) {
-            log.error("Error loading cached mq entries from file. No cached data will be loaded : " + ex.getMessage());
-        }
-        try {
-            log.info("Load measurement cache");
-            int count = measurementCacheService.readFromFile();
-            log.info("Loaded " + count + " measurement records");
-        } catch (Exception ex) {
-            log.error("Error loading cached measurement entries from file. No cached data will be loaded : " + ex.getMessage());
-        }
-        try {
-            log.info("Load system alert cache");
-            int count = alertMeasurementCacheService.readFromFile();
-            log.info("Loaded " + count + " alert records");
-        } catch (Exception ex) {
-            log.error("Error loading cached system alert entries from file. No cached data will be loaded : " + ex.getMessage());
         }
     }
 }
