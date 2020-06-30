@@ -4,7 +4,7 @@ import eu.seatter.homemeasurement.collector.cache.map.AlertMeasurementCacheMapIm
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +15,10 @@ import java.util.Map;
  * Time: 16:14
  */
 @Service
-public class AlertCacheService {
+public class AlertMeasurementCacheService {
     private final AlertMeasurementCacheMapImpl alertCache;
 
-    public AlertCacheService(AlertMeasurementCacheMapImpl alertCache) {
+    public AlertMeasurementCacheService(AlertMeasurementCacheMapImpl alertCache) {
         this.alertCache = alertCache;
     }
 
@@ -30,27 +30,15 @@ public class AlertCacheService {
         return alertCache.getAll();
     }
 
-    public List<Measurement> getAllBySensorId(String sensorId) {
-        return alertCache.getAllBySensorId(sensorId);
-    }
-
     public Map<String, List<Measurement>> getAllSorted() {
         return alertCache.getAllSorted();
     }
 
-    public List<Measurement> getLastBySensorId(String sensorId, int last) {
-        return alertCache.getLastBySensorId(sensorId,last);
+    public int readFromFile() throws IOException {
+        return alertCache.readFromFile();
     }
 
-    public ArrayList<String> getSensorIds() {
-        return new ArrayList<>(alertCache.getSensorIds());
-    }
-
-    public int getCacheMaxSizePerSensor() {
-        return alertCache.getCacheMaxSizePerSensor();
-    }
-
-    public int getCacheSizeBySensorId(String sensorId) {
-        return alertCache.getCacheSizeBySensorId(sensorId);
+    public void flushToFile()  throws IOException {
+        alertCache.flushToFile();
     }
 }

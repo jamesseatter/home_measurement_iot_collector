@@ -25,22 +25,6 @@ public class MQMeasurementCacheService {
         mqcache.add(measurement);
     }
 
-//    public void measurementSentToMq(UUID recordId, Boolean status) {
-//        measurementCache.measurementSentToMq(recordId, status);
-//    }
-//
-//    public void alertSentToMq(UUID recordId, Boolean status) {
-//        measurementCache.alertSentToMq(recordId, status);
-//    }
-
-    public int remove(Measurement measurement) {
-        return mqcache.remove(measurement);
-    }
-
-    public int removeAll(List<Measurement> measurements) {
-        return mqcache.removeAll(measurements);
-    }
-
     public List<Measurement> getAll() {
         return mqcache.getAll();
     }

@@ -3,7 +3,7 @@ package eu.seatter.homemeasurement.collector.controllers;
 import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
-import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
+import eu.seatter.homemeasurement.collector.services.cache.AlertMeasurementCacheService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +20,10 @@ import java.util.Map;
 @Controller
 public class AlertsController {
 
-    private final AlertCacheService alertCacheService;
+    private final AlertMeasurementCacheService alertCacheService;
     private final AlertSystemCache alertSystemCache;
 
-    public AlertsController(AlertCacheService cache, AlertSystemCache alertSystemCache) {
+    public AlertsController(AlertMeasurementCacheService cache, AlertSystemCache alertSystemCache) {
         this.alertCacheService = cache;
         this.alertSystemCache = alertSystemCache;
     }

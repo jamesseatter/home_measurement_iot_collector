@@ -5,7 +5,7 @@ import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertServi
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertServiceImpl;
 import eu.seatter.homemeasurement.collector.services.alert.message.MessageAlertService;
 import eu.seatter.homemeasurement.collector.services.alert.message.MessageAlertServiceImpl;
-import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
+import eu.seatter.homemeasurement.collector.services.cache.AlertMeasurementCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import javax.mail.MessagingException;
 public class AlertService {
     private final EmailAlertService emailAlertService;
     private final MessageAlertService messageAlertService;
-    private final AlertCacheService alertCacheService;
+    private final AlertMeasurementCacheService alertCacheService;
     private final Boolean alertEmailEnabled;
     private final Boolean alertMessagingEnabled;
 
@@ -32,7 +32,7 @@ public class AlertService {
 
     public AlertService(EmailAlertServiceImpl emailAlertService,
                         MessageAlertServiceImpl messageAlertService,
-                        AlertCacheService alertCacheService,
+                        AlertMeasurementCacheService alertCacheService,
                         @Value("#{new Boolean('${message.alert.email.enabled:false}')}") Boolean alertEmailEnabled,
                         @Value("#{new Boolean('${message.alert.messaging.enabled}')}") Boolean alertMessagingEnabled) {
         this.emailAlertService = emailAlertService;

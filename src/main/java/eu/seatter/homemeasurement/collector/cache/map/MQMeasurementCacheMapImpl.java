@@ -1,11 +1,7 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.seatter.homemeasurement.collector.cache.MQCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +34,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     private final File CACHE_FILE;
 
     public MQMeasurementCacheMapImpl(@Value("${cache.root.path}") String cache_path,
-                                     @Value("${cache.alert.system.file}") String cache_file) {
+                                     @Value("${cache.mqfailed.measurement.file}") String cache_file) {
         this.CACHE_FILE = new File(cache_path, cache_file);
     }
 
@@ -96,7 +92,6 @@ public class MQMeasurementCacheMapImpl implements MQCache {
         //File file = new File(CACHE_FILE);
         File directory = new File(CACHE_FILE.getParent());
         log.debug("File = " + CACHE_FILE.toString());
-        log.debug("Directory = " + directory.toString());
         try {
             if(!directory.exists()) {
                 directory.mkdir();
@@ -110,6 +105,10 @@ public class MQMeasurementCacheMapImpl implements MQCache {
         }
 
         ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         String jsonArray = mapper.writeValueAsString(cache);
 
         //write to file
@@ -126,23 +125,22 @@ public class MQMeasurementCacheMapImpl implements MQCache {
 
     @Override
     public int readFromFile() throws IOException {
-        String content = "";
         if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
             throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
         }
+
+        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try {
-            content = new String(Files.readAllBytes(Paths.get(CACHE_FILE.getPath())));
+            cache = mapper.readValue(new File(CACHE_FILE.getPath()), new TypeReference<List<Measurement>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        cache = mapper.readValue(content, new TypeReference<List<Measurement>>() { });
         return cache.size();
     }
 }

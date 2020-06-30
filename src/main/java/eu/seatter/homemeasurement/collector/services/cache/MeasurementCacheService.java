@@ -5,7 +5,6 @@ import eu.seatter.homemeasurement.collector.model.Measurement;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,43 +23,15 @@ public class MeasurementCacheService {
     }
 
     public void add(Measurement measurement) {
-        measurementCache.add(measurement);
+        measurementCache.add(measurement, false);
     }
-
-//    public void measurementSentToMq(UUID recordId, Boolean status) {
-//        measurementCache.measurementSentToMq(recordId, status);
-//    }
-//
-//    public void alertSentToMq(UUID recordId, Boolean status) {
-//        measurementCache.alertSentToMq(recordId, status);
-//    }
 
     public Map<String, List<Measurement>> getAll() {
         return measurementCache.getAll();
     }
 
-    public List<Measurement> getAllBySensorId(String sensorId) {
-        return measurementCache.getAllBySensorId(sensorId);
-    }
-
     public Map<String, List<Measurement>> getAllSorted() {
         return measurementCache.getAllSorted();
-    }
-
-    public List<Measurement> getLastBySensorId(String sensorId, int last) {
-        return measurementCache.getLastBySensorId(sensorId,last);
-    }
-
-    public ArrayList<String> getSensorIds() {
-        return new ArrayList<>(measurementCache.getSensorIds());
-    }
-
-    public int getCacheMaxSizePerSensor() {
-        return measurementCache.getCacheMaxSizePerSensor();
-    }
-
-    public int getCacheSizeBySensorId(String sensorId) {
-        return measurementCache.getCacheSizeBySensorId(sensorId);
     }
 
     public boolean flushToFile()  throws IOException {

@@ -2,7 +2,7 @@ package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
-import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
+import eu.seatter.homemeasurement.collector.services.cache.AlertMeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.cache.MQMeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
@@ -41,7 +41,7 @@ public class CollectorService implements CommandLineRunner {
 
     private final MeasurementCacheService measurementCacheService;
     private final MQMeasurementCacheService mqMeasurementCacheService;
-    private final AlertCacheService alertCacheService;
+    private final AlertMeasurementCacheService alertMeasurementCacheService;
     private final SensorMeasurement sensorMeasurement;
     private final SensorListService sensorListService;
     private final AlertService alertService;
@@ -55,7 +55,7 @@ public class CollectorService implements CommandLineRunner {
             RabbitMQService mqService,
             @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
             @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
-            MQMeasurementCacheService mqMeasurementCacheService, AlertCacheService alertCacheService) {
+            MQMeasurementCacheService mqMeasurementCacheService, AlertMeasurementCacheService alertMeasurementCacheService) {
                     this.sensorMeasurement = sensorMeasurement;
                     this.sensorListService = sensorListService;
                     this.alertService = alertService;
@@ -64,7 +64,7 @@ public class CollectorService implements CommandLineRunner {
                     this.mqEnabled = mqEnabled;
                     this.readIntervalSeconds = readIntervalSeconds;
                     this.mqMeasurementCacheService = mqMeasurementCacheService;
-        this.alertCacheService = alertCacheService;
+        this.alertMeasurementCacheService = alertMeasurementCacheService;
     }
 
     @Override
@@ -95,26 +95,23 @@ public class CollectorService implements CommandLineRunner {
         loadCaches();
 
         while(running) {
-            //If the mqcache has entries, try to sent them to MQ
-            if(mqEnabled) {
-                if (mqMeasurementCacheService.getCacheSize() > 0) {
-                    log.warn("MQ cache has entries that must be sent to the MQ server.");
-                    List<Measurement> mqmeasurements = mqMeasurementCacheService.getAll();
-                    log.warn("MQ cache has " + mqmeasurements.size() + " entries that must be sent to the MQ server.");
-                    Iterator iter = mqmeasurements.iterator();
-                    while(iter.hasNext()) {
-                        Measurement m = (Measurement) iter.next();
-                        boolean result = mqService.sendMeasurement(m);
-                        if (result) {
-                            iter.remove();
-                            log.info("Record " +  m.getRecordUID() + " sent to MQ");
-                        }
+            //If the mqcache has entries, try to send them to MQ
+            if(mqEnabled && mqMeasurementCacheService.getCacheSize() > 0) {
+                log.warn("MQ cache has entries that must be sent to the MQ server.");
+                List<Measurement> mqmeasurements = mqMeasurementCacheService.getAll();
+                log.warn("MQ cache has " + mqmeasurements.size() + " entries that must be sent to the MQ server.");
+                Iterator iter = mqmeasurements.iterator();
+                while(iter.hasNext()) {
+                    Measurement m = (Measurement) iter.next();
+                    if(mqService.sendMeasurement(m)) {
+                        iter.remove();
+                        log.info("Record " +  m.getRecordUID() + " sent to MQ");
                     }
-                    try {
-                        mqMeasurementCacheService.flushToFile();
-                    } catch (IOException ex) {
-                        log.error("Error flushing the MQ Cache to disk : " + ex.getMessage());
-                    }
+                }
+                try {
+                    mqMeasurementCacheService.flushToFile();
+                } catch (IOException ex) {
+                    log.error("Error flushing the MQ Cache to disk : " + ex.getMessage());
                 }
             }
             if(sensorList.size() > 0) {
@@ -138,7 +135,10 @@ public class CollectorService implements CommandLineRunner {
             for (Measurement sr : measurements){
                 measurementCacheService.add(sr);
                 if (mqEnabled) {
-                    mqService.sendMeasurement(sr);
+                    if(!mqService.sendMeasurement(sr)) {
+                        log.error("MQ unavailable, adding measurement to MQ cache for retry later");
+                        mqMeasurementCacheService.add(sr);
+                    };
                 }
                 AlertOnThresholdExceeded(sr);
             }
@@ -148,6 +148,7 @@ public class CollectorService implements CommandLineRunner {
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
                 log.error(ex.getLocalizedMessage());
+                Thread.currentThread().interrupt();
                 running = false;
             }
         }
@@ -187,14 +188,12 @@ public class CollectorService implements CommandLineRunner {
         } catch (Exception ex) {
             log.error("Error loading cached measurement entries from file. No cached data will be loaded : " + ex.getMessage());
         }
-//        try {
-//            log.info("Load system alert cache");
-//            int count = alertCacheService.readFromFile();
-//            log.info("Loaded " + count + " alert records");
-//        } catch (Exception ex) {
-//            log.error("Error loading cached system alert entries from file. No cached data will be loaded : " + ex.getMessage());
-//        }
+        try {
+            log.info("Load system alert cache");
+            int count = alertMeasurementCacheService.readFromFile();
+            log.info("Loaded " + count + " alert records");
+        } catch (Exception ex) {
+            log.error("Error loading cached system alert entries from file. No cached data will be loaded : " + ex.getMessage());
+        }
     }
-
-
 }
