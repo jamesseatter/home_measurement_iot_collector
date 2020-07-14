@@ -37,7 +37,7 @@ public class CollectorService implements CommandLineRunner {
     private String activeProfile;
 
     private final int readIntervalSeconds;
-    private final Boolean mqEnabled;
+    private final boolean mqEnabled;
 
     private final CacheLoad cacheLoad;
     private final MeasurementCacheService measurementCacheService;
@@ -55,7 +55,7 @@ public class CollectorService implements CommandLineRunner {
             MeasurementCacheService measurementCacheService,
             RabbitMQService mqService,
             @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
-            @Value("#{new Boolean('${RabbitMQService.enabled:false}')}") Boolean mqEnabled,
+            @Value("#{new Boolean('${rabbitmqservice.enabled:false}')}") Boolean mqEnabled,
             MQMeasurementCacheService mqMeasurementCacheService) {
                     this.cacheLoad = cacheLoad;
                     this.sensorMeasurement = sensorMeasurement;
@@ -77,7 +77,7 @@ public class CollectorService implements CommandLineRunner {
         List<Measurement> measurements = new ArrayList<>();
 
         try {
-            if(activeProfile.equals("dev")) {
+            if(activeProfile.equals("test")) {
                 log.warn("Add Dev sensor list");
                 sensorList = testSensorList();
             } else {
@@ -123,7 +123,7 @@ public class CollectorService implements CommandLineRunner {
                 break;
             }
 
-            if(activeProfile.equals("dev")) {
+            if(activeProfile.equals("test")) {
                 log.warn("Add Dev sensor measurements");
                 measurements.clear();
                 measurements.addAll(testData(sensorList));
@@ -139,12 +139,13 @@ public class CollectorService implements CommandLineRunner {
                     if(!mqService.sendMeasurement(sr)) {
                         log.error("MQ unavailable, adding measurement to MQ cache for retry later");
                         mqMeasurementCacheService.add(sr);
-                    };
+                    }
                 }
-                AlertOnThresholdExceeded(sr);
+                alertOnThresholdExceeded(sr);
             }
 
             try {
+                log.info("Next measurement in " + readIntervalSeconds + " seconds");
                 Thread.sleep(readIntervalSeconds * 1000);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
@@ -156,7 +157,7 @@ public class CollectorService implements CommandLineRunner {
         log.info("Execution stopping");
     }
 
-    private void AlertOnThresholdExceeded(Measurement measurement) {
+    private void alertOnThresholdExceeded(Measurement measurement) {
         //todo check getlow_threshold is defined
         if(measurement.getLow_threshold() != null && measurement.getValue() <= measurement.getLow_threshold()) {
             log.debug("Sensor value below threshold. Measurement : " + measurement.getValue() + " / Threshold : " + measurement.getLow_threshold());
