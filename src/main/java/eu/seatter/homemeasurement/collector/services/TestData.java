@@ -22,10 +22,12 @@ import java.util.concurrent.ThreadLocalRandom;
 @Component
 @Slf4j
 public class TestData {
+    private TestData() {
+    }
+
     public static List<Measurement> testSensorList() {
         log.warn("Test sensor list in use");
         List<Measurement> list = new ArrayList<>();
-//        Measurement sr = new Measurement();
         list.add(Measurement.builder()
                 .recordUID(UUID.randomUUID())
                 .sensorid("28-000000000001")
@@ -37,9 +39,6 @@ public class TestData {
                 .high_threshold(60.0)
                 .alertgroup("temperature_threshold_alerts_private")
                 .alertdestination("BORRY")
-//                .alertSentToMQ(false)
-//                .alertSent_MeasurementTolerance(false)
-//                .measurementSentToMq(false)
                 .build());
 
         list.add(Measurement.builder()
@@ -53,9 +52,6 @@ public class TestData {
                 .high_threshold(60.0)
                 .alertgroup("temperature_threshold_alerts_private")
                 .alertdestination("PRIVATE")
-//                .alertSentToMQ(false)
-//                .alertSent_MeasurementTolerance(false)
-//                .measurementSentToMq(false)
                 .build());
 
         return list;

@@ -1,4 +1,4 @@
-//package eu.seatter.homemeasurement.collector.services.alert;
+package eu.seatter.homemeasurement.collector.services.alert;
 //
 //import eu.seatter.homemeasurement.collector.model.Measurement;
 //import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertService;

@@ -24,8 +24,8 @@ public class AlertService {
     private final EmailAlertService emailAlertService;
     private final MessageAlertService messageAlertService;
     private final AlertMeasurementCacheService alertCacheService;
-    private final Boolean alertEmailEnabled;
-    private final Boolean alertMessagingEnabled;
+    private final boolean alertEmailEnabled;
+    private final boolean alertMessagingEnabled;
 
 
     @Value("${spring.profiles.active:dev}") String applicationEnvironment;
@@ -33,8 +33,8 @@ public class AlertService {
     public AlertService(EmailAlertServiceImpl emailAlertService,
                         MessageAlertServiceImpl messageAlertService,
                         AlertMeasurementCacheService alertCacheService,
-                        @Value("#{new Boolean('${message.alert.email.enabled:false}')}") Boolean alertEmailEnabled,
-                        @Value("#{new Boolean('${message.alert.messaging.enabled}')}") Boolean alertMessagingEnabled) {
+                        @Value("#{new Boolean('${message.alert.email.enabled:false}')}") boolean alertEmailEnabled,
+                        @Value("#{new Boolean('${message.alert.messaging.enabled}')}") boolean alertMessagingEnabled) {
         this.emailAlertService = emailAlertService;
         this.messageAlertService = messageAlertService;
         this.alertCacheService = alertCacheService;
@@ -48,14 +48,12 @@ public class AlertService {
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");
             emailAlertService.sendAlert(AlertType.Measurement, applicationEnvironment,alertTitle,alertMessage,measurement);
-            //measurement.setAlertSent_MeasurementTolerance(true);
         } else {
             log.info("Email alerts disabled.");
         }
         if(alertMessagingEnabled) {
             log.info("Messaging alerts enabled.");
             messageAlertService.sendAlert(AlertType.Measurement, applicationEnvironment,alertTitle,alertMessage,measurement);
-            //measurement.setAlertSent_MeasurementTolerance(true);
         } else {
             log.info("Messaging alerts disabled.");
         }
@@ -72,7 +70,6 @@ public class AlertService {
         if(alertMessagingEnabled) {
             log.info("Messaging alerts enabled.");
             messageAlertService.sendAlert(AlertType.System, applicationEnvironment,alertTitle,alertMessage,null);
-            //measurement.setAlertSent_MeasurementTolerance(true);
         } else {
             log.info("Messaging alerts disabled.");
         }

@@ -17,15 +17,15 @@ import java.util.Base64;
  */
 @Service
 public class EncyptionServiceASE implements EncryptionService {
-    private static final String key = "7h4d9j4em@[7g3ed";
-    private static final String initVector = "452~][:86y5s{lk9";
+    private static final String KEY = "7h4d9j4em@[7g3ed";
+    private static final String INIT_VECTOR = "452~][:86y5s{lk9";
 
     @Override
     public String encryptString(String unencrypted) {
         if(unencrypted.length() <= 100) {
             try {
-                IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
-                SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
+                IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
+                SecretKeySpec skeySpec = new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), "AES");
 
                 Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
                 cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
@@ -44,8 +44,8 @@ public class EncyptionServiceASE implements EncryptionService {
     @Override
     public String decrypteString(String encrypted) {
         try {
-            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
-            SecretKeySpec skeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
+            IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
+            SecretKeySpec skeySpec = new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);

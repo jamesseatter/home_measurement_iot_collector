@@ -30,30 +30,28 @@ import java.util.*;
 public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
     private Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
-    private final int MAX_ENTRIES_PER_SENSOR;
-    private final File CACHE_FILE;
+    private final int maxentriespersensor;
+    private final File cachefile;
 
-    public AlertMeasurementCacheMapImpl(@Value("${cache.root.path}") String cache_path,
-                                        @Value("${cache.alert.measurement.file}")String cache_file,
+    public AlertMeasurementCacheMapImpl(@Value("${cache.root.path}") String cachePath,
+                                        @Value("${cache.alert.measurement.file}")String cacheFile,
                                         @Value("${measurement.alert.cache.max_records_per_sensor:100}") int maxentriespersensor) {
-        this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
-        this.CACHE_FILE = new File(cache_path, cache_file);
+        this.maxentriespersensor = maxentriespersensor;
+        this.cachefile = new File(cachePath, cacheFile);
     }
 
     @Override
     public void add(Measurement measurement) {
         Measurement toCache = measurement.toBuilder().build();
-        System.out.println(measurement.hashCode() + "   /   " + toCache.hashCode());
 
         if(!cache.containsKey(toCache.getSensorid())) {
             // initialize new map entry for sensor
-            cache.put(toCache.getSensorid(),new ArrayList<>(MAX_ENTRIES_PER_SENSOR));
+            cache.put(toCache.getSensorid(),new ArrayList<>(maxentriespersensor));
         }
 
-        if(cache.get(toCache.getSensorid()).size() == MAX_ENTRIES_PER_SENSOR) {
+        if(cache.get(toCache.getSensorid()).size() == maxentriespersensor) {
             cache.get(toCache.getSensorid()).remove(cache.get(toCache.getSensorid()).size()-1);
         }
-        //cache.get(toCache.getSensorid()).add(toCache);
         cache.get(toCache.getSensorid()).add(0,toCache);
         log.debug("Alert cache Add : " + toCache.toString());
     }
@@ -91,7 +89,6 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
                 throw new IllegalArgumentException("The number of values requested, " + last + ", is greater then the number of records cached for the sensor " + cache.get(sensorId).size());
             }
 
-            //return Collections.unmodifiableList(this.cache.get(sensorId).stream().limit(last).collect(Collectors.toList()));
             List<Measurement> temp = this.cache.get(sensorId);
 
             return Collections.unmodifiableList(temp.subList(temp.size() - last, temp.size()));
@@ -100,11 +97,6 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
         }
     }
 
-//    @Override
-//    public List<measurement> getLastBySensorId(String sensorId) {
-//        return getLastBySensorId(sensorId,1);
-//    }
-
     @Override
     public ArrayList<String> getSensorIds() {
         return new ArrayList<>(cache.keySet());
@@ -112,7 +104,7 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
 
     @Override
     public int getCacheMaxSizePerSensor() {
-        return this.MAX_ENTRIES_PER_SENSOR;
+        return this.maxentriespersensor;
     }
 
     @Override
@@ -122,9 +114,8 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
 
     @Override
     public boolean flushToFile() throws IOException {
-        //File file = new File(CACHE_FILE);
-        File directory = new File(CACHE_FILE.getParent());
-        log.debug("File = " + CACHE_FILE.toString());
+        File directory = new File(cachefile.getParent());
+        log.debug("File = " + cachefile.toString());
         try {
             if(!directory.exists()) {
                 directory.mkdir();
@@ -138,17 +129,12 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
         }
 
         ObjectMapper mapper = new ObjectMapper();
-//        mapper.registerModule(new JavaTimeModule());
-//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         String jsonArray = mapper.writeValueAsString(cache);
 
         //write to file
-        try (FileWriter fileWriter = new FileWriter(CACHE_FILE)) {
+        try (FileWriter fileWriter = new FileWriter(cachefile)) {
             fileWriter.write(jsonArray);
             fileWriter.flush();
-            fileWriter.close();
             return true;
         } catch (IOException ex) {
             log.error("Unable to write to file : " + ex.getMessage());
@@ -158,17 +144,13 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
 
     @Override
     public int readFromFile() throws IOException {
-        if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
-            throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
+        if(!Files.exists(Paths.get(cachefile.getPath()))) {
+            throw new FileNotFoundException("The file " + cachefile.toString() + " was not found");
         }
 
         ObjectMapper mapper = new ObjectMapper();
-//        mapper.registerModule(new JavaTimeModule());
-//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try {
-            cache = mapper.readValue(new File(CACHE_FILE.getPath()), new TypeReference<List<Measurement>>() { });
+            cache = mapper.readValue(new File(cachefile.getPath()), new TypeReference<List<Measurement>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

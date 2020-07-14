@@ -4,6 +4,7 @@ import eu.seatter.homemeasurement.collector.model.AlertDestination;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -67,13 +68,6 @@ public class EmailAlertServiceImpl implements EmailAlertService {
                 throw new MessagingException("Error occurred setting the email content");
             }
 
-//            try {
-////                helper.addAttachment("cdbLogo", new ClassPathResource("templates/CdBLogo.webp"));
-//                helper.addInline("cdbLogo", new ClassPathResource("templates/CdBLogo.webp"));
-//            } catch (MessagingException ex) {
-//                throw new MessagingException("Error occurred adding image to email template");
-//            }
-
             try {
                 mailSender.send(message);
             } catch (MailException ex) {
@@ -89,7 +83,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
     }
 
 
-    private String getSubject(Measurement sr, String alertTitle) {
+    private String getSubject(Measurement sr, @NotNull String alertTitle) {
         String subject = "Home Monitor Alert - " + sr.getTitle() + " - " + sr.getValue() + sr.getMeasurementUnit().toString();
         if(alertTitle != null || !alertTitle.equals("")) {
             subject = alertTitle;
@@ -119,12 +113,14 @@ public class EmailAlertServiceImpl implements EmailAlertService {
 
     private String formatSpringEnvironment(String environment) {
         switch (environment) {
-            case "dev": return "Developement";
             case "test": return "Test";
             case "qa": return "Quality Assurance";
             case "prod": return "Production";
+            case "dev":
+            default:
+                return "Developement";
         }
-        return "Developement";
+
     }
 
     private String getContent(String alertTemplate, String environment, String title, Measurement sr, String alertMessage) {

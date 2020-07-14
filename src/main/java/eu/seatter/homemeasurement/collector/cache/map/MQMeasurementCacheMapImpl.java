@@ -31,11 +31,11 @@ import java.util.List;
 public class MQMeasurementCacheMapImpl implements MQCache {
     private List<Measurement> cache = new ArrayList<>();
 
-    private final File CACHE_FILE;
+    private final File cacheFile;
 
     public MQMeasurementCacheMapImpl(@Value("${cache.root.path}") String cache_path,
-                                     @Value("${cache.mqfailed.measurement.file}") String cache_file) {
-        this.CACHE_FILE = new File(cache_path, cache_file);
+                                     @Value("${cache.mqfailed.measurement.file}") String cacheFile) {
+        this.cacheFile = new File(cache_path, cacheFile);
     }
 
     @Override
@@ -89,9 +89,8 @@ public class MQMeasurementCacheMapImpl implements MQCache {
 
     @Override
     public boolean flushToFile() throws IOException {
-        //File file = new File(CACHE_FILE);
-        File directory = new File(CACHE_FILE.getParent());
-        log.debug("File = " + CACHE_FILE.toString());
+        File directory = new File(cacheFile.getParent());
+        log.debug("File = " + cacheFile.toString());
         try {
             if(!directory.exists()) {
                 directory.mkdir();
@@ -105,17 +104,12 @@ public class MQMeasurementCacheMapImpl implements MQCache {
         }
 
         ObjectMapper mapper = new ObjectMapper();
-//        mapper.registerModule(new JavaTimeModule());
-//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         String jsonArray = mapper.writeValueAsString(cache);
 
         //write to file
-        try (FileWriter fileWriter = new FileWriter(CACHE_FILE)) {
+        try (FileWriter fileWriter = new FileWriter(cacheFile)) {
             fileWriter.write(jsonArray);
             fileWriter.flush();
-            fileWriter.close();
             return true;
         } catch (IOException ex) {
             log.error("Unable to write to file : " + ex.getMessage());
@@ -125,17 +119,13 @@ public class MQMeasurementCacheMapImpl implements MQCache {
 
     @Override
     public int readFromFile() throws IOException {
-        if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
-            throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
+        if(!Files.exists(Paths.get(cacheFile.getPath()))) {
+            throw new FileNotFoundException("The file " + cacheFile.toString() + " was not found");
         }
 
         ObjectMapper mapper = new ObjectMapper();
-//        mapper.registerModule(new JavaTimeModule());
-//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         try {
-            cache = mapper.readValue(new File(CACHE_FILE.getPath()), new TypeReference<List<Measurement>>() { });
+            cache = mapper.readValue(new File(cacheFile.getPath()), new TypeReference<List<Measurement>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

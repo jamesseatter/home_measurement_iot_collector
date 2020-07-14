@@ -18,7 +18,6 @@ public interface AlertMeasurementCache {
     Map<String, List<Measurement>> getAll();
     Map<String,List<Measurement>> getAllSorted();
     List<Measurement> getAllBySensorId(String sensorId);
-//    List<measurement> getLastBySensorId(String sensorId);
     List<Measurement> getLastBySensorId(String sensorId, int last);
 
 

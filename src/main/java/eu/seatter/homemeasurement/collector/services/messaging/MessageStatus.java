@@ -14,12 +14,12 @@ import java.time.temporal.ChronoUnit;
  */
 @Component
 public class MessageStatus {
-    private MessageStatusType current_status;
+    private MessageStatusType currentStatus;
     private ZonedDateTime lastUpdateDate;
     private ZonedDateTime lastSuccessSentDate;
 
     public void update (MessageStatusType status) {
-        current_status = status;
+        currentStatus = status;
         lastUpdateDate = ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES);
         if(status == MessageStatusType.GOOD) {
             lastSuccessSentDate = ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.MINUTES);
@@ -27,7 +27,7 @@ public class MessageStatus {
     }
 
     public MessageStatusType getStatus() {
-        return current_status;
+        return currentStatus;
     }
 
     public ZonedDateTime getLastUpdateDate() {

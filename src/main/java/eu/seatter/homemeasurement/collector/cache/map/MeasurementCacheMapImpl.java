@@ -30,18 +30,14 @@ import java.util.*;
 public class MeasurementCacheMapImpl implements MeasurementCache {
     private Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
-    private final int MAX_ENTRIES_PER_SENSOR;
-//    private final String CACHE_PATH;
-//    private final String CACHE_FILENAME;
-    private final File CACHE_FILE;
+    private final int maxentriespersensor;
+    private final File cachefile;
 
-    public MeasurementCacheMapImpl(@Value("${cache.root.path}") String cache_path,
-                                   @Value("${cache.measurement.file}")String cache_file,
+    public MeasurementCacheMapImpl(@Value("${cache.root.path}") String cachefile,
+                                   @Value("${cache.measurement.file}")String cacheFile,
                                    @Value("${measurement.cache.max_records_per_sensor:24}") int maxentriespersensor) {
-//        this.CACHE_PATH = cache_path;
-//        this.CACHE_FILENAME = cache_file;
-        this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
-        this.CACHE_FILE = new File(cache_path, cache_file);
+        this.maxentriespersensor = maxentriespersensor;
+        this.cachefile = new File(cachefile, cacheFile);
     }
 
     @Override
@@ -50,13 +46,12 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
 
         if(!cache.containsKey(toCache.getSensorid())) {
             // initialize new map entry for sensor
-            cache.put(toCache.getSensorid(),new ArrayList<>(MAX_ENTRIES_PER_SENSOR));
+            cache.put(toCache.getSensorid(),new ArrayList<>(maxentriespersensor));
         }
 
-        if(cache.get(toCache.getSensorid()).size() == MAX_ENTRIES_PER_SENSOR) {
+        if(cache.get(toCache.getSensorid()).size() == maxentriespersensor) {
             cache.get(toCache.getSensorid()).remove(cache.get(toCache.getSensorid()).size()-1);
         }
-        //cache.get(toCache.getSensorid()).add(toCache);
         cache.get(toCache.getSensorid()).add(0,toCache);
         if(!noFlush) {
             log.debug("Measurement cache Add : " + toCache.toString());
@@ -99,8 +94,6 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
             if(cache.get(sensorId).size() < last) {
                 throw new IllegalArgumentException("The number of values requested, " + last + ", is greater then the number of records cached for the sensor " + cache.get(sensorId).size());
             }
-
-            //return Collections.unmodifiableList(this.cache.get(sensorId).stream().limit(last).collect(Collectors.toList()));
             List<Measurement> temp = this.cache.get(sensorId);
 
             return Collections.unmodifiableList(temp.subList(temp.size() - last, temp.size()));
@@ -109,11 +102,6 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
         }
     }
 
-//    @Override
-//    public List<measurement> getLastBySensorId(String sensorId) {
-//        return getLastBySensorId(sensorId,1);
-//    }
-
     @Override
     public ArrayList<String> getSensorIds() {
         return new ArrayList<>(cache.keySet());
@@ -121,7 +109,7 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
 
     @Override
     public int getCacheMaxSizePerSensor() {
-        return this.MAX_ENTRIES_PER_SENSOR;
+        return this.maxentriespersensor;
     }
 
     @Override
@@ -131,18 +119,20 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
 
     private List<Measurement> getListOfMeasurements() {
         List<Measurement> measurements = new ArrayList<>();
-        for(String key : cache.keySet()) {
-            measurements.addAll(cache.get(key).subList(0,cache.get(key).size()));
+        for(Map.Entry<String, List<Measurement>> entry : cache.entrySet()) {
+            measurements.addAll(entry.getValue());
         }
+//        for(String key : cache.keySet()) {
+//            measurements.addAll(cache.get(key).subList(0,cache.get(key).size()));
+//        }
 
         return measurements;
     }
 
     @Override
     public boolean flushToFile() throws  IOException {
-        //File file = new File(CACHE_FILE);
-        File directory = new File(CACHE_FILE.getParent());
-        log.debug("File = " + CACHE_FILE.toString());
+        File directory = new File(cachefile.getParent());
+        log.debug("File = " + cachefile.toString());
         log.debug("Directory = " + directory.toString());
         try {
             if(!directory.exists()) {
@@ -162,7 +152,7 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
         String jsonArray = mapper.writeValueAsString(measurements);
 
         //write to file
-        try (FileWriter fileWriter = new FileWriter(CACHE_FILE)) {
+        try (FileWriter fileWriter = new FileWriter(cachefile)) {
             fileWriter.write(jsonArray);
             fileWriter.flush();
             return true;
@@ -174,18 +164,14 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
 
     @Override
     public int readFromFile() throws IOException {
-        if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
-            throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
+        if(!Files.exists(Paths.get(cachefile.getPath()))) {
+            throw new FileNotFoundException("The file " + cachefile.toString() + " was not found");
         }
 
         ObjectMapper mapper = new ObjectMapper();
-//        mapper.registerModule(new JavaTimeModule());
-//        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-//        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         List<Measurement> measurements;
         try {
-            measurements = mapper.readValue(new File(CACHE_FILE.getPath()), new TypeReference<List<Measurement>>() { });
+            measurements = mapper.readValue(new File(cachefile.getPath()), new TypeReference<List<Measurement>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

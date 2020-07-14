@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 class ApiErrorResponse {
 
     private HttpStatus status;
-    private String error_code;
+    private String errorCode;
     private String message;
     private String detail;
 
@@ -22,7 +22,7 @@ class ApiErrorResponse {
     //Builder
     public static final class ApiErrorResponseBuilder {
         private HttpStatus status;
-        private String error_code;
+        private String errorCode;
         private String message;
         private String detail;
 
@@ -38,8 +38,8 @@ class ApiErrorResponse {
             return this;
         }
 
-        ApiErrorResponseBuilder withError_code(String error_code) {
-            this.error_code = error_code;
+        ApiErrorResponseBuilder withErrorCode(String errorCode) {
+            this.errorCode = errorCode;
             return this;
         }
 
@@ -56,7 +56,7 @@ class ApiErrorResponse {
         ApiErrorResponse build() {
             ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
             apiErrorResponse.status = this.status;
-            apiErrorResponse.error_code = this.error_code;
+            apiErrorResponse.errorCode = this.errorCode;
             apiErrorResponse.detail = this.detail;
             apiErrorResponse.message = this.message;
             return apiErrorResponse;

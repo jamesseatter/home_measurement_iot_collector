@@ -32,14 +32,14 @@ import java.util.List;
 public class AlertSystemCacheMapImpl implements AlertSystemCache {
     private List<SystemAlert> cache = new ArrayList<>();
 
-    private final int MAX_ENTRIES_PER_SENSOR;
-    private final File CACHE_FILE;
+    private final int maxEntriesPerSensor;
+    private final File cacheFile;
 
-    public AlertSystemCacheMapImpl(@Value("${cache.root.path}") String cache_path,
-                                   @Value("${cache.alert.system.file}")String cache_file,
+    public AlertSystemCacheMapImpl(@Value("${cache.root.path}") String cachePath,
+                                   @Value("${cache.alert.system.file}")String cacheFile,
                                    @Value("${system.alert.cache.max_records_per_sensor:100}") int maxentriespersensor) {
-        this.MAX_ENTRIES_PER_SENSOR = maxentriespersensor;
-        this.CACHE_FILE = new File(cache_path, cache_file);
+        this.maxEntriesPerSensor = maxentriespersensor;
+        this.cacheFile = new File(cachePath, cacheFile);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
                 .message(alertMessage)
                 .build();
 
-        if(cache.size() == MAX_ENTRIES_PER_SENSOR) {
+        if(cache.size() == maxEntriesPerSensor) {
             cache.remove(-1);
         }
         cache.add(0,sa);
@@ -64,12 +64,12 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
 
     @Override
     public List<SystemAlert> getAllSorted() {
-        return cache;
+        return getAll();
     }
 
     @Override
     public int getCacheMaxSize() {
-        return MAX_ENTRIES_PER_SENSOR;
+        return maxEntriesPerSensor;
     }
 
     @Override
@@ -79,9 +79,8 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
 
     @Override
     public boolean flushToFile() throws IOException {
-        //File file = new File(CACHE_FILE);
-        File directory = new File(CACHE_FILE.getParent());
-        log.debug("File = " + CACHE_FILE.toString());
+        File directory = new File(cacheFile.getParent());
+        log.debug("File = " + cacheFile.toString());
         try {
             if(!directory.exists()) {
                 directory.mkdir();
@@ -98,10 +97,9 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
         String jsonArray = mapper.writeValueAsString(cache);
 
         //write to file
-        try (FileWriter fileWriter = new FileWriter(CACHE_FILE)) {
+        try (FileWriter fileWriter = new FileWriter(cacheFile)) {
             fileWriter.write(jsonArray);
             fileWriter.flush();
-            fileWriter.close();
             return true;
         } catch (IOException ex) {
             log.error("Unable to write to file : " + ex.getMessage());
@@ -111,14 +109,14 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
 
     @Override
     public int readFromFile() throws IOException {
-        if(!Files.exists(Paths.get(CACHE_FILE.getPath()))) {
-            throw new FileNotFoundException("The file " + CACHE_FILE.toString() + " was not found");
+        if(!Files.exists(Paths.get(cacheFile.getPath()))) {
+            throw new FileNotFoundException("The file " + cacheFile.toString() + " was not found");
         }
 
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            cache = mapper.readValue(new File(CACHE_FILE.getPath()), new TypeReference<List<Measurement>>() { });
+            cache = mapper.readValue(new File(cacheFile.getPath()), new TypeReference<List<Measurement>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

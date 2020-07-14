@@ -10,14 +10,14 @@ public enum AlertDestination {
     BORRY("AlertMeasurementEmailToBorryTemplate.html"),
     PRIVATE("AlertMeasurementEmailToPrivateTemplate.html");
 
-    private final String alert_template;
+    private final String alertTemplate;
 
     AlertDestination(String template) {
-        this.alert_template = template;
+        this.alertTemplate = template;
     }
 
     public String getTemplate() {
-        return this.alert_template;
+        return this.alertTemplate;
     }
 
 }

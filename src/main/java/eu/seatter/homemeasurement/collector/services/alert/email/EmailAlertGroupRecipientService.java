@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class EmailAlertGroupRecipientService {
-    public String getRecipients(String alertGroup) throws IllegalArgumentException {
+    public String getRecipients(String alertGroup) {
         if(alertGroup.isEmpty()) {
             return null;
         }
-        AlertContactGroup ag = AlertContactJSON.GetContactsForGroup(alertGroup).orElse(new AlertContactGroup());
+        AlertContactGroup ag = AlertContactJSON.getContactsForGroup(alertGroup).orElse(new AlertContactGroup());
 
         if(ag.getAddress().isEmpty()) {
             throw new java.lang.IllegalArgumentException("No recipients found for alertgroup:" + alertGroup);

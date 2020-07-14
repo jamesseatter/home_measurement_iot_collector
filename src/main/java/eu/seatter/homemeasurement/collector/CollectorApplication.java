@@ -14,5 +14,6 @@ public class CollectorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... strings) {
+		//no code required by spring
 	}
 }
