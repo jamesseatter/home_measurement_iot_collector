@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -29,12 +28,10 @@ public class DashboardController {
     @SuppressWarnings("SameReturnValue")
     @RequestMapping(value={"/", "/index"})
     public String index(final Model model) {
-        ZoneId zoneId= ZoneId.of("Europe/Zurich");
 
         Map<String, List<Measurement>> allSortedMeasurements = cacheService.getAllSorted();
         for(String id : allSortedMeasurements.keySet()) {
-            //allSortedMeasurements.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC().withZoneSameInstant(zoneId)));
-            allSortedMeasurements.get(id).forEach((srec) -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC()));
+            allSortedMeasurements.get(id).forEach(srec -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC()));
         }
 
         model.addAttribute("allMeasurements", allSortedMeasurements);

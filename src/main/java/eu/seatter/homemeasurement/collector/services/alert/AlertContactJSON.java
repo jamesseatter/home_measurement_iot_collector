@@ -23,13 +23,13 @@ import java.util.Optional;
 @Slf4j
 public class AlertContactJSON {
 
+    @Value("${config.path}")
     private static String configPath;
 
-    public AlertContactJSON(@Value("${config.path}") String configpath) {
-        configPath = configpath;
+    private AlertContactJSON() {
     }
 
-    public static Optional<AlertContactGroup> GetContactsForGroup(String groupName){
+    public static Optional<AlertContactGroup> getContactsForGroup(String groupName){
         log.info("Start JSON Alert Contacts import");
         File alertGroupFileLocation;
 

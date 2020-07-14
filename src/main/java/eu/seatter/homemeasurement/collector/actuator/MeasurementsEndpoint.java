@@ -49,18 +49,6 @@ public class MeasurementsEndpoint {
         return dataout;
     }
 
-//    @ReadOperation
-//    public List<String> measurements(@Selector String sensorid) {
-//        List<measurement> data = cache.getAllBySensorId(sensorid);
-//        List<String> dataout = new ArrayList<>();
-//
-//        for(measurement sr : data) {
-//            dataout.add(formatMeasurements(sr));
-//        }
-//        return dataout;
-//    }
-
-
     private String formatMeasurements(Measurement record) {
 
         return record.getMeasureTimeUTC().format(formatter) +

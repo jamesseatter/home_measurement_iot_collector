@@ -45,7 +45,6 @@ public class MessageAlertServiceImpl implements MessageAlertService {
         } else if(alertType == AlertType.System) {
             SystemAlert systemAlert = new SystemAlert();
             systemAlert.setAlertUID(UUID.randomUUID());
-            //systemAlert.setAlertTimeUTC(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.SECONDS));
             systemAlert.setAlertTimeUTC(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.SECONDS).toLocalDateTime());
             systemAlert.setTitle(alertTitle);
             systemAlert.setMessage(alertMessage);
@@ -66,7 +65,7 @@ public class MessageAlertServiceImpl implements MessageAlertService {
             ma.setAlertSentEmailTO(emailAlertGroupRecipientService.getRecipients(sr.getAlertgroup()));
             return ma;
         }
-        return null;
+        return ma;
     }
 
 }

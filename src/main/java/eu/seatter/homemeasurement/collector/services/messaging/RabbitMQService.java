@@ -61,7 +61,6 @@ public class RabbitMQService implements SensorMessaging {
             String messagesToEmit = convertToJSONMessage(measurement);
             sendMessage(messagesToEmit,"measurement");
             measurement.setMeasurementSentToMq(true);
-            //measurementCacheService.measurementSentToMq(measurement.getRecordUID(), true);
             return true;
         } catch (MessagingException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage(), measurement);
@@ -75,7 +74,6 @@ public class RabbitMQService implements SensorMessaging {
         try {
             String messagesToEmit = convertToJSONMessage(measurementAlert);
             sendMessage(messagesToEmit, "alertmeasurement");
-            //measurementCacheService.alertSentToMq(measurement.getRecordUID(), true);
         } catch (MessagingException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage());
         }
@@ -87,7 +85,6 @@ public class RabbitMQService implements SensorMessaging {
         try {
             String messagesToEmit = convertToJSONMessage(systemAlert);
             sendMessage(messagesToEmit, "a");
-            //measurementCacheService.alertSentToMq(measurement.getRecordUID(), true);
         } catch (MessagingException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage());
         }
@@ -95,23 +92,21 @@ public class RabbitMQService implements SensorMessaging {
     }
 
     private void sendMessage(String messagesToEmit, @NotNull String messageType) throws MessagingException {
-//        String MQ_QUEUE_NAME="CHANGE_ME";
 
 
-        String MQ_ROUTING_KEY="CHANGE_ME";
+        String MQROUTINGKEY="CHANGE_ME";
         switch (messageType) {
-            case "measurement" : {
-                MQ_ROUTING_KEY = env.getProperty("rabbitmqservice.routing_key.measurement");
+            case "measurement" :
+                MQROUTINGKEY = env.getProperty("rabbitmqservice.routing_key.measurement");
                 break;
-            }
-            case "alertmeasurement" : {
-                MQ_ROUTING_KEY = env.getProperty("rabbitmqservice.routing_key.alert.measurement");
+            case "alertmeasurement" :
+                MQROUTINGKEY = env.getProperty("rabbitmqservice.routing_key.alert.measurement");
                 break;
-            }
-            case "alertsystem" : {
-                MQ_ROUTING_KEY = env.getProperty("rabbitmqservice.routing_key.alert.system");
+            case "alertsystem" :
+                MQROUTINGKEY = env.getProperty("rabbitmqservice.routing_key.alert.system");
                 break;
-            }
+            default:
+                throw new IllegalStateException("Unexpected value: " + messageType);
         }
 
         log.info("MQ Sending measurement message to : " +
@@ -119,10 +114,9 @@ public class RabbitMQService implements SensorMessaging {
                 ":" + rabbitTemplate.getConnectionFactory().getPort() +
                 "/" + rabbitTemplate.getConnectionFactory().getVirtualHost() +
                 "/" + rabbitMQProperties.getExchange() +
-                " key : " + MQ_ROUTING_KEY);
+                " key : " + MQROUTINGKEY);
         try {
-//            rabbitTemplate.convertAndSend(rabbitMQProperties.getExchange(), MQ_ROUTING_KEY, messagesToEmit.getBytes(StandardCharsets.UTF_8));
-            rabbitTemplate.convertAndSend(rabbitMQProperties.getExchange(), MQ_ROUTING_KEY, messagesToEmit);
+            rabbitTemplate.convertAndSend(rabbitMQProperties.getExchange(), MQROUTINGKEY, messagesToEmit);
             log.info("MQ measurement message sent");
         } catch (AmqpException ex) {
             log.error("Failed to send message to MQ : " + ex.getLocalizedMessage());

@@ -5,6 +5,7 @@ import eu.seatter.homemeasurement.collector.sensor.types.AnalogueSensor;
 import eu.seatter.homemeasurement.collector.sensor.types.DigitalSensor;
 import eu.seatter.homemeasurement.collector.sensor.types.OneWirePi4JSensor;
 import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,7 +14,10 @@ import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
  * Time: 19:14
  */
 public class SensorFactory {
-    public static Sensor getSensor(SensorType sensorType) {
+    private SensorFactory() {
+    }
+
+    public static @Nullable Sensor getSensor(SensorType sensorType) {
         if(sensorType == SensorType.ONEWIRE) {
             return new OneWirePi4JSensor();
         }

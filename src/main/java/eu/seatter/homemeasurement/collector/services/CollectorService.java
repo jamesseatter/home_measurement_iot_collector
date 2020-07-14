@@ -1,5 +1,6 @@
 package eu.seatter.homemeasurement.collector.services;
 
+import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.cache.CacheLoad;
@@ -36,7 +37,7 @@ public class CollectorService implements CommandLineRunner {
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
-    private final int readIntervalSeconds;
+    private final long readIntervalSeconds;
     private final boolean mqEnabled;
 
     private final CacheLoad cacheLoad;
@@ -54,7 +55,7 @@ public class CollectorService implements CommandLineRunner {
             AlertService alertService,
             MeasurementCacheService measurementCacheService,
             RabbitMQService mqService,
-            @Value("${measurement.interval.seconds:360}") int readIntervalSeconds,
+            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds,
             @Value("#{new Boolean('${rabbitmqservice.enabled:false}')}") Boolean mqEnabled,
             MQMeasurementCacheService mqMeasurementCacheService) {
                     this.cacheLoad = cacheLoad;
@@ -77,7 +78,7 @@ public class CollectorService implements CommandLineRunner {
         List<Measurement> measurements = new ArrayList<>();
 
         try {
-            if(activeProfile.equals("test")) {
+            if(activeProfile.equals("dev")) {
                 log.warn("Add Dev sensor list");
                 sensorList = testSensorList();
             } else {
@@ -88,8 +89,8 @@ public class CollectorService implements CommandLineRunner {
 
         } catch (RuntimeException ex) {
             log.warn("No sensors were connected to the system. Shutting down");
-            //throw new SensorNotFoundException("No sensors found",
-//                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
+            throw new SensorNotFoundException("No sensors found",
+                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
         }
 
         //load cache's
@@ -101,9 +102,9 @@ public class CollectorService implements CommandLineRunner {
                 log.warn("MQ cache has entries that must be sent to the MQ server.");
                 List<Measurement> mqmeasurements = mqMeasurementCacheService.getAll();
                 log.warn("MQ cache has " + mqmeasurements.size() + " entries that must be sent to the MQ server.");
-                Iterator iter = mqmeasurements.iterator();
+                Iterator<Measurement> iter = mqmeasurements.iterator();
                 while(iter.hasNext()) {
-                    Measurement m = (Measurement) iter.next();
+                    Measurement m = iter.next();
                     if(mqService.sendMeasurement(m)) {
                         iter.remove();
                         log.info("Record " +  m.getRecordUID() + " sent to MQ");
@@ -115,15 +116,14 @@ public class CollectorService implements CommandLineRunner {
                     log.error("Error flushing the MQ Cache to disk : " + ex.getMessage());
                 }
             }
-            if(sensorList.size() > 0) {
-                running = true;
-                //todo Send sensor list to the Edge
-            } else {
+            if (sensorList.isEmpty()) {
                 log.info("No sensors connected to device. Exiting.");
                 break;
+            } else {
+                running = true;
             }
 
-            if(activeProfile.equals("test")) {
+            if(activeProfile.equals("dev")) {
                 log.warn("Add Dev sensor measurements");
                 measurements.clear();
                 measurements.addAll(testData(sensorList));
@@ -135,11 +135,9 @@ public class CollectorService implements CommandLineRunner {
 
             for (Measurement sr : measurements){
                 measurementCacheService.add(sr);
-                if (mqEnabled) {
-                    if(!mqService.sendMeasurement(sr)) {
+                if (mqEnabled && !mqService.sendMeasurement(sr)) {
                         log.error("MQ unavailable, adding measurement to MQ cache for retry later");
                         mqMeasurementCacheService.add(sr);
-                    }
                 }
                 alertOnThresholdExceeded(sr);
             }
@@ -158,7 +156,6 @@ public class CollectorService implements CommandLineRunner {
     }
 
     private void alertOnThresholdExceeded(Measurement measurement) {
-        //todo check getlow_threshold is defined
         if(measurement.getLow_threshold() != null && measurement.getValue() <= measurement.getLow_threshold()) {
             log.debug("Sensor value below threshold. Measurement : " + measurement.getValue() + " / Threshold : " + measurement.getLow_threshold());
             try {

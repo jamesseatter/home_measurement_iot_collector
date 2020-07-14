@@ -35,7 +35,7 @@ public class SensorMeasurement {
                 //todo improve handling of missing sensorId
                 continue;
             }
-            Measurement srWithMeasurement;
+
             try {
                 readSensorValue(measurement);
                 measurement.setMeasureTimeUTC(measurementTime);
@@ -64,7 +64,6 @@ public class SensorMeasurement {
     }
 
     private LocalDateTime getTimeDateNowInUTC() {
-        LocalDateTime ldt = LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime().truncatedTo(ChronoUnit.MINUTES);
-        return ldt;
+        return LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime().truncatedTo(ChronoUnit.MINUTES);
     }
 }
