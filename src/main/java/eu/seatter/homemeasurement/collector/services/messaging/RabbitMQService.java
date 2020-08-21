@@ -19,8 +19,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-
 /**
  * Created by IntelliJ IDEA.
  * User: jas
@@ -62,7 +60,7 @@ public class RabbitMQService implements SensorMessaging {
             sendMessage(messagesToEmit,"measurement");
             measurement.setMeasurementSentToMq(true);
             return true;
-        } catch (MessagingException | JsonProcessingException ex) {
+        } catch (AmqpException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage(), measurement);
             mqMeasurementCacheService.add(measurement);
         }
@@ -70,11 +68,11 @@ public class RabbitMQService implements SensorMessaging {
     }
 
     @Override
-    public boolean sendMeasurementAlert(MeasurementAlert measurementAlert) throws MessagingException {
+    public boolean sendMeasurementAlert(MeasurementAlert measurementAlert) {
         try {
             String messagesToEmit = convertToJSONMessage(measurementAlert);
             sendMessage(messagesToEmit, "alertmeasurement");
-        } catch (MessagingException | JsonProcessingException ex) {
+        } catch (AmqpException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage());
         }
         return true;
@@ -85,25 +83,24 @@ public class RabbitMQService implements SensorMessaging {
         try {
             String messagesToEmit = convertToJSONMessage(systemAlert);
             sendMessage(messagesToEmit, "a");
-        } catch (MessagingException | JsonProcessingException ex) {
+        } catch (AmqpException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage());
         }
         return true;
     }
 
-    private void sendMessage(String messagesToEmit, @NotNull String messageType) throws MessagingException {
+    private void sendMessage(String messagesToEmit, @NotNull String messageType) throws AmqpException {
 
-
-        String MQROUTINGKEY="CHANGE_ME";
+        String mqroutingkey;
         switch (messageType) {
             case "measurement" :
-                MQROUTINGKEY = env.getProperty("rabbitmqservice.routing_key.measurement");
+                mqroutingkey = env.getProperty("rabbitmqservice.routing_key.measurement");
                 break;
             case "alertmeasurement" :
-                MQROUTINGKEY = env.getProperty("rabbitmqservice.routing_key.alert.measurement");
+                mqroutingkey = env.getProperty("rabbitmqservice.routing_key.alert.measurement");
                 break;
             case "alertsystem" :
-                MQROUTINGKEY = env.getProperty("rabbitmqservice.routing_key.alert.system");
+                mqroutingkey = env.getProperty("rabbitmqservice.routing_key.alert.system");
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + messageType);
@@ -114,12 +111,13 @@ public class RabbitMQService implements SensorMessaging {
                 ":" + rabbitTemplate.getConnectionFactory().getPort() +
                 "/" + rabbitTemplate.getConnectionFactory().getVirtualHost() +
                 "/" + rabbitMQProperties.getExchange() +
-                " key : " + MQROUTINGKEY);
+                " key : " + mqroutingkey);
         try {
-            rabbitTemplate.convertAndSend(rabbitMQProperties.getExchange(), MQROUTINGKEY, messagesToEmit);
+            rabbitTemplate.convertAndSend(rabbitMQProperties.getExchange(), mqroutingkey, messagesToEmit);
             log.info("MQ measurement message sent");
         } catch (AmqpException ex) {
             log.error("Failed to send message to MQ : " + ex.getLocalizedMessage());
+            throw (ex);
         }
     }
 

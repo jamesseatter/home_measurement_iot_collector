@@ -53,8 +53,20 @@ public class SensorMeasurement {
 
     private void readSensorValue(Measurement measurement) {
         Sensor sensorReader = SensorFactory.getSensor(measurement.getSensorType());
+        int counter = 1;
+        int maxCounter = 3;
+        measurement.setValue(0.0);
         try {
-            measurement.setValue(Objects.requireNonNull(sensorReader).readSensorData(measurement));
+            while (counter <= maxCounter) {
+                measurement.setValue(Objects.requireNonNull(sensorReader).readSensorData(measurement));
+                if((measurement.getValue().intValue() == 85) || (measurement.getValue().intValue() == 0)) {
+                    log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which indicates a reading error. Retry (" + counter + " of " + maxCounter + ")");
+                }
+                if(measurement.getValue() > 100) {
+                    log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which may be an error. Retry (" + counter + " of " + maxCounter + ")");
+                }
+                counter++;
+            }
         }
         catch (RuntimeException ex) {
             //todo improve exception handling
