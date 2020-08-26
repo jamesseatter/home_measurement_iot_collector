@@ -9,11 +9,7 @@
     <div id="page-content-wrapper">
         <div class="container-fluid">
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                <h1>Heating System</h1>
-                <!--                    <select th:field="*{view_days}">-->
-                <!--                        <option th:value="7" th:text="7 Days"></option>-->
-                <!--                        <option th:value="30" th:text="30 Days"></option>-->
-                <!--                    </select>-->
+                <h1 th:text="${title}">Heating System</h1>
                 <div class="panel-content text-center shadow" th:if="${not #lists.isEmpty(allMeasurements)}" style="margin-top: 20px">
                     <canvas id="measurementChart" class="chart"></canvas>
                 </div>
