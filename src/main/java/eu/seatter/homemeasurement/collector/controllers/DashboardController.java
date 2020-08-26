@@ -2,6 +2,7 @@ package eu.seatter.homemeasurement.collector.controllers;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,8 @@ import java.util.Map;
 @SuppressWarnings("DuplicatedCode")
 @Controller
 public class DashboardController {
-
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
     private final MeasurementCacheService cacheService;
 
     public DashboardController(MeasurementCacheService cache) {
@@ -36,6 +38,11 @@ public class DashboardController {
 
         model.addAttribute("allMeasurements", allSortedMeasurements);
         model.addAttribute("view_days","");
+        if(activeProfile.toLowerCase() !="prod") {
+            model.addAttribute("title", "Heating System (" + activeProfile.toUpperCase() + ")");
+        } else {
+            model.addAttribute("title", "Heating System");
+        }
         return "index";
     }
 }

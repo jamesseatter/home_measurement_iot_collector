@@ -18,7 +18,7 @@
     {
       "name": "RabbitMQService.exchangee",
       "type": "java.lang.String",
-      "description": "Description for RabbitMQService.exchangee."
+      "description": "Description for RabbitMQService.exchange."
     },
     {
       "name": "RabbitMQService.vhost",
@@ -169,5 +169,40 @@
       "name": "cache.measurement.max_records_per_sensor",
       "type": "java.lang.String",
       "description": "Description for cache.measurement.max_records_per_sensor."
+    },
+    {
+      "name": "measurement.alert.cache.max_records_per_sensor",
+      "type": "java.lang.String",
+      "description": "Description for measurement.alert.cache.max_records_per_sensor."
+    },
+    {
+      "name": "system.alert.cache.max_records_per_sensor",
+      "type": "java.lang.String",
+      "description": "Description for system.alert.cache.max_records_per_sensor."
+    },
+    {
+      "name": "cache.mqfailed.measurement.file",
+      "type": "java.lang.String",
+      "description": "Description for cache.mqfailed.measurement.file."
+    },
+    {
+      "name": "cache.alert.system.file",
+      "type": "java.lang.String",
+      "description": "Description for cache.alert.system.file."
+    },
+    {
+      "name": "cache.alert.measurement.file",
+      "type": "java.lang.String",
+      "description": "Description for cache.alert.measurement.file."
+    },
+    {
+      "name": "cache.measurement.file",
+      "type": "java.lang.String",
+      "description": "Description for cache.measurement.file."
+    },
+    {
+      "name": "cache.root.path",
+      "type": "java.lang.String",
+      "description": "Description for cache.root.path."
     }
   ] }
