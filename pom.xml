@@ -151,7 +151,18 @@
 			<artifactId>popper.js</artifactId>
 			<version>1.16.1</version>
 		</dependency>
-
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>17.0.0</version>
+			<scope>compile</scope>
+		</dependency>
 		<!-- used for the TemperatureSensor interface -->
 		<dependency>
 			<groupId>com.pi4j</groupId>
@@ -173,20 +184,22 @@
 <!--			<artifactId>reactor-test</artifactId>-->
 <!--			<scope>test</scope>-->
 <!--		</dependency>-->
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.9</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jetbrains</groupId>
-			<artifactId>annotations</artifactId>
-			<version>17.0.0</version>
-			<scope>compile</scope>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.6.0</version>
+			<scope>test</scope>
 		</dependency>
 
-		<!--<dependency>-->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>3.2.4</version>
+			<scope>test</scope>
+		</dependency>
+
+        <!--<dependency>-->
 			<!--<groupId>org.slf4j</groupId>-->
 			<!--<artifactId>slf4j-simple</artifactId>-->
 		<!--</dependency>-->
