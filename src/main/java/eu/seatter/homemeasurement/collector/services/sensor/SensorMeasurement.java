@@ -32,19 +32,17 @@ public class SensorMeasurement {
         for (Measurement measurement : sensorList) {
             if(measurement.getSensorid() == null) {
                 log.error(measurement.loggerFormat() + " : SensorId not found");
-                //todo improve handling of missing sensorId
-                continue;
-            }
-
-            try {
-                readSensorValue(measurement);
-                measurement.setMeasureTimeUTC(measurementTime);
-                measurement.setRecordUID(UUID.randomUUID());
-                measurements.add(measurement);
-                log.debug(measurement.loggerFormat() + " : Value returned - " + measurement.getValue());
-            } catch (Exception ex) {
-                log.error(measurement.loggerFormat() + " : Error reading sensor. " + ex.getMessage());
-                break;
+            } else {
+                try {
+                    readSensorValue(measurement);
+                    measurement.setMeasureTimeUTC(measurementTime);
+                    measurement.setRecordUID(UUID.randomUUID());
+                    measurements.add(measurement);
+                    log.debug(measurement.loggerFormat() + " : Value returned - " + measurement.getValue());
+                } catch (Exception ex) {
+                    log.error(measurement.loggerFormat() + " : Error reading sensor. " + ex.getMessage());
+                    break;
+                }
             }
         }
         log.info("Completed measurement collection");
@@ -59,11 +57,16 @@ public class SensorMeasurement {
         try {
             while (counter <= maxCounter) {
                 measurement.setValue(Objects.requireNonNull(sensorReader).readSensorData(measurement));
-                if((measurement.getValue().intValue() == 85) || (measurement.getValue().intValue() == 0)) {
+                if ((measurement.getValue().intValue() == 85) || (measurement.getValue().intValue() == 0)) {
                     log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which indicates a reading error. Retry (" + counter + " of " + maxCounter + ")");
+                    measurement.setValue(0.0);
                 }
-                if(measurement.getValue() > 100) {
+                else if ((measurement.getValue() > 100) || (measurement.getValue().intValue() < 0)) {
                     log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which may be an error. Retry (" + counter + " of " + maxCounter + ")");
+                    measurement.setValue(0.0);
+                } else {
+                    //Good measurement value
+                    break;
                 }
                 counter++;
             }
