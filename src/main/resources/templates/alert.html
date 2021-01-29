@@ -67,8 +67,8 @@
                                 <!--                            <tr th:each="measurement, iStat : ${sensor.value}"-->
                                 <!--                                th:class="${sensor.getValue()} < ${sensor.get ? 'background-color: rgba(41, 128, 185,1.0)' : 'background-color: rgba(231, 76, 60,1.0)'">-->
                                 <td th:text="${iStat.index + 1}">index missing</td>
-                                <td th:text="${#temporals.format(systemalert.time, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
-                                <td th:text="${systemalert.alertMessage}">title missing</td>
+                                <td th:text="${#temporals.format(systemalert.alertTimeUTC, 'yyyy-MM-dd HH:mm:ss')}">time missing</td>
+                                <td th:text="${systemalert.message}">title missing</td>
                             </tr>
                         </tbody>
                     </table>

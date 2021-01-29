@@ -150,7 +150,7 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
 
         ObjectMapper mapper = new ObjectMapper();
         try {
-            cache = mapper.readValue(new File(cachefile.getPath()), new TypeReference<List<Measurement>>() { });
+            cache = mapper.readValue(new File(cachefile.getPath()), new TypeReference<Map<String,List<Measurement>>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

@@ -3,7 +3,6 @@ package eu.seatter.homemeasurement.collector.cache.map;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
-import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.utils.UtilDateTime;
 import lombok.extern.slf4j.Slf4j;
@@ -116,7 +115,7 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            cache = mapper.readValue(new File(cacheFile.getPath()), new TypeReference<List<Measurement>>() { });
+            cache = mapper.readValue(new File(cacheFile.getPath()), new TypeReference<List<SystemAlert>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

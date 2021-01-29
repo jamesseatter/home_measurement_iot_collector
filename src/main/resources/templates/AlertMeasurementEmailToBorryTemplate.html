@@ -22,7 +22,7 @@
         <td style="background-color: #ee4c50; text-align:left; padding: 40px 30px 40px 30px;">
             <table >
                 <tr><td><b>Température</b></td><td>:</td><td><span th:text="${temperature}"></span></td></tr>
-                <tr><td><b>Date (UTC)</b></td><td>:</td><td><span th:text="${#temporals.format(date,'dd/MMMM/yyyy hh:mm')}"></span></td></tr>
+                <tr><td><b>Date (UTC)</b></td><td>:</td><td><span th:text="${#temporals.format(date,'dd/MMMM/yyyy HH:mm')}"></span></td></tr>
             </table>
         </td>
     </tr>
@@ -45,7 +45,7 @@
                     <td colspan="2">
                         <p>Bonjour,</p>
                         <p>Le système de chauffage central de le PPE est en panne.</p>
-                        <p>Date (UTC)  : <b><span th:text="${#temporals.format(date,'dd/MMMM/yyyy hh:mm')}">1/1/2019 00:00</span></b>
+                        <p>Date (UTC)  : <b><span th:text="${#temporals.format(date,'dd/MMMM/yyyy HH:mm')}">1/1/2019 00:00</span></b>
                         <p>Température : <b><span th:text="${temperature}">25C</span></b>.</p>
                         <br>
                         <p>Pouvons-nous demander à un ingénieur de visiter le site s'il vous plaît.</p>

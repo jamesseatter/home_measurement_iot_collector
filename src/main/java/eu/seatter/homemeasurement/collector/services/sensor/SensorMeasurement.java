@@ -1,11 +1,14 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
+import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.sensor.SensorFactory;
 import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
+import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -26,6 +29,15 @@ public class SensorMeasurement {
 
     private final List<Measurement> measurements = new ArrayList<>();
 
+    private AlertService alertService;
+    private AlertSystemCache alertSystemCache;
+
+    public SensorMeasurement(AlertService alertService, AlertSystemCache alertSystemCache) {
+        this.alertService = alertService;
+        this.alertSystemCache = alertSystemCache;
+    }
+
+
     public List<Measurement> collect(List<Measurement> sensorList) {
         log.info("Start measurement collection");
         LocalDateTime measurementTime = getTimeDateNowInUTC(); //all measurements will use the same time to make reporting easier.
@@ -40,7 +52,16 @@ public class SensorMeasurement {
                     measurements.add(measurement);
                     log.debug(measurement.loggerFormat() + " : Value returned - " + measurement.getValue());
                 } catch (Exception ex) {
-                    log.error(measurement.loggerFormat() + " : Error reading sensor. " + ex.getMessage());
+                    String message = measurement.loggerFormat() + " : Error reading sensor. " + ex.getMessage();
+                    log.error(message);
+                    if(measurement.getValue().intValue() == 0) {
+                        try {
+                            alertService.sendSystemAlert("Error reading sensor value", message);
+                            alertSystemCache.add(message);
+                        } catch (MessagingException exM) {
+                            log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
+                        }
+                    }
                     break;
                 }
             }
@@ -70,6 +91,7 @@ public class SensorMeasurement {
                 }
                 counter++;
             }
+
         }
         catch (RuntimeException ex) {
             //todo improve exception handling
