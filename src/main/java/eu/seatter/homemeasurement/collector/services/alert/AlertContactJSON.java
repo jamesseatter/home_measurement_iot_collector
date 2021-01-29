@@ -24,12 +24,9 @@ import java.util.Optional;
 public class AlertContactJSON {
 
     @Value("${config.path}")
-    private static String configPath;
+    private String configPath;
 
-    private AlertContactJSON() {
-    }
-
-    public static Optional<AlertContactGroup> getContactsForGroup(String groupName){
+    public Optional<AlertContactGroup> getContactsForGroup(String groupName){
         log.info("Start JSON Alert Contacts import");
         File alertGroupFileLocation;
 

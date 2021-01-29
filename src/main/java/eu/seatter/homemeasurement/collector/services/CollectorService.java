@@ -34,7 +34,7 @@ import static eu.seatter.homemeasurement.collector.services.TestData.testSensorL
 @Service
 @Slf4j
 public class CollectorService implements CommandLineRunner {
-    @Value("${spring.profiles.active:}")
+    @Value("${spring.profiles.active:dev}")
     private String activeProfile;
 
     private final long readIntervalSeconds;
@@ -161,7 +161,7 @@ public class CollectorService implements CommandLineRunner {
             try {
                 log.info("Sending alert email");
                 String alertTitle = "Sensor below threshold";
-                String alertMessage = "The sensor \"" + measurement.getDescription() + "\" has a reading of " + measurement.getValue()+measurement.getMeasurementUnit() + " which is below " + measurement.getLow_threshold();
+                String alertMessage = "The sensor \"" + measurement.getTitle() + "\" has a reading of " + measurement.getValue()+measurement.getMeasurementUnit() + " which is below " + measurement.getLow_threshold();
 
                 alertService.sendMeasurementAlert(measurement, alertTitle, alertMessage);
             } catch (MessagingException e) {
