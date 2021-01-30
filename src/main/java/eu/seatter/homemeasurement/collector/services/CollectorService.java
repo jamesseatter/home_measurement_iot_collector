@@ -10,7 +10,6 @@ import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static eu.seatter.homemeasurement.collector.services.TestData.testData;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,10 +27,8 @@ import static eu.seatter.homemeasurement.collector.services.TestData.testData;
 @Service
 @Slf4j
 public class CollectorService implements CommandLineRunner {
-    @Value("${spring.profiles.active:dev}")
-    private String activeProfile;
-    @Autowired
-    private SensorListService sensorListService;
+
+    private final SensorListService sensorListService;
 
     private final long readIntervalSeconds;
 
@@ -50,13 +45,14 @@ public class CollectorService implements CommandLineRunner {
             AlertService alertService,
             MeasurementCacheService measurementCacheService,
             RabbitMQService mqService,
-            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds) {
+            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds, SensorListService sensorListService) {
                     this.cacheLoad = cacheLoad;
                     this.sensorMeasurement = sensorMeasurement;
                     this.alertService = alertService;
                     this.measurementCacheService = measurementCacheService;
                     this.mqService = mqService;
                     this.readIntervalSeconds = readIntervalSeconds;
+        this.sensorListService = sensorListService;
     }
 
     @Override
@@ -89,15 +85,9 @@ public class CollectorService implements CommandLineRunner {
                 running = true;
             }
 
-            if(activeProfile.equals("dev")) {
-                log.warn("Add Dev sensor measurements");
-                measurements.clear();
-                measurements.addAll(testData(sensorList));
-            } else {
-                log.debug("Perform sensor measurements");
-                measurements.clear();
-                measurements = sensorMeasurement.collect(sensorList);
-            }
+            log.debug("Perform sensor measurements");
+            measurements.clear();
+            measurements = sensorMeasurement.collect(sensorList);
 
             for (Measurement sr : measurements){
                 measurementCacheService.add(sr);
