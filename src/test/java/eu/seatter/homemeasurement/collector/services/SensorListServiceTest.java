@@ -3,7 +3,7 @@ package eu.seatter.homemeasurement.collector.services;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerJSON;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerPi4J;
-import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
+import eu.seatter.homemeasurement.collector.services.sensor.SensorListServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -35,7 +35,7 @@ public class SensorListServiceTest {
     private SensorListManagerPi4J sensorListManagerPi4Jl;
 
     @InjectMocks
-    SensorListService sensorListService;
+    SensorListServiceImpl sensorListService;
 
 
     @Test

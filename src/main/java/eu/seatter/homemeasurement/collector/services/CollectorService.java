@@ -4,24 +4,22 @@ import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.cache.CacheLoad;
-import eu.seatter.homemeasurement.collector.services.cache.MQMeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static eu.seatter.homemeasurement.collector.services.TestData.testData;
-import static eu.seatter.homemeasurement.collector.services.TestData.testSensorList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,57 +32,44 @@ import static eu.seatter.homemeasurement.collector.services.TestData.testSensorL
 public class CollectorService implements CommandLineRunner {
     @Value("${spring.profiles.active:dev}")
     private String activeProfile;
+    @Autowired
+    private SensorListService sensorListService;
 
     private final long readIntervalSeconds;
-//    private final boolean mqEnabled;
 
     private final CacheLoad cacheLoad;
     private final MeasurementCacheService measurementCacheService;
-    private final MQMeasurementCacheService mqMeasurementCacheService;
     private final SensorMeasurement sensorMeasurement;
-    private final SensorListService sensorListService;
+
     private final AlertService alertService;
     private final SensorMessaging mqService;
 
     public CollectorService(
             CacheLoad cacheLoad,
             SensorMeasurement sensorMeasurement,
-            SensorListService sensorListService,
             AlertService alertService,
             MeasurementCacheService measurementCacheService,
             RabbitMQService mqService,
-            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds,
-//            @Value("#{new Boolean('${rabbitmqservice.enabled:false}')}") Boolean mqEnabled,
-            MQMeasurementCacheService mqMeasurementCacheService) {
+            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds) {
                     this.cacheLoad = cacheLoad;
                     this.sensorMeasurement = sensorMeasurement;
-                    this.sensorListService = sensorListService;
                     this.alertService = alertService;
                     this.measurementCacheService = measurementCacheService;
                     this.mqService = mqService;
-//                    this.mqEnabled = mqEnabled;
                     this.readIntervalSeconds = readIntervalSeconds;
-                    this.mqMeasurementCacheService = mqMeasurementCacheService;
     }
 
     @Override
-    public void run(String... strings) throws MessagingException {
+    public void run(String... strings) {
         boolean running = true;
         log.info("Sensor Read Interval (seconds) : "+ readIntervalSeconds);
 
-        List<Measurement> sensorList = Collections.emptyList();
+        List<Measurement> sensorList;
         List<Measurement> measurements = new ArrayList<>();
 
         try {
-            if(activeProfile.equals("dev")) {
-                log.warn("Add Dev sensor list");
-                sensorList = testSensorList();
-            } else {
-                log.debug("Perform sensor search");
-                sensorList = sensorListService.getSensors();
-            }
+            sensorList = sensorListService.getSensors();
             log.debug("Sensor count : " + sensorList.size());
-
         } catch (RuntimeException ex) {
             log.warn("No sensors were connected to the system. Shutting down");
             throw new SensorNotFoundException("No sensors found",
