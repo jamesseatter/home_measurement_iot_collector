@@ -16,10 +16,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import static eu.seatter.homemeasurement.collector.services.TestData.testData;
@@ -38,7 +36,7 @@ public class CollectorService implements CommandLineRunner {
     private String activeProfile;
 
     private final long readIntervalSeconds;
-    private final boolean mqEnabled;
+//    private final boolean mqEnabled;
 
     private final CacheLoad cacheLoad;
     private final MeasurementCacheService measurementCacheService;
@@ -56,7 +54,7 @@ public class CollectorService implements CommandLineRunner {
             MeasurementCacheService measurementCacheService,
             RabbitMQService mqService,
             @Value("${measurement.interval.seconds:360}") long readIntervalSeconds,
-            @Value("#{new Boolean('${rabbitmqservice.enabled:false}')}") Boolean mqEnabled,
+//            @Value("#{new Boolean('${rabbitmqservice.enabled:false}')}") Boolean mqEnabled,
             MQMeasurementCacheService mqMeasurementCacheService) {
                     this.cacheLoad = cacheLoad;
                     this.sensorMeasurement = sensorMeasurement;
@@ -64,7 +62,7 @@ public class CollectorService implements CommandLineRunner {
                     this.alertService = alertService;
                     this.measurementCacheService = measurementCacheService;
                     this.mqService = mqService;
-                    this.mqEnabled = mqEnabled;
+//                    this.mqEnabled = mqEnabled;
                     this.readIntervalSeconds = readIntervalSeconds;
                     this.mqMeasurementCacheService = mqMeasurementCacheService;
     }
@@ -97,25 +95,8 @@ public class CollectorService implements CommandLineRunner {
         cacheLoad.load();
 
         while(running) {
-            //If the mqcache has entries, try to send them to MQ
-            if(mqEnabled && mqMeasurementCacheService.getCacheSize() > 0) {
-                log.warn("MQ cache has entries that must be sent to the MQ server.");
-                List<Measurement> mqmeasurements = mqMeasurementCacheService.getAll();
-                log.warn("MQ cache has " + mqmeasurements.size() + " entries that must be sent to the MQ server.");
-                Iterator<Measurement> iter = mqmeasurements.iterator();
-                while(iter.hasNext()) {
-                    Measurement m = iter.next();
-                    if(mqService.sendMeasurement(m)) {
-                        iter.remove();
-                        log.info("Record " +  m.getRecordUID() + " sent to MQ");
-                    }
-                }
-                try {
-                    mqMeasurementCacheService.flushToFile();
-                } catch (IOException ex) {
-                    log.error("Error flushing the MQ Cache to disk : " + ex.getMessage());
-                }
-            }
+            mqService.flushCache();
+
             if (sensorList.isEmpty()) {
                 log.info("No sensors connected to device. Exiting.");
                 break;
@@ -135,10 +116,7 @@ public class CollectorService implements CommandLineRunner {
 
             for (Measurement sr : measurements){
                 measurementCacheService.add(sr);
-                if (mqEnabled && !mqService.sendMeasurement(sr)) {
-                        log.error("MQ unavailable, adding measurement to MQ cache for retry later");
-                        mqMeasurementCacheService.add(sr);
-                }
+                mqService.sendMeasurement(sr);
                 alertOnThresholdExceeded(sr);
             }
 

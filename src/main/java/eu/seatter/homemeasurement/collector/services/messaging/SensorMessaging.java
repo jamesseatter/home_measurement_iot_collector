@@ -16,4 +16,5 @@ public interface SensorMessaging {
     boolean sendMeasurement(Measurement measurement);
     boolean sendMeasurementAlert(MeasurementAlert measurementAlert) throws MessagingException;
     boolean sendSystemAlert(SystemAlert systemAlert);
+    boolean flushCache();
 }

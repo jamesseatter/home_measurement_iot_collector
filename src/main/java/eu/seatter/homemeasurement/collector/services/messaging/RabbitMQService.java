@@ -16,8 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,6 +35,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class RabbitMQService implements SensorMessaging {
     private final Environment env;
+    @Value("#{new Boolean('${rabbitmqservice.enabled:false}')}")
+    Boolean mqEnabled;
 
     private final MessageStatus messageStatus;
     private final AlertSystemCache alertSystemCache;
@@ -85,6 +92,30 @@ public class RabbitMQService implements SensorMessaging {
             sendMessage(messagesToEmit, "a");
         } catch (AmqpException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage());
+        }
+        return true;
+    }
+
+    @Override
+    public boolean flushCache() {
+        if(mqEnabled && mqMeasurementCacheService.getCacheSize() > 0) {
+            log.warn("MQ cache has entries that must be sent to the MQ server.");
+            List<Measurement> mqmeasurements = mqMeasurementCacheService.getAll();
+            log.warn("MQ cache has " + mqmeasurements.size() + " entries that must be sent to the MQ server.");
+            Iterator<Measurement> iter = mqmeasurements.iterator();
+            while(iter.hasNext()) {
+                Measurement m = iter.next();
+                if(sendMeasurement(m)) {
+                    iter.remove();
+                    log.info("Record " +  m.getRecordUID() + " sent to MQ");
+                }
+            }
+            try {
+                mqMeasurementCacheService.flushToFile();
+            } catch (IOException ex) {
+                log.error("Error flushing the MQ Cache to disk : " + ex.getMessage());
+                return false;
+            }
         }
         return true;
     }
