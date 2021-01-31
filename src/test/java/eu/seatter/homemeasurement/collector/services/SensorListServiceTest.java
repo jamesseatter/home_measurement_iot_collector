@@ -4,19 +4,20 @@ import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerJSON;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerPi4J;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListServiceImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,7 +25,6 @@ import static org.mockito.Mockito.when;
  * Date: 11/02/2019
  * Time: 11:36
  */
-@RunWith(MockitoJUnitRunner.class)
 @ActiveProfiles("test")
 public class SensorListServiceTest {
 
@@ -37,6 +37,10 @@ public class SensorListServiceTest {
     @InjectMocks
     SensorListServiceImpl sensorListService;
 
+    @BeforeEach
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     public void givenSensorFile_whenTwoSensors_thenReturnNoSensors() {
