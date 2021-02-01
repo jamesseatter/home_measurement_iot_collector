@@ -122,10 +122,6 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
         for(Map.Entry<String, List<Measurement>> entry : cache.entrySet()) {
             measurements.addAll(entry.getValue());
         }
-//        for(String key : cache.keySet()) {
-//            measurements.addAll(cache.get(key).subList(0,cache.get(key).size()));
-//        }
-
         return measurements;
     }
 

@@ -15,7 +15,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,7 +60,6 @@ public class CollectorService implements CommandLineRunner {
         log.info("Sensor Read Interval (seconds) : "+ readIntervalSeconds);
 
         List<Measurement> sensorList;
-        List<Measurement> measurements = new ArrayList<>();
 
         try {
             sensorList = sensorListService.getSensors();
@@ -86,8 +84,7 @@ public class CollectorService implements CommandLineRunner {
             }
 
             log.debug("Perform sensor measurements");
-            measurements.clear();
-            measurements = sensorMeasurement.collect(sensorList);
+            List<Measurement> measurements  = sensorMeasurement.collect(sensorList);
 
             for (Measurement sr : measurements){
                 measurementCacheService.add(sr);

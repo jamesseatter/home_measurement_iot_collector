@@ -59,9 +59,9 @@ public class EmailAlertServiceImpl implements EmailAlertService {
 
             try {
                 //todo Cleanup the templates, this is now a system alert.
-                if(alertType == AlertType.System) {
+                if(alertType == AlertType.SYSTEM) {
                     message.setContent(getContent("AlertSystemMessageEmailTemplate", environment,alertTitle, measurement, alertMessage), "text/html");
-                } else if(alertType == AlertType.Measurement) {
+                } else if(alertType == AlertType.MEASUREMENT) {
                     message.setContent(getContent(getAlertDestination(measurement), environment,alertTitle, measurement, alertMessage), "text/html");
                 }
             } catch (MessagingException ex) {
@@ -85,7 +85,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
 
     private String getSubject(Measurement sr, @NotNull String alertTitle) {
         String subject = "Home Monitor Alert - " + sr.getTitle() + " - " + sr.getValue() + sr.getMeasurementUnit().toString();
-        if(alertTitle != null || !alertTitle.equals("")) {
+        if(!alertTitle.equals("")) {
             subject = alertTitle;
         }
         log.debug("Email Subject : " + subject);

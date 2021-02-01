@@ -38,7 +38,7 @@ public class DashboardController {
 
         model.addAttribute("allMeasurements", allSortedMeasurements);
         model.addAttribute("view_days","");
-        if(activeProfile.toLowerCase() !="prod") {
+        if(activeProfile.equalsIgnoreCase("prod")) {
             model.addAttribute("title", "Heating System (" + activeProfile.toUpperCase() + ")");
         } else {
             model.addAttribute("title", "Heating System");

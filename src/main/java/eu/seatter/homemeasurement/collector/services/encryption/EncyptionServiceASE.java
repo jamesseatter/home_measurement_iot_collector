@@ -27,7 +27,7 @@ public class EncyptionServiceASE implements EncryptionService {
                 IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
                 SecretKeySpec skeySpec = new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), "AES");
 
-                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+                Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
                 cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
 
                 byte[] encrypted = cipher.doFinal(unencrypted.getBytes());
@@ -47,7 +47,7 @@ public class EncyptionServiceASE implements EncryptionService {
             IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
             SecretKeySpec skeySpec = new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), "AES");
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
             byte[] original = cipher.doFinal(Base64.getDecoder().decode(encrypted));
 

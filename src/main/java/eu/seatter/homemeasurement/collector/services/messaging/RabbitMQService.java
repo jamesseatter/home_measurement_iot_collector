@@ -36,7 +36,7 @@ import java.util.List;
 public class RabbitMQService implements SensorMessaging {
     private final Environment env;
     @Value("#{new Boolean('${rabbitmqservice.enabled:false}')}")
-    Boolean mqEnabled;
+    boolean mqEnabled;
 
     private final MessageStatus messageStatus;
     private final AlertSystemCache alertSystemCache;
@@ -122,7 +122,7 @@ public class RabbitMQService implements SensorMessaging {
 
     private void sendMessage(String messagesToEmit, @NotNull String messageType) throws AmqpException {
 
-        String mqroutingkey;
+        String mqroutingkey="";
         switch (messageType) {
             case "measurement" :
                 mqroutingkey = env.getProperty("rabbitmqservice.routing_key.measurement");

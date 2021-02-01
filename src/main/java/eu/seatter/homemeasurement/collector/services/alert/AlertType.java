@@ -7,5 +7,5 @@ package eu.seatter.homemeasurement.collector.services.alert;
  * Time: 12:49
  */
 public enum AlertType {
-    Measurement,System
+    MEASUREMENT, SYSTEM
 }

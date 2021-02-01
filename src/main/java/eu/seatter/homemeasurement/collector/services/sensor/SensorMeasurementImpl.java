@@ -31,8 +31,6 @@ import java.util.UUID;
 @Profile("!dev")
 public class SensorMeasurementImpl implements SensorMeasurement {
 
-    private final List<Measurement> measurements = new ArrayList<>();
-
     private AlertService alertService;
     private AlertSystemCache alertSystemCache;
 
@@ -43,30 +41,28 @@ public class SensorMeasurementImpl implements SensorMeasurement {
 
 
     public List<Measurement> collect(List<Measurement> sensorList) {
+        final List<Measurement> measurements = new ArrayList<>();
         log.info("Start measurement collection");
+
         LocalDateTime measurementTime = getTimeDateNowInUTC(); //all measurements will use the same time to make reporting easier.
         for (Measurement measurement : sensorList) {
             if(measurement.getSensorid() == null) {
                 log.error(measurement.loggerFormat() + " : SensorId not found");
             } else {
-                try {
-                    readSensorValue(measurement);
-                    measurement.setMeasureTimeUTC(measurementTime);
-                    measurement.setRecordUID(UUID.randomUUID());
-                    measurements.add(measurement);
-                    log.debug(measurement.loggerFormat() + " : Value returned - " + measurement.getValue());
-                } catch (Exception ex) {
-                    String message = measurement.loggerFormat() + " : Error reading sensor. " + ex.getMessage();
+                readSensorValue(measurement);
+                measurement.setMeasureTimeUTC(measurementTime);
+                measurement.setRecordUID(UUID.randomUUID());
+                measurements.add(measurement);
+                log.debug(measurement.loggerFormat() + " : Value returned - " + measurement.getValue());
+                if(measurement.getValue().intValue() == 0) {
+                    String message = measurement.loggerFormat() + " : Error reading sensor - " + measurement.getSensorid() + " / " + measurement.getTitle();
                     log.error(message);
-                    if(measurement.getValue().intValue() == 0) {
-                        try {
-                            alertService.sendSystemAlert("Error reading sensor value", message);
-                            alertSystemCache.add(message);
-                        } catch (MessagingException exM) {
-                            log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
-                        }
+                    try {
+                        alertService.sendSystemAlert(message, "The sensor did not respond to a query, this may be a transient fault or there may be a problem with the sensor. If this occurs twice verify the sensor is still attached to the system.");
+                        alertSystemCache.add(message);
+                    } catch (MessagingException exM) {
+                        log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
                     }
-                    break;
                 }
             }
         }
@@ -98,9 +94,8 @@ public class SensorMeasurementImpl implements SensorMeasurement {
 
         }
         catch (RuntimeException ex) {
-            //todo improve exception handling
             log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
-            throw ex;
+            measurement.setValue(0.0);
         }
     }
 
