@@ -47,13 +47,13 @@ public class AlertService {
         alertCacheService.add(measurement);
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");
-            emailAlertService.sendAlert(AlertType.Measurement, applicationEnvironment,alertTitle,alertMessage,measurement);
+            emailAlertService.sendAlert(AlertType.MEASUREMENT, applicationEnvironment,alertTitle,alertMessage,measurement);
         } else {
             log.info("Email alerts disabled.");
         }
         if(alertMessagingEnabled) {
             log.info("Messaging alerts enabled.");
-            messageAlertService.sendAlert(AlertType.Measurement, applicationEnvironment,alertTitle,alertMessage,measurement);
+            messageAlertService.sendAlert(AlertType.MEASUREMENT, applicationEnvironment,alertTitle,alertMessage,measurement);
         } else {
             log.info("Messaging alerts disabled.");
         }
@@ -63,13 +63,13 @@ public class AlertService {
         if (alertTitle == null) alertTitle = "System Alert";
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");
-            emailAlertService.sendAlert(AlertType.System, applicationEnvironment, alertTitle, alertMessage, null);
+            emailAlertService.sendAlert(AlertType.SYSTEM, applicationEnvironment, alertTitle, alertMessage, null);
         } else {
             log.info("Email alerts disabled.");
         }
         if(alertMessagingEnabled) {
             log.info("Messaging alerts enabled.");
-            messageAlertService.sendAlert(AlertType.System, applicationEnvironment,alertTitle,alertMessage,null);
+            messageAlertService.sendAlert(AlertType.SYSTEM, applicationEnvironment,alertTitle,alertMessage,null);
         } else {
             log.info("Messaging alerts disabled.");
         }

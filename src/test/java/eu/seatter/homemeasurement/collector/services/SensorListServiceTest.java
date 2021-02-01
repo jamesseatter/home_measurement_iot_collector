@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
  * Time: 11:36
  */
 @ActiveProfiles("test")
-public class SensorListServiceTest {
+class SensorListServiceTest {
 
     @Mock
     private SensorListManagerJSON sensorListManagerJSON;
@@ -43,7 +43,7 @@ public class SensorListServiceTest {
     }
 
     @Test
-    public void givenSensorFile_whenTwoSensors_thenReturnNoSensors() {
+    void givenSensorFile_whenTwoSensors_thenReturnNoSensors() {
         //given
         List<Measurement> sensorListJSON = new ArrayList<>();
         sensorListJSON.add(Measurement.builder().sensorid("28-000008d2fdb9").familyid(40).build());
@@ -59,7 +59,7 @@ public class SensorListServiceTest {
     }
 
     @Test
-    public void given1WireScan_whenNoSensorFile_thenReturnNoSensors() {
+    void given1WireScan_whenNoSensorFile_thenReturnNoSensors() {
         //given
         List<Measurement> sensorListJSON = new ArrayList<>();
         sensorListJSON.add(Measurement.builder().sensorid("28-000008d2fdb9").familyid(40).build());
@@ -75,7 +75,7 @@ public class SensorListServiceTest {
     }
 
     @Test
-    public void givenSensorFileAnd1WireScan_whenTwoSensors_thenReturnSensors() {
+    void givenSensorFileAnd1WireScan_whenTwoSensors_thenReturnSensors() {
         //given
         List<Measurement> sensorListJSON = new ArrayList<>();
         sensorListJSON.add(Measurement.builder().sensorid("28-000008d2fdb9").familyid(40).build());

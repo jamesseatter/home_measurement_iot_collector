@@ -34,7 +34,7 @@ public class MessageAlertServiceImpl implements MessageAlertService {
 
     @Override
     public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Measurement measurement) throws MessagingException {
-        if(alertType == AlertType.Measurement) {
+        if(alertType == AlertType.MEASUREMENT) {
             MeasurementAlert measurementAlert = convertmeasurementToMeasurementAlert(measurement);
             measurementAlert.setTitle(alertTitle);
             measurementAlert.setMessage(alertMessage);
@@ -42,7 +42,7 @@ public class MessageAlertServiceImpl implements MessageAlertService {
 
             rabbitMQService.sendMeasurementAlert(measurementAlert);
 
-        } else if(alertType == AlertType.System) {
+        } else if(alertType == AlertType.SYSTEM) {
             SystemAlert systemAlert = new SystemAlert();
             systemAlert.setAlertUID(UUID.randomUUID());
             systemAlert.setAlertTimeUTC(ZonedDateTime.now(ZoneId.of("Etc/UTC")).truncatedTo(ChronoUnit.SECONDS).toLocalDateTime());

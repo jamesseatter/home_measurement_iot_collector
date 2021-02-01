@@ -23,11 +23,8 @@ import java.util.List;
 @Slf4j
 public class SensorListManagerJSON implements SensorList {
 
-    private static String configPath;
-
-    public SensorListManagerJSON(@Value("${config.path}") String configpath) {
-        configPath = configpath;
-    }
+    @Value("${config.path}")
+    private String configPath;
 
     @Override
     public List<Measurement> getSensors() {
