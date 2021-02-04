@@ -1,60 +1,99 @@
-//package eu.seatter.homemeasurement.collector.cache.map;
-//
-//import com.fasterxml.jackson.databind.JsonMappingException;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import eu.seatter.homemeasurement.collector.model.Measurement;
-//import eu.seatter.homemeasurement.collector.model.SensorType;
-//import org.junit.jupiter.api.Test;
-//
-//import java.io.IOException;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//
-///**
-// * Created by IntelliJ IDEA.
-// * User: jas
-// * Date: 25/03/2020
-// * Time: 16:44
-// */
-//public class MQMeasurementCacheMapImplTest {
-//
-//
-//    @Test
-//    public void flushToDisk() throws JsonMappingException, IOException {
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//
-//        List<Measurement> listOfRecords = new ArrayList<>();
-//        listOfRecords.add(Measurement.builder()
-//                .sensorid("28-000000000001")
-//                .title("Température de l'eau à l'arrivée")
-//                .description("Returns the temperature of the hot water entering the house from the central heating system")
-//                .familyid(40)
-//                .sensorType(SensorType.ONEWIRE)
-//                .low_threshold(45.0)
-//                .high_threshold(60.0)
-//                .alertgroup("temperature_threshold_alerts_private")
-//                .alertdestination("BORRY")
-//                .build());
-//
-//        listOfRecords.add(Measurement.builder()
-//                .sensorid("28-000000000002")
-//                .title("Température de l'eau de chaudière")
-//                .description("Returns the temperature of the hot water in the boiler")
-//                .familyid(40)
-//                .sensorType(SensorType.ONEWIRE)
-//                .low_threshold(35.0)
-//                .high_threshold(60.0)
-//                .alertgroup("temperature_threshold_alerts_private")
-//                .alertdestination("PRIVATE")
-//                .build());
-//
-//
-//            String jsonArray = mapper.writeValueAsString(listOfRecords);
-//
-//            List<Measurement> asList = mapper.readValue(jsonArray, List.class);
-//
-//    }
-//
-//}
+package eu.seatter.homemeasurement.collector.cache.map;
+
+import eu.seatter.homemeasurement.collector.TestData;
+import eu.seatter.homemeasurement.collector.model.Measurement;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: jas
+ * Date: 04/02/2021
+ * Time: 23:34
+ */
+class MQMeasurementCacheMapImplTest {
+    private TestData testData = new TestData();
+    private Measurement measurement1;
+    private Measurement measurement1_2;
+    private Measurement measurement2;
+
+    private MQMeasurementCacheMapImpl mqMeasurementCacheMap = new MQMeasurementCacheMapImpl("test","test");
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        measurement1 = testData.getTestMeasurement("SENSOR_1", LocalDateTime.now());
+        measurement1_2 = testData.getTestMeasurement("SENSOR_1", LocalDateTime.now().plusMinutes(1));
+        measurement2 = testData.getTestMeasurement("SENSOR_2", LocalDateTime.now());
+    }
+
+    @Test
+    void given3RecordsAdded_then3RecordsInCache() {
+        //given
+        mqMeasurementCacheMap.add(measurement1);
+        mqMeasurementCacheMap.add(measurement1_2);
+        mqMeasurementCacheMap.add(measurement2);
+
+        //then
+        assertEquals(3,mqMeasurementCacheMap.getAll().size());
+    }
+
+    @Test
+    void given3RecordsAdded_whenRemove1_then2RecordsInCache() {
+        //given
+        mqMeasurementCacheMap.add(measurement1);
+        mqMeasurementCacheMap.add(measurement1_2);
+        mqMeasurementCacheMap.add(measurement2);
+
+        //when
+        mqMeasurementCacheMap.remove(measurement2);
+
+        //then
+        assertEquals(2,mqMeasurementCacheMap.getAll().size());
+    }
+
+    @Test
+    void given3RecordsAdded_whenRemoveAllSensor1_then1RecordsInCache() {
+        //given
+        List<Measurement> sensor1 = new ArrayList<>();
+        sensor1.add(measurement1);
+        sensor1.add(measurement1_2);
+
+        mqMeasurementCacheMap.add(measurement1);
+        mqMeasurementCacheMap.add(measurement1_2);
+        mqMeasurementCacheMap.add(measurement2);
+
+        //when
+        mqMeasurementCacheMap.removeAll(sensor1);
+
+        //then
+        assertEquals(1,mqMeasurementCacheMap.getAll().size());
+    }
+
+    @Test
+    void given3RecordsAdded_whenGetAll_then2RecordsInCache() {
+        //given
+        mqMeasurementCacheMap.add(measurement1);
+        mqMeasurementCacheMap.add(measurement1_2);
+        mqMeasurementCacheMap.add(measurement2);
+
+        //then
+        assertEquals(3,mqMeasurementCacheMap.getAll().size());
+    }
+
+    @Test
+    void given3RecordsAdded_whenGetCacheSize_then2RecordsInCache() {
+        //given
+        mqMeasurementCacheMap.add(measurement1);
+        mqMeasurementCacheMap.add(measurement1_2);
+        mqMeasurementCacheMap.add(measurement2);
+
+        //then
+        assertEquals(3,mqMeasurementCacheMap.getCacheSize());
+    }
+}

@@ -1,18 +1,14 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorType;
-import eu.seatter.homemeasurement.collector.utils.UtilDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by IntelliJ IDEA.
@@ -56,17 +52,5 @@ public class SensorListServiceDev implements SensorListService {
                 .build());
 
         return list;
-    }
-
-    public static List<Measurement> testData(List<Measurement> sensorList) {
-        log.warn("Test measurement data in use");
-        for(Measurement srec : sensorList) {
-            srec.setMeasurementUnit(MeasurementUnit.C);
-            srec.setMeasureTimeUTC(UtilDateTime.getTimeDateNowNoSecondsInUTC());
-            int val = ThreadLocalRandom.current().nextInt(35, 75);
-            srec.setValue((double)val);
-        }
-
-        return Collections.unmodifiableList(sensorList);
     }
 }
