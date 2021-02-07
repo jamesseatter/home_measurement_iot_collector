@@ -32,6 +32,7 @@ public class Measurement implements Comparable<Measurement> {
 
     private String description;
     private MeasurementUnit measurementUnit;
+    private Double measurementadjustmentvalue = 0.0d;
     private SensorType sensorType;
     private int familyid;
 

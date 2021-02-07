@@ -64,7 +64,10 @@ public class SensorMeasurementImpl implements SensorMeasurement {
                         log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
                     }
                 }
+                log.debug(measurement.loggerFormat() + " : Sensor measurementadjustmentvalue = " + measurement.getMeasurementadjustmentvalue());
+                measurement.setValue(measurement.getValue()+measurement.getMeasurementadjustmentvalue());
             }
+            log.info(measurement.loggerFormat() + " : Updated sensor measurement = " + measurement.getValue());
         }
         log.info("Completed measurement collection");
         return measurements;

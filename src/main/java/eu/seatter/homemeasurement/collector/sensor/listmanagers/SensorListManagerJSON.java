@@ -34,10 +34,14 @@ public class SensorListManagerJSON implements SensorList {
         sensorFileLocation = new File(configPath,"sensorlist.json");
         log.info("Sensor File Location " + sensorFileLocation.toString());
 
-        if (!(sensorFileLocation.exists())) {
-            log.info("Sensor file does not exist at location. Import terminated");
+        InputStream inputStream;
+        try {
+            inputStream = new FileInputStream(sensorFileLocation);
+        } catch (FileNotFoundException ex) {
+            log.info("Sensor File not found at location");
             return Collections.emptyList();
         }
+
         log.info("Loading sensors");
 
         List<Measurement> measurements;
@@ -47,23 +51,13 @@ public class SensorListManagerJSON implements SensorList {
         mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
         TypeReference<List<Measurement>> typeReference = new TypeReference<List<Measurement>>() {};
 
-        InputStream inputStream;
-        try {
-            inputStream = new FileInputStream(sensorFileLocation);
-        } catch (FileNotFoundException ex) {
-            log.info("Sensor File not found at location");
-            return Collections.emptyList();
-        }
-
         try {
             measurements = mapper.readValue(inputStream, typeReference);
-
         } catch (IOException ex) {
             log.error("Unable to read in JSON file: " + ex.getMessage());
             return Collections.emptyList();
         }
         log.info("Complete JSON Sensor list import finished. Found " + measurements.size() + " sensors");
         return measurements;
-
     }
 }
