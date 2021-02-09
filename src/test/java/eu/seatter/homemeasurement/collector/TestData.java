@@ -29,7 +29,7 @@ public class TestData {
                 .familyid(40)
                 .sensorType(SensorType.ONEWIRE)
                 .low_threshold(45.0)
-                .high_threshold(60.0)
+                .high_threshold(75.0)
                 .alertgroup("temperature_threshold_alerts_private")
                 .alertdestination("BORRY")
                 .build());
