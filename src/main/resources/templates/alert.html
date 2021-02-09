@@ -1,13 +1,10 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main_layout}" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Home Measurement Dashboard Alerts</title>
-</head>
 <body>
     <div class="container" layout:fragment="content">
         <div class="container-fluid">
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                <h1>Measurement Alerts</h1>
+                <h1 th:text="'Measurement Alerts ' + ${title_postfix}">Measurement Alerts</h1>
 
                 <div class="shadow table-responsive" th:if="${not #lists.isEmpty(measurementalerts)}">
                     <table class="table table-hover ">
@@ -44,7 +41,7 @@
                 </div>
             </main>
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                <h1>System Alerts</h1>
+                <h1 th:text="'System Alerts ' + ${title_postfix}">System Alerts</h1>
 
                 <div class="shadow table-responsive" th:if="${not #lists.isEmpty(systemalerts)}">
                     <table class="table table-hover ">

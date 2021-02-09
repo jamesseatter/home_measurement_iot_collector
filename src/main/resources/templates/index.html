@@ -1,15 +1,20 @@
 <!DOCTYPE HTML>
 <html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main_layout}" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Home Measurement Dashboard Heating System</title>
-</head>
+<!--<head>-->
+<!--    <title>Home Measurement Dashboard Heating System</title>-->
+<!--</head>-->
 <body>
 <div class="container" layout:fragment="content">
     <!-- Page Content -->
     <div id="page-content-wrapper">
         <div class="container-fluid">
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                <h1 th:text="${title}">Heating System</h1>
+                <h1 th:text="'Heating System ' + ${title_postfix}">Heating System</h1>
+                <h4>Current temperatures</h4>
+                <div class="panel-content text-center" th:if="${not #lists.isEmpty(liveMeasurements)}" style="margin-top: 20px">
+                    <div id="live_data_div" style="width: 400px; height: 120px; "></div>
+                </div>
+                <h4>Historical temperatures</h4>
                 <div class="panel-content text-center shadow" th:if="${not #lists.isEmpty(allMeasurements)}" style="margin-top: 20px">
                     <canvas id="measurementChart" class="chart"></canvas>
                 </div>
@@ -61,6 +66,39 @@
     <!--Charting    -->
     <script src="/webjars/momentjs/2.24.0/min/moment.min.js"></script>
     <script src="/webjars/chartjs/2.9.3/Chart.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript" th:inline="javascript" defer="defer">
+        /*<![CDATA[*/
+        google.charts.load('current', {'packages':['gauge']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let measurements = /*[[${liveMeasurements}]]*/ 'default';
+            var data = new google.visualization.DataTable();
+
+            data.addColumn('string', 'label');
+            data.addColumn('number', 'value');
+
+            measurements.forEach(function (measurement) {
+                data.addRows([
+                    [measurement.shortName, measurement.value]
+                ]);
+            });
+
+            var options = {
+                width: 400, height: 120,
+                redFrom: 75, redTo: 100,
+                yellowFrom:60, yellowTo: 75,
+                minorTicks: 5
+            };
+
+            var chart = new google.visualization.Gauge(document.getElementById('live_data_div'));
+
+            chart.draw(data, options);
+        }
+        /*]]>*/
+    </script>
     <!--    <script th:inline="javascript">-->
     <script th:inline="javascript">
         let measurements = /*[[${allMeasurements}]]*/ 'default';
