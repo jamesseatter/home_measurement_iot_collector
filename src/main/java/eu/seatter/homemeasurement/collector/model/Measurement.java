@@ -24,6 +24,7 @@ public class Measurement implements Comparable<Measurement> {
     private UUID recordUID;
     private String sensorid;
     private String title;
+    private String shortTitle;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

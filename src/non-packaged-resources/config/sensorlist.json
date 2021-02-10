@@ -2,6 +2,7 @@
   {
     "sensorid": "28-000008d2fdb9",
     "title" : "Température de l'eau à l'arrivée",
+    "shorttitle" : "Arrive",
     "description" : "Returns the temperature of the hot water entering the house from the central heating system.",
     "familyid": "40",
     "sensortype": "ONEWIRE",
@@ -15,6 +16,7 @@
   {
     "sensorid": "28-0000095fcafb",
     "title" : "Température de l'eau de chaudière",
+    "shorttitle" : "Boiler",
     "description" : "Returns the temperature of the hot water in the boiler.",
     "familyid": "40",
     "sensortype": "ONEWIRE",
