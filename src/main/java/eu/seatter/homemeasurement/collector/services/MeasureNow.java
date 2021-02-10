@@ -36,18 +36,10 @@ public class MeasureNow {
         List<MeasurementWeb> measurementWeb = new ArrayList<>();
         for (int i = 0; i <sensorList.size() ; i++) {
             Measurement m = sensorList.get(i);
-            String shortName;
-            if(m.getSensorid().equals("28-000008d2fdb9")) {
-                shortName="Central";
-            } else if (m.getSensorid().equals("28-000000000001")) {
-                shortName="Boiler";
-            } else {
-                shortName="unknown";
-            }
             measurementWeb.add(MeasurementWeb.builder()
                     .sensorid(m.getSensorid())
                     .title(m.getTitle())
-                    .shortName(shortName)
+                    .shorttitle(m.getShortTitle())
                     .description(m.getDescription())
                     .measureTimeUTC(m.getMeasureTimeUTC())
                     .measurementUnit(m.getMeasurementUnit())

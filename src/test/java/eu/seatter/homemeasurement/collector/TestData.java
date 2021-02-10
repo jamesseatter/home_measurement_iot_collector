@@ -23,7 +23,7 @@ public class TestData {
         List<Measurement> sensorList = new ArrayList<>();
         sensorList.add(Measurement.builder()
                 .recordUID(UUID.randomUUID())
-                .sensorid("28-000000000001")
+                .sensorid("28-000008d2fdb9")
                 .title("Température de l'eau à l'arrivée")
                 .description("Returns the temperature of the hot water entering the house from the central heating system")
                 .familyid(40)
@@ -36,7 +36,7 @@ public class TestData {
 
         sensorList.add(Measurement.builder()
                 .recordUID(UUID.randomUUID())
-                .sensorid("28-000000000002")
+                .sensorid("28-0000095fcafb")
                 .title("Température de l'eau de chaudière")
                 .description("Returns the temperature of the hot water in the boiler")
                 .familyid(40)

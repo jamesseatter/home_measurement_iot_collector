@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 public class MeasurementWeb {
     private String sensorid;
     private String title;
-    private String shortName;
+    private String shorttitle;
     private String description;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
