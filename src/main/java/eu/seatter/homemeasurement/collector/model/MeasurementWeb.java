@@ -30,5 +30,7 @@ public class MeasurementWeb {
     private Double value;
     private MeasurementUnit measurementUnit;
 
+    private Double low_threshold;
+    private Double high_threshold;
 
 }
