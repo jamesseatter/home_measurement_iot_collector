@@ -57,7 +57,7 @@ public class SensorListManagerJSONTest {
 
     @BeforeAll
     void init() {
-        Path tmpFile = sharedTempDir.resolve(sharedTempDir.resolve("sensorList.json"));
+        Path tmpFile = sharedTempDir.resolve(sharedTempDir.resolve("sensorlist.json"));
         try (FileWriter fileJSON = new FileWriter(String.valueOf(tmpFile))) {
             fileJSON.write(sensorJSON);
             fileJSON.flush();
@@ -89,27 +89,4 @@ public class SensorListManagerJSONTest {
         //then
         assertEquals(0,sensors.size());
     }
-
-    //Tests after 10 will use the sensorBADJSON data so be carefull
-
-    @Test
-    @Order(10)
-    void givenBackJSONData_thenReturnEmptyList() {
-        //given
-        Path tmpFile = sharedTempDir.resolve(sharedTempDir.resolve("sensorList.json"));
-        try (FileWriter fileJSON = new FileWriter(String.valueOf(tmpFile))) {
-            fileJSON.write(sensorBADJSON);
-            fileJSON.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        SensorListManagerJSON sensorListManagerJSON = new SensorListManagerJSON();
-        ReflectionTestUtils.setField(sensorListManagerJSON, "configPath", sharedTempDir.toString());
-
-        List<Measurement> sensors = sensorListManagerJSON.getSensors();
-
-        //then
-        assertEquals(0,sensors.size());
-    }
-
 }

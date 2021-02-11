@@ -3,7 +3,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
@@ -28,16 +28,17 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "pom.xml" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
-      - run: mvn dependency:go-offline
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-v1-{{ .Branch }}-
+            - maven-repo-v1-
 
       - save_cache:
           paths:
             - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
+          key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+
+      - run: mvn dependency:go-offline
 
       # run tests!
       - run: mvn integration-test
@@ -52,6 +53,3 @@ jobs:
           path: ~/junit
       - store_artifacts:
           path: ~/junit
-
-
-

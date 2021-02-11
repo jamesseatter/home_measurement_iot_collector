@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="livegauges">
+    <div class="container" layout:fragment="livegauges">
+        <h4>Current temperatures</h4>
+        <div class="panel-content text-center" th:if="${not #lists.isEmpty(liveMeasurements)}" style="margin-top: 20px">
+            <div id="livegauges" class="row">
+                <div class="col-sm">
+                    <div id="live_data_div_0" style="width: 100px; height: 120px; "></div>
+                </div>
+                <div class="col-sm">
+                    <div id="live_data_div_1" style="width: 100px; height: 120px; "></div>
+                </div>
+                <div class="col-sm">
+                    <div id="live_data_div_2" style="display:none; width: 100px; height: 120px; "></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Charting    -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!--    <script th:inline="javascript">-->
+    <script type="text/javascript" th:inline="javascript" defer="defer">
+        /*<![CDATA[*/
+        google.charts.load('current', {'packages':['gauge']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawOneChart(measurement, index) {
+            let data = new google.visualization.DataTable();
+
+            data.addColumn('string', 'label');
+            data.addColumn('number', 'value');
+
+            var options = {
+                width: 400, height: 120,
+                greenColor: '#0acafa',
+                greenFrom:0, greenTo: 50,
+                yellowColor: '#21bd19',
+                yellowFrom:50, yellowTo: 70,
+                redFrom: 70, redTo: 100,
+                minorTicks: 5
+            };
+
+            data.addRows([
+                [measurement.shorttitle, measurement.value]
+            ]);
+            options.greenTo = measurement.low_threshold;
+            options.yellowFrom = measurement.low_threshold;
+            options.yellowTo = measurement.high_threshold;
+            options.redFrom = measurement.high_threshold;
+
+            var chart = new google.visualization.Gauge(document.getElementById('live_data_div_' + index));
+
+            chart.draw(data, options);
+        }
+
+        function drawChart() {
+            let measurements = /*[[${liveMeasurements}]]*/ 'default';
+
+            measurements.forEach(drawOneChart);
+        }
+
+        /*]]>*/
+    </script>
+</div>

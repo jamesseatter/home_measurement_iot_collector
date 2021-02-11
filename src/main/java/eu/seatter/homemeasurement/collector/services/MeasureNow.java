@@ -43,6 +43,8 @@ public class MeasureNow {
                     .description(m.getDescription())
                     .measureTimeUTC(m.getMeasureTimeUTC())
                     .measurementUnit(m.getMeasurementUnit())
+                    .low_threshold(m.getLow_threshold())
+                    .high_threshold(m.getHigh_threshold())
                     .value(m.getValue())
                     .build()
             );
