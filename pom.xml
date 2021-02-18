@@ -121,7 +121,7 @@
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
-			<version>4.4.1</version>
+			<version>5.0.0-beta1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -144,11 +144,6 @@
 			<groupId>org.webjars</groupId>
 			<artifactId>momentjs</artifactId>
 			<version>2.24.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars.npm</groupId>
-			<artifactId>popper.js</artifactId>
-			<version>1.16.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
