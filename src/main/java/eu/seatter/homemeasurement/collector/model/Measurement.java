@@ -41,6 +41,7 @@ public class Measurement implements Comparable<Measurement> {
     private Double high_threshold;
 
     private Boolean measurementSentToMq = false;
+    private Boolean measurementSentToAzure = false;
 
     private String alertId;
     private String alertgroup;
@@ -64,4 +65,5 @@ public class Measurement implements Comparable<Measurement> {
     public int compareTo(Measurement that) {
         return this.measureTimeUTC.compareTo(that.measureTimeUTC);
     }
+
 }

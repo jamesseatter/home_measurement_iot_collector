@@ -204,5 +204,20 @@
       "name": "cache.root.path",
       "type": "java.lang.String",
       "description": "Description for cache.root.path."
+    },
+    {
+      "name": "azure.iothub.hostname",
+      "type": "java.lang.String",
+      "description": "Description for azure.iothub.hostname."
+    },
+    {
+      "name": "azure.iothub.deviceID",
+      "type": "java.lang.String",
+      "description": "Description for azure.iothub.deviceID."
+    },
+    {
+      "name": "azure.iothub.sharedaccessKey",
+      "type": "java.lang.String",
+      "description": "Description for azure.iothub.sharedaccessKey."
     }
   ] }

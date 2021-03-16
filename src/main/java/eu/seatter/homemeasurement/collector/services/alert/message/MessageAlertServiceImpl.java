@@ -5,7 +5,7 @@ import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertGroupRecipientService;
-import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
+import eu.seatter.homemeasurement.collector.services.messaging.rabbitmq.RabbitMQService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

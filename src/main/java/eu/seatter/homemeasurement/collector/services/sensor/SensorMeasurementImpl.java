@@ -50,6 +50,7 @@ public class SensorMeasurementImpl implements SensorMeasurement {
                 log.error(measurement.loggerFormat() + " : SensorId not found");
             } else {
                 readSensorValue(measurement);
+                measurement.setRecordUID(java.util.UUID.randomUUID());
                 measurement.setMeasureTimeUTC(measurementTime);
                 measurement.setRecordUID(UUID.randomUUID());
                 measurements.add(measurement);

@@ -5,8 +5,9 @@ import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.cache.CacheLoad;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
-import eu.seatter.homemeasurement.collector.services.messaging.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
+import eu.seatter.homemeasurement.collector.services.messaging.azure.AzureIOTHub;
+import eu.seatter.homemeasurement.collector.services.messaging.rabbitmq.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class CollectorService implements CommandLineRunner {
 
     private final AlertService alertService;
     private final SensorMessaging mqService;
+    private final AzureIOTHub azureIOTHub;
 
     public CollectorService(
             CacheLoad cacheLoad,
@@ -44,7 +46,7 @@ public class CollectorService implements CommandLineRunner {
             AlertService alertService,
             MeasurementCacheService measurementCacheService,
             RabbitMQService mqService,
-            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds, SensorListService sensorListService) {
+            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds, SensorListService sensorListService, AzureIOTHub azureIOTHub) {
                     this.cacheLoad = cacheLoad;
                     this.sensorMeasurement = sensorMeasurement;
                     this.alertService = alertService;
@@ -52,6 +54,7 @@ public class CollectorService implements CommandLineRunner {
                     this.mqService = mqService;
                     this.readIntervalSeconds = readIntervalSeconds;
         this.sensorListService = sensorListService;
+        this.azureIOTHub = azureIOTHub;
     }
 
     @Override
@@ -89,6 +92,7 @@ public class CollectorService implements CommandLineRunner {
             for (Measurement sr : measurements){
                 measurementCacheService.add(sr);
                 mqService.sendMeasurement(sr);
+                azureIOTHub.sendMeasurement(sr);
                 alertOnThresholdExceeded(sr);
             }
 
