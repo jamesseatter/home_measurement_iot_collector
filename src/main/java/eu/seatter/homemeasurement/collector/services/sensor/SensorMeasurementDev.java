@@ -25,6 +25,7 @@ public class SensorMeasurementDev implements SensorMeasurement {
     public List<Measurement> collect(List<Measurement> sensorList) {
         log.warn("Test measurement data in use");
         for(Measurement srec : sensorList) {
+            srec.setRecordUID(java.util.UUID.randomUUID());
             srec.setMeasurementUnit(MeasurementUnit.C);
             srec.setMeasureTimeUTC(UtilDateTime.getTimeDateNowNoSecondsInUTC());
             int val = ThreadLocalRandom.current().nextInt(35, 75);

@@ -6,7 +6,7 @@ package eu.seatter.homemeasurement.collector.services.messaging;
  * Date: 24/02/2020
  * Time: 23:34
  */
-public enum MessageStatusType {
+ public enum MessageStatusType {
     GOOD,
     ERROR
 }

@@ -1,10 +1,6 @@
-package eu.seatter.homemeasurement.collector.services.messaging;
+package eu.seatter.homemeasurement.collector.services.messaging.rabbitmq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
 import eu.seatter.homemeasurement.collector.cache.map.AlertSystemCacheMapImpl;
 import eu.seatter.homemeasurement.collector.config.RabbitMQProperties;
@@ -12,6 +8,10 @@ import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.services.cache.MQMeasurementCacheService;
+import eu.seatter.homemeasurement.collector.services.messaging.Converter;
+import eu.seatter.homemeasurement.collector.services.messaging.MessageStatus;
+import eu.seatter.homemeasurement.collector.services.messaging.MessageStatusType;
+import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.AmqpException;
@@ -42,6 +42,7 @@ public class RabbitMQService implements SensorMessaging {
     private final AlertSystemCache alertSystemCache;
     private final MQMeasurementCacheService mqMeasurementCacheService;
     private final RabbitTemplate rabbitTemplate;
+    private final Converter converter;
 
     final RabbitMQProperties rabbitMQProperties;
 
@@ -50,20 +51,22 @@ public class RabbitMQService implements SensorMessaging {
                            MQMeasurementCacheService mqMeasurementCacheService,
                            Environment env,
                            RabbitTemplate rabbitTemplate,
-                           RabbitMQProperties rabbitMQProperties) {
+                           RabbitMQProperties rabbitMQProperties,
+                           Converter converter) {
         this.messageStatus = messageStatus;
         this.alertSystemCache = alertSystemCache;
         this.mqMeasurementCacheService = mqMeasurementCacheService;
         this.rabbitTemplate = rabbitTemplate;
         this.rabbitMQProperties = rabbitMQProperties;
         this.env = env;
+        this.converter = converter;
     }
 
     @Override
     public boolean sendMeasurement(Measurement measurement) {
 
         try {
-            String messagesToEmit = convertToJSONMessage(measurement);
+            String messagesToEmit = converter.convertToJSONMessage(measurement);
             sendMessage(messagesToEmit,"measurement");
             measurement.setMeasurementSentToMq(true);
             return true;
@@ -77,7 +80,7 @@ public class RabbitMQService implements SensorMessaging {
     @Override
     public boolean sendMeasurementAlert(MeasurementAlert measurementAlert) {
         try {
-            String messagesToEmit = convertToJSONMessage(measurementAlert);
+            String messagesToEmit = converter.convertToJSONMessage(measurementAlert);
             sendMessage(messagesToEmit, "alertmeasurement");
         } catch (AmqpException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage());
@@ -88,8 +91,8 @@ public class RabbitMQService implements SensorMessaging {
     @Override
     public boolean sendSystemAlert(SystemAlert systemAlert) {
         try {
-            String messagesToEmit = convertToJSONMessage(systemAlert);
-            sendMessage(messagesToEmit, "a");
+            String messagesToEmit = converter.convertToJSONMessage(systemAlert);
+            sendMessage(messagesToEmit, "alertsystem");
         } catch (AmqpException | JsonProcessingException ex) {
             messageSendFailed(ex.getMessage());
         }
@@ -152,14 +155,7 @@ public class RabbitMQService implements SensorMessaging {
         }
     }
 
-    private <T> String convertToJSONMessage(T record) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        return mapper.writeValueAsString(record);
-    }
+
 
     private void messageSendFailed(String message) {
         messageSendFailed(message,null);
