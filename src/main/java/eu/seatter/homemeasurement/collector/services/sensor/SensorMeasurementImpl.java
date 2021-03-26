@@ -31,8 +31,8 @@ import java.util.UUID;
 @Profile("!dev")
 public class SensorMeasurementImpl implements SensorMeasurement {
 
-    private AlertService alertService;
-    private AlertSystemCache alertSystemCache;
+    private final AlertService alertService;
+    private final AlertSystemCache alertSystemCache;
 
     public SensorMeasurementImpl(AlertService alertService, AlertSystemCache alertSystemCache) {
         this.alertService = alertService;
@@ -93,11 +93,11 @@ public class SensorMeasurementImpl implements SensorMeasurement {
                     //Good measurement value
                     break;
                 }
+                Thread.sleep(5000);
                 counter++;
             }
-
         }
-        catch (RuntimeException ex) {
+        catch (RuntimeException | InterruptedException ex) {
             log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
             measurement.setValue(0.0);
         }
