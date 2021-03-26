@@ -27,11 +27,12 @@ public class AzureIOTHub implements SensorMessaging {
 
     // Using the MQTT protocol to connect to IoT Hub
     private static final IotHubClientProtocol protocol = IotHubClientProtocol.MQTT;
-    private final DeviceClient client;
+    private DeviceClient client;
 
     private final Converter converter;
     private final MessageStatus messageStatus;
     private final AlertSystemCache alertSystemCache;
+    private final String connectionString;
 
     public AzureIOTHub(Converter converter,
                        MessageStatus messageStatus,
@@ -48,11 +49,22 @@ public class AzureIOTHub implements SensorMessaging {
         // Using the Azure CLI:
         // az iot hub device-identity show-connection-string --hub-name {YourIoTHubName} --device-id MyJavaDevice --output table
 
-        String sb = "HostName=" + hostName + ";" +
+        connectionString = "HostName=" + hostName + ";" +
                 "DeviceId=" + deviceId + ";" +
                 "SharedAccessKey=" + sharedAccessKey;
-        client = new DeviceClient(sb, protocol);
+        client = new DeviceClient(connectionString, protocol);
         client.open();
+    }
+
+    public void reconnect() {
+        try {
+            client.closeNow();
+            client = new DeviceClient(connectionString, protocol);
+        } catch (IOException ex) {
+            log.error("Exception closing Azure Client connection: " + ex.getMessage());
+        } catch (URISyntaxException ex) {
+            log.error("Exception creating an Azure Client connection: " + ex.getMessage());
+        }
     }
 
     // Print the acknowledgement received from IoT Hub for the telemetry message sent.
@@ -84,23 +96,28 @@ public class AzureIOTHub implements SensorMessaging {
     }
 
     private boolean sendMessage(Object message, java.util.UUID uuid) {
+        int retryCounter = 1;
+        int maxRetries = 3;
+        while (retryCounter < maxRetries) {
+            try {
+                String messagesToEmit = converter.convertToJSONMessage(message);
+                Message msg = new Message(messagesToEmit);
 
-        try {
-            String messagesToEmit = converter.convertToJSONMessage(message);
-            Message msg = new Message(messagesToEmit);
+                log.info("Azure Sending message {" + uuid.toString() + "}: " + messagesToEmit);
+                Object lockobj = new Object();
 
-            log.info("Azure Sending message {" + uuid.toString() + "}: " + messagesToEmit);
-            Object lockobj = new Object();
+                msg.setProperty("environment", activeProfile);
 
-            msg.setProperty("environment", activeProfile);
+                // Send the message.
+                EventCallback callback = new EventCallback(uuid);
+                client.sendEventAsync(msg, callback, lockobj);
 
-            // Send the message.
-            EventCallback callback = new EventCallback(uuid);
-            client.sendEventAsync(msg, callback, lockobj);
-
-            return true;
-        } catch (IOException | AmqpException ex) {
-            messageSendFailed(ex.getMessage());
+                return true;
+            } catch (IOException | AmqpException ex) {
+                messageSendFailed(ex.getMessage());
+                reconnect();
+                retryCounter++;
+            }
         }
         return false;
     }
