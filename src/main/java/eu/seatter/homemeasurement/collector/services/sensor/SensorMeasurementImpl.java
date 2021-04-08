@@ -1,10 +1,10 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
-import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.sensor.SensorFactory;
 import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
+import eu.seatter.homemeasurement.collector.services.cache.AlertSystemCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -32,11 +32,11 @@ import java.util.UUID;
 public class SensorMeasurementImpl implements SensorMeasurement {
 
     private final AlertService alertService;
-    private final AlertSystemCache alertSystemCache;
+    private final AlertSystemCacheService alertSystemCacheService;
 
-    public SensorMeasurementImpl(AlertService alertService, AlertSystemCache alertSystemCache) {
+    public SensorMeasurementImpl(AlertService alertService, AlertSystemCacheService alertSystemCache) {
         this.alertService = alertService;
-        this.alertSystemCache = alertSystemCache;
+        this.alertSystemCacheService = alertSystemCache;
     }
 
 
@@ -60,7 +60,7 @@ public class SensorMeasurementImpl implements SensorMeasurement {
                     log.error(message);
                     try {
                         alertService.sendSystemAlert(message, "The sensor did not respond to a query, this may be a transient fault or there may be a problem with the sensor. If this occurs twice verify the sensor is still attached to the system.");
-                        alertSystemCache.add(message);
+                        alertSystemCacheService.add("Sensor Measurement", message);
                     } catch (MessagingException exM) {
                         log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
                     }
@@ -100,6 +100,7 @@ public class SensorMeasurementImpl implements SensorMeasurement {
         catch (RuntimeException | InterruptedException ex) {
             log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
             measurement.setValue(0.0);
+            Thread.currentThread().interrupt();
         }
     }
 
