@@ -2,20 +2,15 @@ package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
 import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.cache.CacheLoad;
-import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
-import eu.seatter.homemeasurement.collector.services.messaging.azure.AzureIOTHub;
 import eu.seatter.homemeasurement.collector.services.messaging.rabbitmq.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
-import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import java.util.List;
 
 /**
@@ -29,32 +24,23 @@ import java.util.List;
 public class CollectorService implements CommandLineRunner {
 
     private final SensorListService sensorListService;
+    private final CacheLoad cacheLoad;
+
+    private final SensorMessaging mqService;
+    private final ProcessSensor processSensor;
 
     private final long readIntervalSeconds;
 
-    private final CacheLoad cacheLoad;
-    private final MeasurementCacheService measurementCacheService;
-    private final SensorMeasurement sensorMeasurement;
-
-    private final AlertService alertService;
-    private final SensorMessaging mqService;
-    private final AzureIOTHub azureIOTHub;
 
     public CollectorService(
             CacheLoad cacheLoad,
-            SensorMeasurement sensorMeasurement,
-            AlertService alertService,
-            MeasurementCacheService measurementCacheService,
             RabbitMQService mqService,
-            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds, SensorListService sensorListService, AzureIOTHub azureIOTHub) {
+            @Value("${measurement.interval.seconds:360}") long readIntervalSeconds, SensorListService sensorListService, ProcessSensor processSensor) {
                     this.cacheLoad = cacheLoad;
-                    this.sensorMeasurement = sensorMeasurement;
-                    this.alertService = alertService;
-                    this.measurementCacheService = measurementCacheService;
                     this.mqService = mqService;
                     this.readIntervalSeconds = readIntervalSeconds;
-        this.sensorListService = sensorListService;
-        this.azureIOTHub = azureIOTHub;
+                    this.sensorListService = sensorListService;
+                    this.processSensor = processSensor;
     }
 
     @Override
@@ -86,15 +72,7 @@ public class CollectorService implements CommandLineRunner {
                 running = true;
             }
 
-            log.debug("Perform sensor measurements");
-            List<Measurement> measurements  = sensorMeasurement.collect(sensorList);
-
-            for (Measurement sr : measurements){
-                measurementCacheService.add(sr);
-                mqService.sendMeasurement(sr);
-                azureIOTHub.sendMeasurement(sr);
-                alertOnThresholdExceeded(sr);
-            }
+            processSensor.process(sensorList);
 
             try {
                 log.info("Next measurement in " + readIntervalSeconds + " seconds");
@@ -107,22 +85,5 @@ public class CollectorService implements CommandLineRunner {
             }
         }
         log.info("Execution stopping");
-    }
-
-    private void alertOnThresholdExceeded(Measurement measurement) {
-        if(measurement.getLow_threshold() != null && measurement.getValue() <= measurement.getLow_threshold()) {
-            log.debug("Sensor value below threshold. Measurement : " + measurement.getValue() + " / Threshold : " + measurement.getLow_threshold());
-            try {
-                log.info("Sending alert email");
-                String alertTitle = "Sensor below threshold";
-                String alertMessage = "The sensor \"" + measurement.getTitle() + "\" has a reading of " + measurement.getValue()+measurement.getMeasurementUnit() + " which is below " + measurement.getLow_threshold();
-
-                alertService.sendMeasurementAlert(measurement, alertTitle, alertMessage);
-            } catch (MessagingException e) {
-                log.error("Failed to send Email Alert : " + e.getLocalizedMessage());
-            } catch (Exception e) {
-                log.error("A general error occurred : " + e.getLocalizedMessage());
-            }
-        }
     }
 }

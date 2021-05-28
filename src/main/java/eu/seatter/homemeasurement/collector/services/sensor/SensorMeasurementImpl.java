@@ -82,7 +82,7 @@ public class SensorMeasurementImpl implements SensorMeasurement {
         try {
             while (counter <= maxCounter) {
                 measurement.setValue(Objects.requireNonNull(sensorReader).readSensorData(measurement));
-                if ((measurement.getValue().intValue() == 85) || (measurement.getValue().intValue() == 0)) {
+                if ((measurement.getValue().intValue() == 85) || (measurement.getValue().intValue() == 0) || (measurement.getValue().isNaN())) {
                     log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which indicates a reading error. Retry (" + counter + " of " + maxCounter + ")");
                     measurement.setValue(0.0);
                 }

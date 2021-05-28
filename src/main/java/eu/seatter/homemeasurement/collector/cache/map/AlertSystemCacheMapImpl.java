@@ -42,18 +42,19 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     }
 
     @Override
-    public void add(String alertMessage) {
+    public SystemAlert add(String title,String alertMessage) {
         SystemAlert sa = new SystemAlert().toBuilder()
                 .alertTimeUTC(UtilDateTime.getTimeDateNowNoSecondsInUTC())
-                .title("")
+                .title(title)
                 .message(alertMessage)
                 .build();
 
         if(cache.size() == maxEntriesPerSensor) {
-            cache.remove(-1);
+            cache.remove(cache.size() -1);
         }
         cache.add(0,sa);
         log.debug("System alert cache Add : " + alertMessage);
+        return sa;
     }
 
     @Override
@@ -82,7 +83,11 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
         log.debug("File = " + cacheFile.toString());
         try {
             if(!directory.exists()) {
-                directory.mkdir();
+                boolean mkdir = directory.mkdir();
+                if (!mkdir) {
+                    log.error("Unable to create the file: " + directory.toString());
+                    return false;
+                }
             }
         } catch(SecurityException ex) {
             log.error("Security Exception, unable to create directory due to security issues : " + ex.getMessage());
