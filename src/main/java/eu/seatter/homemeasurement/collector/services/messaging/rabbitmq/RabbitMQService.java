@@ -1,12 +1,11 @@
 package eu.seatter.homemeasurement.collector.services.messaging.rabbitmq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
-import eu.seatter.homemeasurement.collector.cache.map.AlertSystemCacheMapImpl;
 import eu.seatter.homemeasurement.collector.config.RabbitMQProperties;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
+import eu.seatter.homemeasurement.collector.services.cache.AlertSystemCacheService;
 import eu.seatter.homemeasurement.collector.services.cache.MQMeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.Converter;
 import eu.seatter.homemeasurement.collector.services.messaging.MessageStatus;
@@ -39,7 +38,7 @@ public class RabbitMQService implements SensorMessaging {
     boolean mqEnabled;
 
     private final MessageStatus messageStatus;
-    private final AlertSystemCache alertSystemCache;
+    private final AlertSystemCacheService alertSystemCacheService;
     private final MQMeasurementCacheService mqMeasurementCacheService;
     private final RabbitTemplate rabbitTemplate;
     private final Converter converter;
@@ -47,14 +46,14 @@ public class RabbitMQService implements SensorMessaging {
     final RabbitMQProperties rabbitMQProperties;
 
     public RabbitMQService(MessageStatus messageStatus,
-                           AlertSystemCacheMapImpl alertSystemCache,
+                           AlertSystemCacheService alertSystemCache,
                            MQMeasurementCacheService mqMeasurementCacheService,
                            Environment env,
                            RabbitTemplate rabbitTemplate,
                            RabbitMQProperties rabbitMQProperties,
                            Converter converter) {
         this.messageStatus = messageStatus;
-        this.alertSystemCache = alertSystemCache;
+        this.alertSystemCacheService = alertSystemCache;
         this.mqMeasurementCacheService = mqMeasurementCacheService;
         this.rabbitTemplate = rabbitTemplate;
         this.rabbitMQProperties = rabbitMQProperties;
@@ -125,7 +124,7 @@ public class RabbitMQService implements SensorMessaging {
 
     private void sendMessage(String messagesToEmit, @NotNull String messageType) throws AmqpException {
 
-        String mqroutingkey="";
+        String mqroutingkey;
         switch (messageType) {
             case "measurement" :
                 mqroutingkey = env.getProperty("rabbitmqservice.routing_key.measurement");
@@ -139,6 +138,7 @@ public class RabbitMQService implements SensorMessaging {
             default:
                 throw new IllegalStateException("Unexpected value: " + messageType);
         }
+        if (mqroutingkey == null) throw new AssertionError();
 
         log.info("MQ Sending measurement message to : " +
                 rabbitTemplate.getConnectionFactory().getHost() +
@@ -158,14 +158,14 @@ public class RabbitMQService implements SensorMessaging {
 
 
     private void messageSendFailed(String message) {
-        messageSendFailed(message,null);
+        messageSendFailed(message,Measurement.builder().build());
     }
 
     private void messageSendFailed(String message, Measurement measurement) {
         log.error(message);
+        log.error("Failed measurement: " + measurement.toString());
         messageStatus.update(MessageStatusType.ERROR);
-        alertSystemCache.add(message);
-        //todo handle via throw in code that call rabbitmq
+        alertSystemCacheService.add("Rabbit MQ", message);
     }
 
 }
