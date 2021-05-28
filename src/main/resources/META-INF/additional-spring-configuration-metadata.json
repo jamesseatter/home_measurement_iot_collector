@@ -219,5 +219,15 @@
       "name": "azure.iothub.sharedaccessKey",
       "type": "java.lang.String",
       "description": "Description for azure.iothub.sharedaccessKey."
+    },
+    {
+      "name": "azure.iothub.connectionstring",
+      "type": "java.lang.String",
+      "description": "Description for azure.iothub.connectionstring."
+    },
+    {
+      "name": "azure.enabled",
+      "type": "java.lang.String",
+      "description": "Description for azure.enabled."
     }
   ] }

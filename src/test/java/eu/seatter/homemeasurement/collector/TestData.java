@@ -3,6 +3,7 @@ package eu.seatter.homemeasurement.collector;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.SensorType;
+import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.utils.UtilDateTime;
 
 import java.time.LocalDateTime;
@@ -73,6 +74,14 @@ public class TestData {
                 .alertgroup("temperature_threshold_alerts_private")
                 .alertdestination("BORRY")
                 .measureTimeUTC(localDateTime)
+                .build();
+    }
+
+    public SystemAlert getTestSystemAlert(String title, String alertMessage) {
+        return new SystemAlert().toBuilder()
+                .alertTimeUTC(UtilDateTime.getTimeDateNowNoSecondsInUTC())
+                .title("")
+                .message(alertMessage)
                 .build();
     }
 }
