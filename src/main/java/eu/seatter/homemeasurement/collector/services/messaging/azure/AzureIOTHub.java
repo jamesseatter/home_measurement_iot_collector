@@ -1,6 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.messaging.azure;
 
 import com.microsoft.azure.sdk.iot.device.*;
+import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
 import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
@@ -12,7 +13,6 @@ import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,10 +20,13 @@ import java.net.URISyntaxException;
 
 @Slf4j
 @Service
-@Scope("singleton")
+//@Scope("singleton")
 public class AzureIOTHub implements SensorMessaging {
     @Value("${spring.profiles.active:}")
     private String activeProfile;
+
+    @Value("#{new Boolean('${azure.enabled}:false}')}")
+    private boolean azureEnable;
 
     // Using the MQTT protocol to connect to IoT Hub
     private static final IotHubClientProtocol protocol = IotHubClientProtocol.MQTT;
@@ -32,31 +35,53 @@ public class AzureIOTHub implements SensorMessaging {
     private final Converter converter;
     private final MessageStatus messageStatus;
     private final AlertSystemCache alertSystemCache;
+
     private final String connectionString;
 
     public AzureIOTHub(Converter converter,
                        MessageStatus messageStatus,
                        AlertSystemCache alertSystemCache,
-                       @Value("${azure.iothub.hostname}") String hostName,
-                       @Value("${azure.iothub.deviceid}") String deviceId,
-                       @Value("${azure.iothub.sharedaccessKey}") String sharedAccessKey
-                       ) throws IOException, URISyntaxException {
+                       @Value("${azure.iothub.connectionstring:}") String connectionString
+                       ) throws URISyntaxException, IOException {
         this.converter = converter;
         this.messageStatus = messageStatus;
         this.alertSystemCache = alertSystemCache;
-        // Connect to the IoT hub.
-        // The device connection string to authenticate the device with your IoT hub.
-        // Using the Azure CLI:
-        // az iot hub device-identity show-connection-string --hub-name {YourIoTHubName} --device-id MyJavaDevice --output table
+        this.connectionString = connectionString;
 
-        connectionString = "HostName=" + hostName + ";" +
-                "DeviceId=" + deviceId + ";" +
-                "SharedAccessKey=" + sharedAccessKey;
-        client = new DeviceClient(connectionString, protocol);
-        client.open();
+        if (azureEnable) {
+            // Connect to the IoT hub.
+            client = new DeviceClient(this.connectionString, protocol);
+
+            client.registerConnectionStatusChangeCallback((status, statusChangeReason, throwable, callbackContext) -> {
+                log.warn("CONNECTION STATUS UPDATE: " + status);
+                log.warn("CONNECTION STATUS REASON: " + statusChangeReason);
+                log.warn("CONNECTION STATUS THROWABLE: " + (throwable == null ? "null" : throwable.getMessage()));
+
+                if (status == IotHubConnectionStatus.DISCONNECTED) {
+                    //connection was lost, and is not being re-established. Look at provided exception for
+                    // how to resolve this issue. Cannot send messages until this issue is resolved, and you manually
+                    // re-open the device client
+                    try {
+                        client.open();
+                    } catch (IOException ex) {
+                        log.error("Unable to re-open MQTT connection: " + ex.getMessage());
+                    }
+                } else if (status == IotHubConnectionStatus.DISCONNECTED_RETRYING) {
+                    //connection was lost, but is being re-established. Can still send messages, but they won't
+                    // be sent until the connection is re-established
+                    log.warn("Retrying MQTT connection");
+                } else if (status == IotHubConnectionStatus.CONNECTED) {
+                    //Connection was successfully re-established. Can send messages.
+                    log.info("Reconnected to MQTT");
+                }
+            }, new Object());
+
+            client.open();
+        }
     }
 
     public void reconnect() {
+        log.warn("Azure reconnect initiated due to connection issues");
         try {
             client.closeNow();
             client = new DeviceClient(connectionString, protocol);
@@ -96,10 +121,13 @@ public class AzureIOTHub implements SensorMessaging {
     }
 
     private boolean sendMessage(Object message, java.util.UUID uuid) {
+        if(!azureEnable) return false;
+
         int retryCounter = 1;
-        int maxRetries = 3;
+        final int maxRetries = 3;
         while (retryCounter < maxRetries) {
             try {
+                client.open();
                 String messagesToEmit = converter.convertToJSONMessage(message);
                 Message msg = new Message(messagesToEmit);
 
@@ -111,12 +139,11 @@ public class AzureIOTHub implements SensorMessaging {
                 // Send the message.
                 EventCallback callback = new EventCallback(uuid);
                 client.sendEventAsync(msg, callback, lockobj);
-
                 return true;
             } catch (IOException | AmqpException ex) {
                 messageSendFailed(ex.getMessage());
-                reconnect();
                 retryCounter++;
+                reconnect();
             }
         }
         return false;
@@ -130,6 +157,6 @@ public class AzureIOTHub implements SensorMessaging {
     private void messageSendFailed(String message) {
         log.error(message);
         messageStatus.update(MessageStatusType.ERROR);
-        alertSystemCache.add(message);
+        alertSystemCache.add("Azure IOT Hub",message);
     }
 }
