@@ -13,7 +13,7 @@ import java.util.List;
  */
 @SuppressWarnings("SameReturnValue")
 public interface AlertSystemCache {
-    void add(String alertMessage);
+    SystemAlert add(String title,String alertMessage);
     List<SystemAlert> getAll();
     List<SystemAlert> getAllSorted();
 

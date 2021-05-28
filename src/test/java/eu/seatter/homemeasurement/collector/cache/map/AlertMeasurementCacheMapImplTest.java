@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Date: 04/02/2021
  * Time: 23:44
  */
-class AlertalertMeasurementCacheMaplTest {
+class AlertMeasurementCacheMapImplTest {
 
     private TestData testData = new TestData();
     private Measurement measurement1;
@@ -55,9 +55,9 @@ class AlertalertMeasurementCacheMaplTest {
         assertEquals(1, alertMeasurementCacheMap.getAllBySensorId("SENSOR_1").size());
     }
 
-    @Test
-    public void getAllSorted() {
-    }
+//    @Test
+//    public void getAllSorted() {
+//    }
 
     @Test
     public void given2MeasurementsAddedForOneSensor_whenGetLastBySensorId_thenReturn1Measurement() {
