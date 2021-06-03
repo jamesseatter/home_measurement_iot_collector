@@ -16,23 +16,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Date: 21/05/2019
  * Time: 12:34
  */
-public class MeasurementCacheMapImplTest {
-    private TestData testData = new TestData();
+class MeasurementCacheMapImplTest {
+    private final TestData testData = new TestData();
     private Measurement measurement1;
     private Measurement measurement1_2;
     private Measurement measurement2;
 
-    private MeasurementCacheMapImpl measurementCacheMapImp = new MeasurementCacheMapImpl("test","test",10);
+    private final MeasurementCacheMapImpl measurementCacheMapImp = new MeasurementCacheMapImpl("test","test",10);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         measurement1 = testData.getTestMeasurement("SENSOR_1", LocalDateTime.now());
         measurement1_2 = testData.getTestMeasurement("SENSOR_1", LocalDateTime.now().plusMinutes(1));
         measurement2 = testData.getTestMeasurement("SENSOR_2", LocalDateTime.now());
     }
 
     @Test
-    public void whenGetAll_thenReturnTwoSensors() {
+    void whenGetAll_thenReturnTwoSensors() {
         //given
         measurementCacheMapImp.add(measurement1,true);
         measurementCacheMapImp.add(measurement2,true);
@@ -44,7 +44,7 @@ public class MeasurementCacheMapImplTest {
     }
 
     @Test
-    public void whenGetAllBySensorId_thenReturnOneSensor() {
+    void whenGetAllBySensorId_thenReturnOneSensor() {
         //given
         measurementCacheMapImp.add(measurement1,true);
         measurementCacheMapImp.add(measurement2,true);
@@ -56,11 +56,7 @@ public class MeasurementCacheMapImplTest {
     }
 
     @Test
-    public void getAllSorted() {
-    }
-
-    @Test
-    public void given2MeasurementsAddedForOneSensor_whenGetLastBySensorId_thenReturn1Measurement() {
+    void given2MeasurementsAddedForOneSensor_whenGetLastBySensorId_thenReturn1Measurement() {
         //given
         measurementCacheMapImp.add(measurement1,true);
         measurementCacheMapImp.add(measurement2,true);
@@ -80,7 +76,7 @@ public class MeasurementCacheMapImplTest {
     }
 
     @Test
-    public void whenGetCacheMaxSizePerSensor_thenReturn24() {
+    void whenGetCacheMaxSizePerSensor_thenReturn24() {
         //when
 
         //then
@@ -89,7 +85,7 @@ public class MeasurementCacheMapImplTest {
     }
 
     @Test
-    public void whenGetCacheSizeBySensorId_returnOne() {
+    void whenGetCacheSizeBySensorId_returnOne() {
         //then
         measurementCacheMapImp.add(measurement1,true);
         measurementCacheMapImp.add(measurement1_2,true);

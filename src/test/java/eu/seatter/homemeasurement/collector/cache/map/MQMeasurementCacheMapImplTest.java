@@ -18,12 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Time: 23:34
  */
 class MQMeasurementCacheMapImplTest {
-    private TestData testData = new TestData();
+    private final TestData testData = new TestData();
     private Measurement measurement1;
     private Measurement measurement1_2;
     private Measurement measurement2;
 
-    private MQMeasurementCacheMapImpl mqMeasurementCacheMap = new MQMeasurementCacheMapImpl("test","test");
+    private final MQMeasurementCacheMapImpl mqMeasurementCacheMap = new MQMeasurementCacheMapImpl("test","test");
 
     @BeforeEach
     public void setUp() throws Exception {

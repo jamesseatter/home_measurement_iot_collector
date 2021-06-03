@@ -10,10 +10,7 @@ import org.mockito.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,8 +22,8 @@ import static org.mockito.Mockito.*;
  * Date: 21/05/2019
  * Time: 12:34
  */
-public class MeasurementCacheServiceTest {
-    private TestData testData = new TestData();
+class MeasurementCacheServiceTest {
+    private final TestData testData = new TestData();
     private Measurement measurement1;
     private Measurement measurement2;
 
@@ -42,7 +39,7 @@ public class MeasurementCacheServiceTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         measurement1 = testData.getTestMeasurement("SENSOR_1", LocalDateTime.now());
         measurement2 = testData.getTestMeasurement("SENSOR_2", LocalDateTime.now());
 
@@ -52,7 +49,7 @@ public class MeasurementCacheServiceTest {
     void givenAdd1_whenGetall_thenCacheServiceGetallHas1(){
         //given
         Map<String,List<Measurement>> measurementMap = new HashMap<>();
-        measurementMap.putIfAbsent("SENSOR_1", Arrays.asList(measurement1));
+        measurementMap.putIfAbsent("SENSOR_1", Collections.singletonList(measurement1));
         measurementCacheService.add(measurement1);
 
         //when
@@ -68,8 +65,8 @@ public class MeasurementCacheServiceTest {
     void givenAdd2_when_getall_thenCacheServiceGetallHas2() {
         //given
         Map<String,List<Measurement>> measurementMap = new HashMap<>();
-        measurementMap.putIfAbsent("SENSOR_1", Arrays.asList(measurement1));
-        measurementMap.putIfAbsent("SENSOR_2", Arrays.asList(measurement2));
+        measurementMap.putIfAbsent("SENSOR_1", Collections.singletonList(measurement1));
+        measurementMap.putIfAbsent("SENSOR_2", Collections.singletonList(measurement2));
 
         measurementCacheService.add(measurement1);
 
@@ -86,14 +83,14 @@ public class MeasurementCacheServiceTest {
     void givenAdd2_whenGetallsorted_thenCacheServiceGetallsortedHas2() {
         //given
         Map<String,List<Measurement>> measurementMap = new HashMap<>();
-        measurementMap.putIfAbsent("SENSOR_1", Arrays.asList(measurement1));
-        measurementMap.putIfAbsent("SENSOR_2", Arrays.asList(measurement2));
+        measurementMap.putIfAbsent("SENSOR_1", Collections.singletonList(measurement1));
+        measurementMap.putIfAbsent("SENSOR_2", Collections.singletonList(measurement2));
 
         measurementCacheService.add(measurement1);
 
         Map<String,List<Measurement>> measurementMapSorted = new HashMap<>();
-        measurementMapSorted.putIfAbsent("SENSOR_1", Arrays.asList(measurement1));
-        measurementMapSorted.putIfAbsent("SENSOR_2", Arrays.asList(measurement2));
+        measurementMapSorted.putIfAbsent("SENSOR_1", Collections.singletonList(measurement1));
+        measurementMapSorted.putIfAbsent("SENSOR_2", Collections.singletonList(measurement2));
 
         //when
         when(measurementCacheService.getAllSorted()).thenReturn(measurementMapSorted);

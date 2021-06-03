@@ -28,7 +28,7 @@ public enum DeviceIdentification {
             this.os = System.getProperty("os.name");
             this.manufacturer = "Pi";
         } catch (Exception e) {
-
+            //todo improve exception handling
         }
     }
 

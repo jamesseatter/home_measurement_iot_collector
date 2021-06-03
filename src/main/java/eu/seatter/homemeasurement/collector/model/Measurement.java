@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -64,6 +65,16 @@ public class Measurement implements Comparable<Measurement> {
     @Override
     public int compareTo(Measurement that) {
         return this.measureTimeUTC.compareTo(that.measureTimeUTC);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(recordUID, measureTimeUTC, sensorid);
     }
 
 }

@@ -28,7 +28,7 @@ public class OneWirePi4JSensor implements Sensor {
     public Double readSensorData(Measurement measurement) {
         log.info("Processing : " + measurement.loggerFormat());
         if(measurement.getSensorid().isEmpty()) {
-            throw new RuntimeException(measurement.loggerFormat() + " : ID not set");
+            throw new SensorNotFoundException("Sensor is not defined correctlt", measurement.loggerFormat() + " : ID not set");
         }
         String sensorID = measurement.getSensorid();
         Optional<W1Device> w1device;
@@ -40,7 +40,6 @@ public class OneWirePi4JSensor implements Sensor {
         } else {
             log.warn("Sensor Family " + measurement.getFamilyid() + " NOT SUPPORTED");
             return 0.0D;
-            //todo convert to a throw
         }
 
         if(w1device.isPresent()) {
@@ -50,7 +49,7 @@ public class OneWirePi4JSensor implements Sensor {
                 value = ((TemperatureSensor) w1device.get()).getTemperature();
                 log.debug(measurement.loggerFormat() + " : Measurement - " + value);
             } catch (Exception e) {
-                throw new RuntimeException(measurement.loggerFormat() + " : Unable to get measurement from sensor");
+                throw new SensorNotFoundException("Sensor not found on the system",measurement.loggerFormat() + " : Unable to get measurement from sensor");
             }
             return value;
 

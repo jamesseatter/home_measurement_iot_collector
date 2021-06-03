@@ -53,7 +53,7 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
             cache.get(toCache.getSensorid()).remove(cache.get(toCache.getSensorid()).size()-1);
         }
         cache.get(toCache.getSensorid()).add(0,toCache);
-        log.debug("Alert cache Add : " + toCache.toString());
+        log.debug("Alert cache Add : " + toCache);
     }
 
     @Override
@@ -64,9 +64,7 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
     @Override
     public Map<String,List<Measurement>> getAllSorted() {
         Map<String,List<Measurement>> cacheSorted = cache;
-        for(String id : cacheSorted.keySet()) {
-            cacheSorted.get(id).sort(Comparator.comparing(Measurement::getMeasureTimeUTC).reversed());
-        }
+        cacheSorted.keySet().forEach(id -> cacheSorted.get(id).sort(Comparator.comparing(Measurement::getMeasureTimeUTC).reversed()));
 
         return cacheSorted;
     }
@@ -115,7 +113,7 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
     @Override
     public boolean flushToFile() throws IOException {
         File directory = new File(cachefile.getParent());
-        log.debug("File = " + cachefile.toString());
+        log.debug("File = " + cachefile);
         try {
             if(!directory.exists()) {
                 directory.mkdir();
@@ -145,7 +143,7 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
     @Override
     public int readFromFile() throws IOException {
         if(!Files.exists(Paths.get(cachefile.getPath()))) {
-            throw new FileNotFoundException("The file " + cachefile.toString() + " was not found");
+            throw new FileNotFoundException("The file " + cachefile + " was not found");
         }
 
         ObjectMapper mapper = new ObjectMapper();

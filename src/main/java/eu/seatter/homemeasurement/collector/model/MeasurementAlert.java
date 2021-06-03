@@ -8,6 +8,7 @@ import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -56,5 +57,15 @@ public class MeasurementAlert  implements Comparable<MeasurementAlert> {
     @Override
     public int compareTo(@NotNull MeasurementAlert that) {
         return this.alertTimeUTC.compareTo(that.alertTimeUTC);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(alertUID, alertTimeUTC, message);
     }
 }

@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SensorListManagerJSON_2Test {
+class SensorListManagerJSON_2Test {
 
     @TempDir
     static Path sharedTempDir;
 
-    String sensorBADJSON = "BAD DATA BAD DATA";
+    final String sensorBADJSON = "BAD DATA BAD DATA";
 
     @BeforeAll
     void init() {

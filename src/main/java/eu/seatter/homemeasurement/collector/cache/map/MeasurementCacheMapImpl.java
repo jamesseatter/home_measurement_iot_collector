@@ -28,7 +28,7 @@ import java.util.*;
 @Component
 @Scope("singleton")
 public class MeasurementCacheMapImpl implements MeasurementCache {
-    private Map<String,List<Measurement>> cache = new LinkedHashMap <>();
+    private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
     private final int maxentriespersensor;
     private final File cachefile;
@@ -54,7 +54,7 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
         }
         cache.get(toCache.getSensorid()).add(0,toCache);
         if(!noFlush) {
-            log.debug("Measurement cache Add : " + toCache.toString());
+            log.debug("Measurement cache Add : " + toCache);
             try {
                 flushToFile();
             } catch (IOException e) {
@@ -128,8 +128,8 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     @Override
     public boolean flushToFile() throws  IOException {
         File directory = new File(cachefile.getParent());
-        log.debug("File = " + cachefile.toString());
-        log.debug("Directory = " + directory.toString());
+        log.debug("File = " + cachefile);
+        log.debug("Directory = " + directory);
         try {
             if(!directory.exists()) {
                 directory.mkdir();
@@ -161,7 +161,7 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     @Override
     public int readFromFile() throws IOException {
         if(!Files.exists(Paths.get(cachefile.getPath()))) {
-            throw new FileNotFoundException("The file " + cachefile.toString() + " was not found");
+            throw new FileNotFoundException("The file " + cachefile + " was not found");
         }
 
         ObjectMapper mapper = new ObjectMapper();

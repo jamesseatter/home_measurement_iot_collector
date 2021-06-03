@@ -31,7 +31,7 @@ public class AlertContactJSON {
         File alertGroupFileLocation;
 
         alertGroupFileLocation = new File(configPath,"alertcontacts.json");
-        log.info("Alert Contacts File Location " + alertGroupFileLocation.toString());
+        log.info("Alert Contacts File Location " + alertGroupFileLocation);
 
         if (!(alertGroupFileLocation.exists())) {
             log.info("Alert Group file does not exist at location. Import terminated");

@@ -8,6 +8,7 @@ import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -44,7 +45,17 @@ public class SystemAlert implements Comparable<SystemAlert> {
     }
 
     @Override
-    public int compareTo(@NotNull SystemAlert that) {
-        return this.alertTimeUTC.compareTo(that.alertTimeUTC);
+    public int compareTo(@NotNull SystemAlert systemAlert) {
+        return this.alertTimeUTC.compareTo(systemAlert.alertTimeUTC);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(alertUID, alertTimeUTC, message);
     }
 }

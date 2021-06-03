@@ -37,13 +37,6 @@ public class MeasurementsEndpoint {
         Map<String, List<Measurement>> data = cacheService.getAll();
         Map<String, List<String>> dataout = new HashMap<>();
 
-//        for(String sensorid : data.keySet()) {
-//            dataout.putIfAbsent(sensorid, new ArrayList<>());
-//            for(Measurement sr : data.get(sensorid)) {
-//                dataout.get(sensorid).add(formatMeasurements(sr));
-//            }
-//        }
-
         for (Map.Entry<String, List<Measurement>> entry : data.entrySet()) {
             dataout.putIfAbsent(entry.getKey(), new ArrayList<>());
             for(Measurement sr : entry.getValue()) {
@@ -54,12 +47,12 @@ public class MeasurementsEndpoint {
         return dataout;
     }
 
-    private String formatMeasurements(Measurement record) {
+    private String formatMeasurements(Measurement measurement) {
 
-        return record.getMeasureTimeUTC().format(formatter) +
+        return measurement.getMeasureTimeUTC().format(formatter) +
                 " UTC;" +
-                record.getValue() +
-                record.getMeasurementUnit();
+                measurement.getValue() +
+                measurement.getMeasurementUnit();
     }
 
 }

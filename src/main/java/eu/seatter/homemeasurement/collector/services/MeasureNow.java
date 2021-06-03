@@ -20,8 +20,8 @@ import java.util.List;
 @Slf4j
 public class MeasureNow {
 
-    private SensorListService sensorListService;
-    private SensorMeasurement sensorMeasurement;
+    private final SensorListService sensorListService;
+    private final SensorMeasurement sensorMeasurement;
 
     public MeasureNow(SensorListService sensorListService, SensorMeasurement sensorMeasurement) {
         this.sensorListService = sensorListService;
@@ -34,8 +34,7 @@ public class MeasureNow {
         sensorList = sensorMeasurement.collect(sensorList);
 
         List<MeasurementWeb> measurementWeb = new ArrayList<>();
-        for (int i = 0; i <sensorList.size() ; i++) {
-            Measurement m = sensorList.get(i);
+        for (Measurement m : sensorList) {
             measurementWeb.add(MeasurementWeb.builder()
                     .sensorid(m.getSensorid())
                     .title(m.getTitle())

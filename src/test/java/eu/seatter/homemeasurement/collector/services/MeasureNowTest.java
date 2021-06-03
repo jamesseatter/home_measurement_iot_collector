@@ -15,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 /**
@@ -30,7 +29,7 @@ class MeasureNowTest {
     @Mock private SensorMeasurement sensorMeasurementMock;
     @InjectMocks private MeasureNow measureNow;
 
-    private TestData testData = new TestData();
+    private final TestData testData = new TestData();
 
     @BeforeAll
     void init() {
