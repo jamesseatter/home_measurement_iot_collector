@@ -33,9 +33,9 @@ public class MQMeasurementCacheMapImpl implements MQCache {
 
     private final File cacheFile;
 
-    public MQMeasurementCacheMapImpl(@Value("${cache.root.path}") String cache_path,
+    public MQMeasurementCacheMapImpl(@Value("${cache.root.path}") String cachePath,
                                      @Value("${cache.mqfailed.measurement.file}") String cacheFile) {
-        this.cacheFile = new File(cache_path, cacheFile);
+        this.cacheFile = new File(cachePath, cacheFile);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     @Override
     public boolean flushToFile() throws IOException {
         File directory = new File(cacheFile.getParent());
-        log.debug("File = " + cacheFile.toString());
+        log.debug("File = " + cacheFile);
         try {
             if(!directory.exists()) {
                 directory.mkdir();
@@ -120,7 +120,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     @Override
     public int readFromFile() throws IOException {
         if(!Files.exists(Paths.get(cacheFile.getPath()))) {
-            throw new FileNotFoundException("The file " + cacheFile.toString() + " was not found");
+            throw new FileNotFoundException("The file " + cacheFile + " was not found");
         }
 
         ObjectMapper mapper = new ObjectMapper();

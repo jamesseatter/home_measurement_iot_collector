@@ -93,7 +93,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
     }
 
     private String getAlertDestination(Measurement sr) {
-        String alertDestination = "";
+        String alertDestination;
         try {
             alertDestination = AlertDestination.valueOf(sr.getAlertdestination()).getTemplate();
         } catch (EnumConstantNotPresentException ex) {

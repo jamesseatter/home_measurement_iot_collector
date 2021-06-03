@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class Converter {
-    public <T> String convertToJSONMessage(T record) throws JsonProcessingException {
+    public <T> String convertToJSONMessage(T message) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         mapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        return mapper.writeValueAsString(record);
+        return mapper.writeValueAsString(message);
     }
 }

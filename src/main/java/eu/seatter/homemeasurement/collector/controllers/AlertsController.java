@@ -36,11 +36,8 @@ public class AlertsController {
     public String index(final Model model) {
 
         Map<String, List<Measurement>> allSortedMeasurementAlerts = alertCacheService.getAllSorted();
-        for(String id : allSortedMeasurementAlerts.keySet()) {
-            allSortedMeasurementAlerts.get(id).forEach(srec -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC()));
-        }
+        allSortedMeasurementAlerts.keySet().forEach(id -> allSortedMeasurementAlerts.get(id).forEach(srec -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC())));
 
-        @SuppressWarnings("unchecked")
         List<SystemAlert> systemAlerts = alertSystemCache.getAllSorted();
         systemAlerts.forEach(srec -> srec.setAlertTimeUTC(srec.getAlertTimeUTC()));
 

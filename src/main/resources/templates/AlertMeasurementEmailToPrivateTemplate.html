@@ -6,25 +6,26 @@
 </head>
 <body style="margin: 0; padding: 20px 0 30px 0;">
 <table style="width:600px; text-align:center; padding:0; border-spacing: 0; border-collapse: collapse; border: 1px solid #cccccc;">
+    <caption></caption>
     <tr style="padding: 10px 10px 8px 5px;">
         <td style="text-align:center; background-color: #70bbd9; padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
 <!--<img alt="CdB Logo image" src="cid:cdbLogo" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>-->
 <!--<img alt="CdB Logo image" src="@{/images/CdBLogo.webp}" height="103" width="81" style="padding: 0 0 10px 0;"/> <br>-->
-            <b>Home Monitor</b></br>
-            <b>Measurement Alert!!</b></br>
+            <strong>Home Monitor</strong><br>
+            <strong>Measurement Alert!!</strong><br>
         </td>
     </tr>
     <tr th:unless="${environment == 'Production'}">
         <td style="text-align:center; background-color: #e74c3c; padding: 40px 0 30px 0; color: #153643; font-family: Arial, sans-serif; font-size: 24px;">
-            <b th:text="${environment}">Developement</b>
+            <b th:text="${environment}">Developement</strong>
         </td>
     </tr>
 
     <tr style="padding: 10px 10px 8px 5px;color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
         <td style="background-color: #ee4c50; text-align:left; padding: 40px 30px 40px 30px;">
             <table >
-                <tr><td><b>Température</b></td><td>:</td><td><span th:text="${temperature}"></span></td></tr>
-                <tr><td><b>Date (UTC)</b></td><td>:</td><td><span th:text="${#temporals.format(date,'dd/MMMM/yyyy HH:mm')}"></span></td></tr>
+                <tr><td><strong>Température</strong></td><td>:</td><td><span th:text="${temperature}"></span></td></tr>
+                <tr><td><strong>Date (UTC)</strong></td><td>:</td><td><span th:text="${#temporals.format(date,'dd/MMMM/yyyy HH:mm')}"></span></td></tr>
             </table>
         </td>
     </tr>

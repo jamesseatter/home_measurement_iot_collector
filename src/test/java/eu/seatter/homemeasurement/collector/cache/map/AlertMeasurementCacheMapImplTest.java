@@ -17,22 +17,22 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class AlertMeasurementCacheMapImplTest {
 
-    private TestData testData = new TestData();
+    private final TestData testData = new TestData();
     private Measurement measurement1;
     private Measurement measurement1_2;
     private Measurement measurement2;
 
-    private AlertMeasurementCacheMapImpl alertMeasurementCacheMap = new AlertMeasurementCacheMapImpl("test","test",24);
+    private final AlertMeasurementCacheMapImpl alertMeasurementCacheMap = new AlertMeasurementCacheMapImpl("test","test",24);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         measurement1 = testData.getTestMeasurement("SENSOR_1", LocalDateTime.now());
         measurement1_2 = testData.getTestMeasurement("SENSOR_1", LocalDateTime.now().plusMinutes(1));
         measurement2 = testData.getTestMeasurement("SENSOR_2", LocalDateTime.now());
     }
 
     @Test
-    public void whenGetAll_thenReturnTwoSensors() {
+    void whenGetAll_thenReturnTwoSensors() {
         //given
         alertMeasurementCacheMap.add(measurement1);
         alertMeasurementCacheMap.add(measurement2);
@@ -44,7 +44,7 @@ class AlertMeasurementCacheMapImplTest {
     }
 
     @Test
-    public void whenGetAllBySensorId_thenReturnOneSensor() {
+    void whenGetAllBySensorId_thenReturnOneSensor() {
         //given
         alertMeasurementCacheMap.add(measurement1);
         alertMeasurementCacheMap.add(measurement2);
@@ -55,12 +55,8 @@ class AlertMeasurementCacheMapImplTest {
         assertEquals(1, alertMeasurementCacheMap.getAllBySensorId("SENSOR_1").size());
     }
 
-//    @Test
-//    public void getAllSorted() {
-//    }
-
     @Test
-    public void given2MeasurementsAddedForOneSensor_whenGetLastBySensorId_thenReturn1Measurement() {
+    void given2MeasurementsAddedForOneSensor_whenGetLastBySensorId_thenReturn1Measurement() {
         //given
         alertMeasurementCacheMap.add(measurement1);
         alertMeasurementCacheMap.add(measurement2);
@@ -80,7 +76,7 @@ class AlertMeasurementCacheMapImplTest {
     }
 
     @Test
-    public void whenGetCacheMaxSizePerSensor_thenReturn24() {
+    void whenGetCacheMaxSizePerSensor_thenReturn24() {
         //when
 
         //then
@@ -89,7 +85,7 @@ class AlertMeasurementCacheMapImplTest {
     }
 
     @Test
-    public void whenGetCacheSizeBySensorId_returnOne() {
+    void whenGetCacheSizeBySensorId_returnOne() {
         //then
         alertMeasurementCacheMap.add(measurement1);
         alertMeasurementCacheMap.add(measurement1_2);

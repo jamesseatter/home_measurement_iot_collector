@@ -80,12 +80,12 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     @Override
     public boolean flushToFile() throws IOException {
         File directory = new File(cacheFile.getParent());
-        log.debug("File = " + cacheFile.toString());
+        log.debug("File = " + cacheFile);
         try {
             if(!directory.exists()) {
                 boolean mkdir = directory.mkdir();
                 if (!mkdir) {
-                    log.error("Unable to create the file: " + directory.toString());
+                    log.error("Unable to create the file: " + directory);
                     return false;
                 }
             }
@@ -114,7 +114,7 @@ public class AlertSystemCacheMapImpl implements AlertSystemCache {
     @Override
     public int readFromFile() throws IOException {
         if(!Files.exists(Paths.get(cacheFile.getPath()))) {
-            throw new FileNotFoundException("The file " + cacheFile.toString() + " was not found");
+            throw new FileNotFoundException("The file " + cacheFile + " was not found");
         }
 
         ObjectMapper mapper = new ObjectMapper();

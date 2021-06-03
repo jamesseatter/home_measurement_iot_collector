@@ -94,7 +94,7 @@ public class AzureIOTHub implements SensorMessaging {
 
     // Print the acknowledgement received from IoT Hub for the telemetry message sent.
     private static class EventCallback implements IotHubEventCallback {
-        java.util.UUID uuid;
+        final java.util.UUID uuid;
 
         public EventCallback(java.util.UUID uuid) {
             this.uuid = uuid;

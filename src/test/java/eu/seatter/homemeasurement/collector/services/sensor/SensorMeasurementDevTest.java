@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class SensorMeasurementDevTest {
     SensorMeasurementDev sensorMeasurementDev = new SensorMeasurementDev();
-    TestData testData = new TestData();
+    final TestData testData = new TestData();
 
     @Test
     void givenTestSensorsThanMeasuementsGreaterthanZeroReturned() {
@@ -28,7 +28,6 @@ class SensorMeasurementDevTest {
         //when
 
         //than
-        assertNotNull(measurements.size());
         for (Measurement m: measurements) {
             assertNotNull(m.getValue());
             assertTrue(m.getValue()>0.0);

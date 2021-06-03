@@ -10,12 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 /**
@@ -25,7 +23,7 @@ import static org.mockito.Mockito.*;
  * Time: 09:29
  */
 class SensorListServiceImplTest {
-    private TestData testData = new TestData();
+    private final TestData testData = new TestData();
 
     @InjectMocks
     private SensorListServiceImpl SensorListServiceImpl;
@@ -44,7 +42,7 @@ class SensorListServiceImplTest {
     @Test
     void whenSensorsDetectedThen2SensorsReturned() {
         //given
-        List<Measurement> sensorList = new ArrayList<>();
+        List<Measurement> sensorList;
 
         //when
         when(jsonFile.getSensors()).thenReturn(testData.getTestSensorList());
@@ -52,7 +50,6 @@ class SensorListServiceImplTest {
 
         //then
         sensorList = SensorListServiceImpl.getSensors();
-        assertNotNull(sensorList.size());
         assertEquals(2,sensorList.size());
         verify(jsonFile,times(1)).getSensors();
         verify(pi4j,times(1)).getSensors();
@@ -61,7 +58,7 @@ class SensorListServiceImplTest {
     @Test
     void whenNoSensorsDetectedThenNoSensorsReturned() {
         //given
-        List<Measurement> sensorList = new ArrayList<>();
+        List<Measurement> sensorList;
 
         //when
         when(jsonFile.getSensors()).thenReturn(testData.getTestSensorList());

@@ -29,7 +29,7 @@ import java.util.List;
  * Date: 24/03/2019
  * Time: 12:13
  */
-@SuppressWarnings("FieldCanBeLocal")
+
 @Slf4j
 @Service
 public class RabbitMQService implements SensorMessaging {

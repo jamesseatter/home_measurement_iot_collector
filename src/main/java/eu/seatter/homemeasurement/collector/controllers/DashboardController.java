@@ -19,7 +19,6 @@ import java.util.Map;
  * Date: 09/05/2019
  * Time: 09:17
  */
-@SuppressWarnings("DuplicatedCode")
 @Controller
 public class DashboardController {
     @Value("${spring.profiles.active:Unknown}")

@@ -20,12 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SensorListManagerJSONTest {
-
+class SensorListManagerJSONTest {
     @TempDir
     static Path sharedTempDir;
 
-    String sensorJSON = "[\n" +
+    final String sensorJSON = "[\n" +
             "  {\n" +
             "    \"sensorid\": \"28-000008d2fdb9\",\n" +
             "    \"title\" : \"Température de l'eau à l'arrivée\",\n" +

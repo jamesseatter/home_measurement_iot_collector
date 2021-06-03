@@ -32,7 +32,7 @@ public class SensorListManagerJSON implements SensorList {
         File sensorFileLocation;
 
         sensorFileLocation = new File(configPath,"sensorlist.json");
-        log.info("Sensor File Location " + sensorFileLocation.toString());
+        log.info("Sensor File Location " + sensorFileLocation);
 
         InputStream inputStream;
         try {

@@ -18,10 +18,10 @@ class AlertSystemCacheMapImplTest {
     private String alertMessage;
     private final int cacheMaxSize = 24;
 
-    private AlertSystemCacheMapImpl cache = new AlertSystemCacheMapImpl("test","test",cacheMaxSize);
+    private final AlertSystemCacheMapImpl cache = new AlertSystemCacheMapImpl("test","test",cacheMaxSize);
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         alertTitle =  "Azure connection";
         alertMessage = "Failed to connect to Azure IOT Hub";
     }

@@ -6,6 +6,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Base64;
 
 
@@ -17,14 +18,19 @@ import java.util.Base64;
  */
 @Service
 public class EncyptionServiceASE implements EncryptionService {
+    SecureRandom random = new SecureRandom();
+
     private static final String KEY = "7h4d9j4em@[7g3ed";
-    private static final String INIT_VECTOR = "452~][:86y5s{lk9";
 
     @Override
     public String encryptString(String unencrypted) {
+        byte[] bytesIV = new byte[16];
+        random.nextBytes(bytesIV);
+
+        /* KEY + IV setting */
         if(unencrypted.length() <= 100) {
             try {
-                IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
+                IvParameterSpec iv = new IvParameterSpec(bytesIV);
                 SecretKeySpec skeySpec = new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), "AES");
 
                 Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -43,8 +49,11 @@ public class EncyptionServiceASE implements EncryptionService {
 
     @Override
     public String decrypteString(String encrypted) {
+        byte[] bytesIV = new byte[16];
+        random.nextBytes(bytesIV);
+
         try {
-            IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes(StandardCharsets.UTF_8));
+            IvParameterSpec iv = new IvParameterSpec(bytesIV);
             SecretKeySpec skeySpec = new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), "AES");
 
             Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
