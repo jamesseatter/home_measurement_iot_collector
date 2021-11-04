@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -31,18 +32,28 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
 
     private final int maxentriespersensor;
+    private final int maxageofentriesindays;
     private final File cachefile;
 
     public MeasurementCacheMapImpl(@Value("${cache.root.path}") String cachefile,
                                    @Value("${cache.measurement.file}")String cacheFile,
-                                   @Value("${measurement.cache.max_records_per_sensor:24}") int maxentriespersensor) {
+                                   @Value("${measurement.cache.max_records_per_sensor:24}") int maxentriespersensor,
+                                   @Value("${measurement.cache.max_age.days:14}") int maxageofentriesindays) {
         this.maxentriespersensor = maxentriespersensor;
+        this.maxageofentriesindays = maxageofentriesindays;
         this.cachefile = new File(cachefile, cacheFile);
     }
 
     @Override
     public void add(Measurement measurement, boolean noFlush) {
+        LocalDateTime curDate = LocalDateTime.now();
+
         Measurement toCache = measurement.toBuilder().build();
+
+        if(toCache.getMeasureTimeUTC().isBefore(curDate.minusDays(maxageofentriesindays))) {
+            //Ignore the entry in the cache file.
+            return;
+        }
 
         if(!cache.containsKey(toCache.getSensorid())) {
             // initialize new map entry for sensor
@@ -176,6 +187,9 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
         for(Measurement measurement : measurements) {
             add(measurement, true);
         }
+        // Rewrite the cache file to remove entries that are too old.
+        // This is hygiene in cases where code dies for a while.
+        flushToFile();
         return measurements.size();
     }
 }

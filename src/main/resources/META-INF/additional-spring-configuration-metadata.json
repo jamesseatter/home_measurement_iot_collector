@@ -171,11 +171,6 @@
       "description": "Description for cache.measurement.max_records_per_sensor."
     },
     {
-      "name": "measurement.alert.cache.max_records_per_sensor",
-      "type": "java.lang.String",
-      "description": "Description for measurement.alert.cache.max_records_per_sensor."
-    },
-    {
       "name": "system.alert.cache.max_records_per_sensor",
       "type": "java.lang.String",
       "description": "Description for system.alert.cache.max_records_per_sensor."
@@ -229,5 +224,15 @@
       "name": "azure.enabled",
       "type": "java.lang.String",
       "description": "Description for azure.enabled."
+    },
+    {
+      "name": "measurement.cache.max_age.days",
+      "type": "java.lang.String",
+      "description": "Description for measurement.cache.max_age.days."
+    },
+    {
+      "name": "measurement.alert.cache.max_records_per_sensor",
+      "type": "java.lang.String",
+      "description": "Description for measurement.alert.cache.max_records_per_sensor."
     }
   ] }

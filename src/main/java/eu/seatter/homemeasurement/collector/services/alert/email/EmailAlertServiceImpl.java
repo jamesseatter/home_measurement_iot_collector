@@ -36,6 +36,14 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         this.emailAlertGroupRecipientService = emailAlertGroupRecipientService;
     }
 
+    /**
+     * @param alertType The type of alert being sent based on Enum AlertType
+     * @param environment The execution environment, for example QA, Test, Prod
+     * @param alertTitle The title of the alert message, subject line of the email
+     * @param alertMessage The message that explains the alert in human readable format
+     * @param measurement The Measurement object containing all the details of the measurement
+     * @throws MessagingException The exception message
+     */
     @Override
     public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Measurement measurement) throws MessagingException {
 
@@ -130,6 +138,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         context.setVariable("temperature", sr.getValue().toString() + sr.getMeasurementUnit().toString());
         context.setVariable("date", sr.getMeasureTimeUTC());
         context.setVariable("message", alertMessage);
+        context.setVariable("sensortitle", sr.getTitle());
         log.debug("Email message Template : " + alertTemplate);
         log.debug("Email message text (optional)) : " + alertMessage);
         return templateEngine.process(alertTemplate, context);

@@ -22,7 +22,7 @@ class MeasurementCacheMapImplTest {
     private Measurement measurement1_2;
     private Measurement measurement2;
 
-    private final MeasurementCacheMapImpl measurementCacheMapImp = new MeasurementCacheMapImpl("test","test",10);
+    private final MeasurementCacheMapImpl measurementCacheMapImp = new MeasurementCacheMapImpl("test","test",10,14);
 
     @BeforeEach
     void setUp() {
@@ -69,7 +69,7 @@ class MeasurementCacheMapImplTest {
     @Test
     void givenCacheSetu10MaxEntriesPerSensor_whenGetCacheSizePerSensor_thenReturn10() {
         //given
-        MeasurementCacheMapImpl mc = new MeasurementCacheMapImpl("test","test",10);
+        MeasurementCacheMapImpl mc = new MeasurementCacheMapImpl("test","test",10,14);
 
         //then
         assertEquals(10,mc.getCacheMaxSizePerSensor());
