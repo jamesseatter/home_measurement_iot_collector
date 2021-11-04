@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -80,8 +81,9 @@ public class CollectorService implements CommandLineRunner {
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
                 log.error(ex.getLocalizedMessage());
-                Thread.currentThread().interrupt();
-                running = false;
+                log.error(Arrays.toString(ex.getStackTrace()));
+//                Thread.currentThread().interrupt();
+//                running = false;
             }
         }
         log.info("Execution stopping");
