@@ -123,35 +123,38 @@ public class RabbitMQService implements SensorMessaging {
     }
 
     private void sendMessage(String messagesToEmit, @NotNull String messageType) throws AmqpException {
+        if(mqEnabled) {
+            String mqroutingkey;
+            switch (messageType) {
+                case "measurement" :
+                    mqroutingkey = env.getProperty("rabbitmqservice.routing_key.measurement");
+                    break;
+                case "alertmeasurement" :
+                    mqroutingkey = env.getProperty("rabbitmqservice.routing_key.alert.measurement");
+                    break;
+                case "alertsystem" :
+                    mqroutingkey = env.getProperty("rabbitmqservice.routing_key.alert.system");
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + messageType);
+            }
+            if (mqroutingkey == null) throw new AssertionError();
 
-        String mqroutingkey;
-        switch (messageType) {
-            case "measurement" :
-                mqroutingkey = env.getProperty("rabbitmqservice.routing_key.measurement");
-                break;
-            case "alertmeasurement" :
-                mqroutingkey = env.getProperty("rabbitmqservice.routing_key.alert.measurement");
-                break;
-            case "alertsystem" :
-                mqroutingkey = env.getProperty("rabbitmqservice.routing_key.alert.system");
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + messageType);
-        }
-        if (mqroutingkey == null) throw new AssertionError();
-
-        log.info("MQ Sending measurement message to : " +
-                rabbitTemplate.getConnectionFactory().getHost() +
-                ":" + rabbitTemplate.getConnectionFactory().getPort() +
-                "/" + rabbitTemplate.getConnectionFactory().getVirtualHost() +
-                "/" + rabbitMQProperties.getExchange() +
-                " key : " + mqroutingkey);
-        try {
-            rabbitTemplate.convertAndSend(rabbitMQProperties.getExchange(), mqroutingkey, messagesToEmit);
-            log.info("MQ measurement message sent");
-        } catch (AmqpException ex) {
-            log.error("Failed to send message to MQ : " + ex.getLocalizedMessage());
-            throw (ex);
+            log.info("MQ Sending measurement message to : " +
+                    rabbitTemplate.getConnectionFactory().getHost() +
+                    ":" + rabbitTemplate.getConnectionFactory().getPort() +
+                    "/" + rabbitTemplate.getConnectionFactory().getVirtualHost() +
+                    "/" + rabbitMQProperties.getExchange() +
+                    " key : " + mqroutingkey);
+            try {
+                rabbitTemplate.convertAndSend(rabbitMQProperties.getExchange(), mqroutingkey, messagesToEmit);
+                log.info("MQ measurement message sent");
+            } catch (AmqpException ex) {
+                log.error("Failed to send message to MQ : " + ex.getLocalizedMessage());
+                throw (ex);
+            }
+        } else {
+            log.info("MQ Service is disabled, no message sent.");
         }
     }
 

@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,46 +49,45 @@ public class CollectorService implements CommandLineRunner {
 
     @Override
     public void run(String... strings) {
-        boolean running = true;
         log.info("Sensor Read Interval (seconds) : "+ readIntervalSeconds);
-
-        List<Measurement> sensorList;
-
-        try {
-            sensorList = sensorListService.getSensors();
-            log.debug("Sensor count : " + sensorList.size());
-        } catch (RuntimeException ex) {
-            log.warn("No sensors were connected to the system. Shutting down");
-            throw new SensorNotFoundException("No sensors found",
-                    "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
-        }
 
         //load cache's
         cacheLoad.load();
 
-        while(running) {
-            mqService.flushCache();
-
-            if (sensorList.isEmpty()) {
-                log.info("No sensors connected to device. Exiting.");
-                break;
-            } else {
-                running = true;
-            }
-
-            processSensor.process(sensorList);
+        Runnable measurementTask = () -> {
+            List<Measurement> sensorList;
 
             try {
-                log.info("Next measurement in " + readIntervalSeconds + " seconds");
-                Thread.sleep(readIntervalSeconds * 1000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-                log.error(ex.getLocalizedMessage());
-                log.error(Arrays.toString(ex.getStackTrace()));
-//                Thread.currentThread().interrupt();
-//                running = false;
+                sensorList = sensorListService.getSensors();
+                log.debug("Sensor count : " + sensorList.size());
+            } catch (RuntimeException ex) {
+                log.warn("No sensors were connected to the system. Shutting down");
+                throw new SensorNotFoundException("No sensors found",
+                        "Verify that sensors are connected to the device and try to restart the service. Verify the logs show the sensors being found.");
             }
-        }
+
+            mqService.flushCache();
+
+            if (!sensorList.isEmpty()) {
+                try {
+                    log.info("Measurements will be taken every " + readIntervalSeconds + " seconds");
+                    processSensor.process(sensorList);
+                } catch (RuntimeException ex) {
+                    log.error(ex.getLocalizedMessage());
+                    log.error(Arrays.toString(ex.getStackTrace()));
+                    Thread.currentThread().interrupt();
+                }
+            } else {
+                log.info("No sensors connected to device. Exiting.");
+            }
+        };
+
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+
+        executorService.scheduleAtFixedRate(measurementTask, 0, readIntervalSeconds, TimeUnit.SECONDS);
+
+
         log.info("Execution stopping");
     }
+
 }
