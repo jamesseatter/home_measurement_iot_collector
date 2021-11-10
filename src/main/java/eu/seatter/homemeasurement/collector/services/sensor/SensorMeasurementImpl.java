@@ -14,10 +14,7 @@ import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -93,14 +90,20 @@ public class SensorMeasurementImpl implements SensorMeasurement {
                     //Good measurement value
                     break;
                 }
-                Thread.sleep(5000);
+                try {
+                    Thread.sleep(5000);
+                }  catch (InterruptedException ex) {
+                    log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
+                    log.error(measurement.loggerFormat() + " : " + Arrays.toString(ex.getStackTrace()));
+                    measurement.setValue(0.0);
+                    Thread.currentThread().interrupt();
+                }
                 counter++;
             }
         }
-        catch (RuntimeException | InterruptedException ex) {
+        catch (RuntimeException ex) {
             log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
             measurement.setValue(0.0);
-            Thread.currentThread().interrupt();
         }
     }
 
