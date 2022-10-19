@@ -6,7 +6,9 @@ import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheMapImpl;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.*;
  * Date: 21/05/2019
  * Time: 12:34
  */
+@ExtendWith(MockitoExtension.class)
 class MeasurementCacheServiceTest {
     private final TestData testData = new TestData();
     private Measurement measurement1;
@@ -35,7 +38,7 @@ class MeasurementCacheServiceTest {
 
     @BeforeEach
     public void init(){
-        MockitoAnnotations.initMocks(this);
+
     }
 
     @BeforeEach

@@ -8,9 +8,10 @@ import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
  * Time: 22:28
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension.class)
 class MeasureNowTest {
     @Mock private SensorListService sensorListServiceMock;
     @Mock private SensorMeasurement sensorMeasurementMock;
@@ -33,7 +35,7 @@ class MeasureNowTest {
 
     @BeforeAll
     void init() {
-        MockitoAnnotations.initMocks(this);
+
     }
 
     @Test

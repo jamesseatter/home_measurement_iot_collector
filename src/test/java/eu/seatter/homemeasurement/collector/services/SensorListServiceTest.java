@@ -6,9 +6,10 @@ import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManage
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.when;
  * Time: 11:36
  */
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class SensorListServiceTest {
 
     @Mock
@@ -39,7 +41,7 @@ class SensorListServiceTest {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+
     }
 
     @Test
