@@ -56,7 +56,7 @@ public class CollectorService implements CommandLineRunner {
 
         Runnable measurementTask = () -> {
             List<Measurement> sensorList;
-
+            log.info("Start sensor measurement cycle");
             try {
                 sensorList = sensorListService.getSensors();
                 log.debug("Sensor count : " + sensorList.size());
@@ -80,14 +80,13 @@ public class CollectorService implements CommandLineRunner {
             } else {
                 log.info("No sensors connected to device. Exiting.");
             }
+            log.info("End sensor measurement cycle");
         };
 
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
         executorService.scheduleAtFixedRate(measurementTask, 0, readIntervalSeconds, TimeUnit.SECONDS);
 
-
-        log.info("Execution stopping");
     }
 
 }

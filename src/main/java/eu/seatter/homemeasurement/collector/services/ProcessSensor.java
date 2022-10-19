@@ -3,7 +3,6 @@ package eu.seatter.homemeasurement.collector.services;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
-import eu.seatter.homemeasurement.collector.services.messaging.azure.AzureIOTHub;
 import eu.seatter.homemeasurement.collector.services.messaging.rabbitmq.RabbitMQService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import lombok.extern.slf4j.Slf4j;
@@ -17,15 +16,13 @@ import java.util.List;
 public class ProcessSensor {
     private final MeasurementCacheService measurementCacheService;
     private final RabbitMQService mqService;
-    private final AzureIOTHub azureIOTHub;
     private final AlertService alertService;
     private final SensorMeasurement sensorMeasurement;
 
 
-    public ProcessSensor(MeasurementCacheService measurementCacheService, RabbitMQService mqService, AzureIOTHub azureIOTHub, AlertService alertService, SensorMeasurement sensorMeasurement) {
+    public ProcessSensor(MeasurementCacheService measurementCacheService, RabbitMQService mqService, AlertService alertService, SensorMeasurement sensorMeasurement) {
         this.measurementCacheService = measurementCacheService;
         this.mqService = mqService;
-        this.azureIOTHub = azureIOTHub;
         this.alertService = alertService;
         this.sensorMeasurement = sensorMeasurement;
     }
@@ -37,7 +34,6 @@ public class ProcessSensor {
         for (Measurement sr : measurements) {
             measurementCacheService.add(sr);
             mqService.sendMeasurement(sr);
-            azureIOTHub.sendMeasurement(sr);
             alertOnThresholdExceeded(sr);
         }
     }

@@ -118,6 +118,8 @@ public class RabbitMQService implements SensorMessaging {
                 log.error("Error flushing the MQ Cache to disk : " + ex.getMessage());
                 return false;
             }
+        } else {
+            return false;
         }
         return true;
     }
