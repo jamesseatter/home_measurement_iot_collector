@@ -1,5 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
+import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
+import eu.seatter.homemeasurement.collector.exception.SensorValueException;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.sensor.SensorFactory;
 import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
@@ -46,15 +48,21 @@ public class SensorMeasurementImpl implements SensorMeasurement {
             if(measurement.getSensorid() == null) {
                 log.error(measurement.loggerFormat() + " : SensorId not found");
             } else {
-                readSensorValue(measurement);
-                measurement.setRecordUID(java.util.UUID.randomUUID());
-                measurement.setMeasureTimeUTC(measurementTime);
-                measurement.setRecordUID(UUID.randomUUID());
-                measurements.add(measurement);
-                log.debug(measurement.loggerFormat() + " : Value returned - " + measurement.getValue());
-                if(measurement.getValue().intValue() == 0) {
+                try {
+                    readSensorValue(measurement);
+                    measurement.setRecordUID(java.util.UUID.randomUUID());
+                    measurement.setMeasureTimeUTC(measurementTime);
+                    measurement.setRecordUID(UUID.randomUUID());
+                    log.debug(measurement.loggerFormat() + " : Value returned - " + measurement.getValue());
+
+                    log.debug(measurement.loggerFormat() + " : Sensor measurementadjustmentvalue = " + measurement.getMeasurementadjustmentvalue());
+                    measurement.setValue(measurement.getValue() + measurement.getMeasurementadjustmentvalue());
+                    measurements.add(measurement);
+                }
+                catch (SensorNotFoundException ex) {
                     String message = measurement.loggerFormat() + " : Error reading sensor - " + measurement.getSensorid() + " / " + measurement.getTitle();
                     log.error(message);
+                    log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
                     try {
                         alertService.sendSystemAlert(message, "The sensor did not respond to a query, this may be a transient fault or there may be a problem with the sensor. If this occurs twice verify the sensor is still attached to the system.");
                         alertSystemCacheService.add("Sensor Measurement", message);
@@ -62,8 +70,18 @@ public class SensorMeasurementImpl implements SensorMeasurement {
                         log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
                     }
                 }
-                log.debug(measurement.loggerFormat() + " : Sensor measurementadjustmentvalue = " + measurement.getMeasurementadjustmentvalue());
-                measurement.setValue(measurement.getValue()+measurement.getMeasurementadjustmentvalue());
+                catch (SensorValueException ex) {
+                    String message = measurement.loggerFormat() + " : Error reading sensor - " + measurement.getSensorid() + " / " + measurement.getTitle();
+                    log.error(message);
+                    log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
+                    sensorList.remove(measurement);
+                    try {
+                        alertService.sendSystemAlert(message, "The sensor returned an illegal value, this may be a transient fault or there may be a problem with the sensor. If this occurs twice verify the sensor is still attached and working.");
+                        alertSystemCacheService.add("Sensor Measurement", message);
+                    } catch (MessagingException exM) {
+                        log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
+                    }
+                }
             }
             log.info(measurement.loggerFormat() + " : Updated sensor measurement = " + measurement.getValue());
         }
@@ -71,40 +89,35 @@ public class SensorMeasurementImpl implements SensorMeasurement {
         return measurements;
     }
 
-    private void readSensorValue(Measurement measurement) {
+    private void readSensorValue(Measurement measurement) throws SensorNotFoundException, SensorValueException {
         Sensor sensorReader = SensorFactory.getSensor(measurement.getSensorType());
         int counter = 1;
         int maxCounter = 3;
         measurement.setValue(0.0);
-        try {
-            while (counter <= maxCounter) {
-                measurement.setValue(Objects.requireNonNull(sensorReader).readSensorData(measurement));
-                if ((measurement.getValue().intValue() == 85) || (measurement.getValue().intValue() == 0) || (measurement.getValue().isNaN())) {
-                    log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which indicates a reading error. Retry (" + counter + " of " + maxCounter + ")");
-                    measurement.setValue(0.0);
-                }
-                else if ((measurement.getValue() > 100) || (measurement.getValue().intValue() < 0)) {
-                    log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which may be an error. Retry (" + counter + " of " + maxCounter + ")");
-                    measurement.setValue(0.0);
-                } else {
-                    //Good measurement value
-                    break;
-                }
-                try {
-                    Thread.sleep(5000);
-                }  catch (InterruptedException ex) {
-                    log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
-                    log.error(measurement.loggerFormat() + " : " + Arrays.toString(ex.getStackTrace()));
-                    measurement.setValue(0.0);
-                    Thread.currentThread().interrupt();
-                }
-                counter++;
+        while (counter <= maxCounter) {
+            measurement.setValue(Objects.requireNonNull(sensorReader).readSensorData(measurement));
+            if ((measurement.getValue().intValue() == 85) || (measurement.getValue().intValue() == 0) || (measurement.getValue().isNaN())) {
+                log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which indicates a reading error. Retry (" + counter + " of " + maxCounter + ")");
+                measurement.setValue(0.0);
             }
+            else if ((measurement.getValue() > 100) || (measurement.getValue().intValue() < 0)) {
+                log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which may be an error. Retry (" + counter + " of " + maxCounter + ")");
+                measurement.setValue(0.0);
+            } else {
+                //Good measurement value
+                break;
+            }
+            try {
+                Thread.sleep(5000);
+            }  catch (InterruptedException ex) {
+                log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
+                log.error(measurement.loggerFormat() + " : " + Arrays.toString(ex.getStackTrace()));
+                measurement.setValue(0.0);
+                Thread.currentThread().interrupt();
+            }
+            counter++;
         }
-        catch (RuntimeException ex) {
-            log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
-            measurement.setValue(0.0);
-        }
+        if(measurement.getValue() == 0.0d) throw new SensorValueException("Sensor measurement failed","The value returned by the sensor is illegal and has been ignored. Check the sensor is connected and working.");
     }
 
     private LocalDateTime getTimeDateNowInUTC() {

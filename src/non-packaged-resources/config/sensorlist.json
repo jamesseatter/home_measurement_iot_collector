@@ -7,7 +7,7 @@
     "familyid": "40",
     "sensortype": "ONEWIRE",
     "measurementUnit": "C",
-    "measurementadjustmentvalue" : "17",
+    "measurementadjustmentvalue" : "2",
     "low_threshold": 45,
     "high_threshold": 75,
     "alertgroup": "temperature_threshold_alerts_private",

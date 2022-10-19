@@ -36,6 +36,7 @@ public class Device implements Comparable<Device> {
     @Size(max = 50)
     private String operatingSystem;
 
+    @Builder.Default
     private RegistrationStatus registrationStatus = RegistrationStatus.NOTREGISTERED;
 
     private String registrationCode;

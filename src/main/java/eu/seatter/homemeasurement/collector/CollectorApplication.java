@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 public class CollectorApplication implements CommandLineRunner {
 	public static void main(String... args) {
-		SpringApplication.run(CollectorApplication.class, args).close();
+		SpringApplication.run(CollectorApplication.class, args);
 	}
 
 	@Override
