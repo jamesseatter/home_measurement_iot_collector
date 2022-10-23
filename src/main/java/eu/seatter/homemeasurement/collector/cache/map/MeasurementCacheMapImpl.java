@@ -83,10 +83,12 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     @Override
     public Map<String,List<Measurement>> getAllSorted() {
         Map<String,List<Measurement>> cacheSorted = cache;
+//        for(Map.Entry<String, List<Measurement>> id : cacheSorted.entrySet()) {
+//            cacheSorted.get(id.getKey()).sort(Comparator.comparing(Measurement::getMeasureTimeUTC).reversed());
+//        }
         for(String id : cacheSorted.keySet()) {
             cacheSorted.get(id).sort(Comparator.comparing(Measurement::getMeasureTimeUTC).reversed());
         }
-
         return cacheSorted;
     }
 
