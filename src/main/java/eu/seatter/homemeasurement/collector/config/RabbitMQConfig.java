@@ -1,6 +1,7 @@
 package eu.seatter.homemeasurement.collector.config;
 
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -14,6 +15,7 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
  * Date: 29/06/2020
  * Time: 08:46
  */
+@EnableRabbit
 @Configuration
 public class RabbitMQConfig {
     private final RabbitMQProperties rabbitMQProperties;

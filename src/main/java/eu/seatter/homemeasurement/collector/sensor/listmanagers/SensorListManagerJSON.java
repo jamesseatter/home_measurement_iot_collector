@@ -2,7 +2,6 @@ package eu.seatter.homemeasurement.collector.sensor.listmanagers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,7 @@ public class SensorListManagerJSON implements SensorList {
         List<Measurement> measurements;
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
         TypeReference<List<Measurement>> typeReference = new TypeReference<List<Measurement>>() {};
 

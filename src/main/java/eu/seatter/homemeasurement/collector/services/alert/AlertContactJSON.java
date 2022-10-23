@@ -2,7 +2,6 @@ package eu.seatter.homemeasurement.collector.services.alert;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.seatter.homemeasurement.collector.model.AlertContactGroup;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +41,7 @@ public class AlertContactJSON {
         List<AlertContactGroup> alertContactGroups;
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+//        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
         TypeReference<List<AlertContactGroup>> typeReference = new TypeReference<List<AlertContactGroup>>() {
         };
