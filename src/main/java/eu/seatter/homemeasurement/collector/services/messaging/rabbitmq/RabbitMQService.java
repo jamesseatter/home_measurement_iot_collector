@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.messaging.rabbitmq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import eu.seatter.homemeasurement.collector.config.RabbitMQProperties;
+import eu.seatter.homemeasurement.collector.config.RabbitMQConfig;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
@@ -14,9 +14,8 @@ import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -33,31 +32,27 @@ import java.util.List;
 @Slf4j
 @Service
 public class RabbitMQService implements SensorMessaging {
-    private final Environment env;
     @Value("#{new Boolean('${rabbitmqservice.enabled:false}')}")
     boolean mqEnabled;
 
     private final MessageStatus messageStatus;
     private final AlertSystemCacheService alertSystemCacheService;
     private final MQMeasurementCacheService mqMeasurementCacheService;
-    private final RabbitTemplate rabbitTemplate;
+    private final AmqpTemplate rabbitTemplate;
+    private final RabbitMQConfig rabbitMQConfig;
     private final Converter converter;
-
-    final RabbitMQProperties rabbitMQProperties;
 
     public RabbitMQService(MessageStatus messageStatus,
                            AlertSystemCacheService alertSystemCache,
                            MQMeasurementCacheService mqMeasurementCacheService,
-                           Environment env,
-                           RabbitTemplate rabbitTemplate,
-                           RabbitMQProperties rabbitMQProperties,
+                           AmqpTemplate rabbitTemplate,
+                           RabbitMQConfig rabbitMQConfig,
                            Converter converter) {
         this.messageStatus = messageStatus;
         this.alertSystemCacheService = alertSystemCache;
         this.mqMeasurementCacheService = mqMeasurementCacheService;
         this.rabbitTemplate = rabbitTemplate;
-        this.rabbitMQProperties = rabbitMQProperties;
-        this.env = env;
+        this.rabbitMQConfig = rabbitMQConfig;
         this.converter = converter;
     }
 
@@ -129,13 +124,13 @@ public class RabbitMQService implements SensorMessaging {
             String mqroutingkey;
             switch (messageType) {
                 case "measurement" :
-                    mqroutingkey = env.getProperty("rabbitmqservice.routing_key.measurement");
+                    mqroutingkey = rabbitMQConfig.getRoutingkey();
                     break;
                 case "alertmeasurement" :
-                    mqroutingkey = env.getProperty("rabbitmqservice.routing_key.alert.measurement");
+                    mqroutingkey = rabbitMQConfig.getRoutingkeyAlertMeasurement();
                     break;
                 case "alertsystem" :
-                    mqroutingkey = env.getProperty("rabbitmqservice.routing_key.alert.system");
+                    mqroutingkey = rabbitMQConfig.getRoutingkeyAlertSystem();
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + messageType);
@@ -143,13 +138,13 @@ public class RabbitMQService implements SensorMessaging {
             if (mqroutingkey == null) throw new AssertionError();
 
             log.info("MQ Sending measurement message to : " +
-                    rabbitTemplate.getConnectionFactory().getHost() +
-                    ":" + rabbitTemplate.getConnectionFactory().getPort() +
-                    "/" + rabbitTemplate.getConnectionFactory().getVirtualHost() +
-                    "/" + rabbitMQProperties.getExchange() +
+
+                    rabbitMQConfig.getHost() +
+                    "/" + rabbitMQConfig.getVirtualHost() +
+                    "/" + rabbitMQConfig.getExchange() +
                     " key : " + mqroutingkey);
             try {
-                rabbitTemplate.convertAndSend(rabbitMQProperties.getExchange(), mqroutingkey, messagesToEmit);
+                rabbitTemplate.convertAndSend(rabbitMQConfig.getExchange(), mqroutingkey, messagesToEmit);
                 log.info("MQ measurement message sent");
             } catch (AmqpException ex) {
                 log.error("Failed to send message to MQ : " + ex.getLocalizedMessage());
