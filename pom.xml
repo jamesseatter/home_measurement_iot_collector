@@ -254,12 +254,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>org.junit.platform</groupId>
-						<artifactId>junit-platform-surefire-provider</artifactId>
-					</dependency>
-				</dependencies>
+				<version>2.22.2</version>
 				<!--Note your version number might be different-->
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
