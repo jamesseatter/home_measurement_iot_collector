@@ -15,49 +15,41 @@
         </layout>
     </appender>
 
-    <appender name="MainLogFile" class="ch.qos.logback.core.FileAppender">
+<!--    <appender name="MainLogFile" class="ch.qos.logback.core.FileAppender">-->
+<!--        <file>${LOG_PATH}/main.log</file>-->
+<!--        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+<!--            <Pattern>-->
+<!--                %d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n-->
+<!--            </Pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/main.log</file>
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        <encoder>
             <Pattern>
                 %d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </Pattern>
         </encoder>
-    </appender>
-    <!--<appender name="RollingFile"-->
-              <!--class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-        <!--<file>${LOGS}/spring-boot-logger.log</file>-->
-        <!--<encoder-->
-                <!--class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
-            <!--<Pattern>-->
-                <!--&lt;!&ndash;%d %p %C{1.} [%t] %m%n&ndash;&gt;-->
-                <!--&lt;!&ndash;%d{ISO8601} %-5level [%t] %logger{16}: %msg%n%throwable&ndash;&gt;-->
-                <!--%d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n-->
-            <!--</Pattern>-->
-        <!--</encoder>-->
 
-        <!--<rollingPolicy-->
-                <!--class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
-            <!--&lt;!&ndash; rollover daily and when the file reaches 10 MegaBytes &ndash;&gt;-->
-            <!--<fileNamePattern>${LOGS}/archived/spring-boot-logger-%d{yyyy-MM-dd}.%i.log-->
-            <!--</fileNamePattern>-->
-            <!--<timeBasedFileNamingAndTriggeringPolicy-->
-                    <!--class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">-->
-                <!--<maxFileSize>10MB</maxFileSize>-->
-            <!--</timeBasedFileNamingAndTriggeringPolicy>-->
-        <!--</rollingPolicy>-->
-    <!--</appender>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>MyApp-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>1MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10MB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
 
     <!-- LOG everything at INFO level -->
     <root level="info">
-        <!--<appender-ref ref="RollingFile" />-->
-        <appender-ref ref="MainLogFile"/>
+        <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console" />
     </root>
 
     <!-- LOG "com.seatter*" at TRACE level -->
     <logger name="eu.seatter" level="trace" additivity="false">
-        <!--<appender-ref ref="RollingFile" />-->
-        <appender-ref ref="MainLogFile"/>
+        <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console" />
     </logger>
 
