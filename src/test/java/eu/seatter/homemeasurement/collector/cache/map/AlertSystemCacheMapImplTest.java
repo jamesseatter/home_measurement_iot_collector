@@ -22,8 +22,8 @@ class AlertSystemCacheMapImplTest {
 
     @BeforeEach
     public void setUp() {
-        alertTitle =  "Azure connection";
-        alertMessage = "Failed to connect to Azure IOT Hub";
+        alertTitle =  "MQ Connection";
+        alertMessage = "Failed to connect to RabbitMQ";
     }
 
     @Test
