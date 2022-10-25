@@ -1,0 +1,17 @@
+[
+  {
+    "name"    : "temperature_threshold_alerts_private",
+    "type"    : "email",
+    "address" : "j"
+  },
+  {
+    "name"    : "temperature_threshold_alerts_public",
+    "type"    : "email",
+    "address" : ""
+  },
+  {
+    "name"    : "system_alerts",
+    "type"    : "email",
+    "address" : ""
+  }
+]

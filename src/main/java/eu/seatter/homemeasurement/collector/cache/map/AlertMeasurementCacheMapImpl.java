@@ -1,7 +1,9 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import eu.seatter.homemeasurement.collector.cache.AlertMeasurementCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * Created by IntelliJ IDEA.
@@ -126,7 +130,12 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
             return false;
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = JsonMapper.builder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .serializationInclusion(NON_NULL)
+                .build();
         String jsonArray = mapper.writeValueAsString(cache);
 
         //write to file
@@ -146,7 +155,12 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
             throw new FileNotFoundException("The file " + cachefile + " was not found");
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = JsonMapper.builder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .serializationInclusion(NON_NULL)
+                .build();
         try {
             cache = mapper.readValue(new File(cachefile.getPath()), new TypeReference<Map<String,List<Measurement>>>() { });
         } catch (IOException ex) {

@@ -1,0 +1,244 @@
+{
+	"rabbit_version": "3.11.0",
+	"rabbitmq_version": "3.11.0",
+	"product_name": "RabbitMQ",
+	"product_version": "3.11.0",
+	"users": [
+		{
+			"name": "admin",
+			"password_hash": "eNA0chBCd6MS8Y8Ob1zWM4bm7IcFcYY1n9GoJqPVwJc9cG2G",
+			"hashing_algorithm": "rabbit_password_hashing_sha256",
+			"tags": [
+				"administrator"
+			],
+			"limits": {}
+		},
+		{
+			"name": "U_home_monitor_dev",
+			"password_hash": "H6StnSEJ7g8lj6iT8ZWbJ69IvOqC6k+2ILqPdRtC2nPUxFdn",
+			"hashing_algorithm": "rabbit_password_hashing_sha256",
+			"tags": [],
+			"limits": {}
+		},
+		{
+			"name": "U_home_monitor_qa",
+			"password_hash": "KIi+D1/2xdg3HR0SJX5747w+RwIVInQNw8u+/o3g1zSAWBAP",
+			"hashing_algorithm": "rabbit_password_hashing_sha256",
+			"tags": [],
+			"limits": {}
+		},
+		{
+			"name": "U_home_monitor_prod",
+			"password_hash": "Ezdmx6pMOTz72IVPMAPA/PKDpE0MEparHewCdQpJ91n47fRb",
+			"hashing_algorithm": "rabbit_password_hashing_sha256",
+			"tags": [],
+			"limits": {}
+		}
+	],
+	"vhosts": [
+		{
+			"name": "home_monitor_qa"
+		},
+		{
+			"name": "/"
+		},
+		{
+			"name": "home_monitor_prod"
+		},
+		{
+			"name": "home_monitor_dev"
+		}
+	],
+	"permissions": [
+		{
+			"user": "U_home_monitor_qa",
+			"vhost": "home_monitor_qa",
+			"configure": ".*",
+			"write": ".*",
+			"read": ".*"
+		},
+		{
+			"user": "admin",
+			"vhost": "/",
+			"configure": ".*",
+			"write": ".*",
+			"read": ".*"
+		},
+		{
+			"user": "admin",
+			"vhost": "home_monitor_qa",
+			"configure": ".*",
+			"write": ".*",
+			"read": ".*"
+		},
+		{
+			"user": "U_home_monitor_dev",
+			"vhost": "home_monitor_dev",
+			"configure": ".*",
+			"write": ".*",
+			"read": ".*"
+		},
+		{
+			"user": "admin",
+			"vhost": "home_monitor_dev",
+			"configure": ".*",
+			"write": ".*",
+			"read": ".*"
+		},
+		{
+			"user": "U_home_monitor_prod",
+			"vhost": "home_monitor_prod",
+			"configure": ".*",
+			"write": ".*",
+			"read": ".*"
+		},
+		{
+			"user": "admin",
+			"vhost": "home_monitor_prod",
+			"configure": ".*",
+			"write": ".*",
+			"read": ".*"
+		}
+	],
+	"topic_permissions": [],
+	"parameters": [],
+	"global_parameters": [
+		{
+			"name": "internal_cluster_id",
+			"value": "rabbitmq-cluster-id-RNQDqUhAnIrf7COeIbUPdg"
+		}
+	],
+	"policies": [],
+	"queues": [
+		{
+			"name": "Q_home_monitor_qa",
+			"vhost": "home_monitor_qa",
+			"durable": true,
+			"auto_delete": false,
+			"arguments": {
+				"x-queue-type": "classic"
+			}
+		},
+		{
+			"name": "rabbitmq.queue",
+			"vhost": "/",
+			"durable": false,
+			"auto_delete": false,
+			"arguments": {}
+		},
+		{
+			"name": "Q_home_monitor_prod",
+			"vhost": "home_monitor_prod",
+			"durable": true,
+			"auto_delete": false,
+			"arguments": {
+				"x-queue-type": "classic"
+			}
+		},
+		{
+			"name": "Q_home_monitor_dev",
+			"vhost": "home_monitor_dev",
+			"durable": true,
+			"auto_delete": false,
+			"arguments": {
+				"x-queue-type": "classic"
+			}
+		}
+	],
+	"exchanges": [
+		{
+			"name": "E_home_monitor_qa",
+			"vhost": "home_monitor_qa",
+			"type": "direct",
+			"durable": true,
+			"auto_delete": false,
+			"internal": false,
+			"arguments": {}
+		},
+		{
+			"name": "rabbitmq.exchange",
+			"vhost": "/",
+			"type": "direct",
+			"durable": true,
+			"auto_delete": false,
+			"internal": false,
+			"arguments": {}
+		},
+		{
+			"name": "E_home_monitor_prod",
+			"vhost": "home_monitor_prod",
+			"type": "topic",
+			"durable": true,
+			"auto_delete": false,
+			"internal": false,
+			"arguments": {}
+		},
+		{
+			"name": "E_home_monitor_dev",
+			"vhost": "home_monitor_dev",
+			"type": "topic",
+			"durable": true,
+			"auto_delete": false,
+			"internal": false,
+			"arguments": {}
+		}
+	],
+	"bindings": [
+		{
+			"source": "E_home_monitor_qa",
+			"vhost": "home_monitor_qa",
+			"destination": "Q_home_monitor_qa",
+			"destination_type": "queue",
+			"routing_key": "measurement.*",
+			"arguments": {}
+		},
+		{
+			"source": "E_home_monitor_qa",
+			"vhost": "home_monitor_qa",
+			"destination": "Q_home_monitor_qa",
+			"destination_type": "queue",
+			"routing_key": "registration.*",
+			"arguments": {}
+		},
+		{
+			"source": "rabbitmq.exchange",
+			"vhost": "/",
+			"destination": "rabbitmq.queue",
+			"destination_type": "queue",
+			"routing_key": "rabbitmq.routingkey",
+			"arguments": {}
+		},
+		{
+			"source": "E_home_monitor_prod",
+			"vhost": "home_monitor_prod",
+			"destination": "Q_home_monitor_prod",
+			"destination_type": "queue",
+			"routing_key": "measurement.",
+			"arguments": {}
+		},
+		{
+			"source": "E_home_monitor_prod",
+			"vhost": "home_monitor_prod",
+			"destination": "Q_home_monitor_prod",
+			"destination_type": "queue",
+			"routing_key": "registration.*",
+			"arguments": {}
+		},
+		{
+			"source": "E_home_monitor_dev",
+			"vhost": "home_monitor_dev",
+			"destination": "Q_home_monitor_dev",
+			"destination_type": "queue",
+			"routing_key": "measurement.*",
+			"arguments": {}
+		},
+		{
+			"source": "E_home_monitor_dev",
+			"vhost": "home_monitor_dev",
+			"destination": "Q_home_monitor_dev",
+			"destination_type": "queue",
+			"routing_key": "registration.*",
+			"arguments": {}
+		}
+	]
+}

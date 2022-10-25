@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -39,7 +40,7 @@ public class SensorMeasurementImpl implements SensorMeasurement {
     }
 
 
-    public List<Measurement> collect(List<Measurement> sensorList) {
+    public List<Measurement> collect(@NotNull List<Measurement> sensorList) {
         final List<Measurement> measurements = new ArrayList<>();
         log.info("Start measurement collection");
 
@@ -61,26 +62,24 @@ public class SensorMeasurementImpl implements SensorMeasurement {
                 }
                 catch (SensorNotFoundException ex) {
                     String message = measurement.loggerFormat() + " : Error reading sensor - " + measurement.getSensorid() + " / " + measurement.getTitle();
-                    log.error(message);
-                    log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
-                    try {
-                        alertService.sendSystemAlert(message, "The sensor did not respond to a query, this may be a transient fault or there may be a problem with the sensor. If this occurs twice verify the sensor is still attached to the system.");
-                        alertSystemCacheService.add("Sensor Measurement", message);
-                    } catch (MessagingException exM) {
-                        log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
-                    }
+                    String alertMessage = "The sensor did not respond to a query, this may be a transient fault or there may be a problem with the sensor. If this occurs twice verify the sensor is still attached to the system.";
+                    String exceptionMessage = measurement.loggerFormat() + " : " + ex.getLocalizedMessage();
+                    sensorList.remove(measurement);
+                    sendAlert(message,alertMessage,exceptionMessage);
                 }
                 catch (SensorValueException ex) {
                     String message = measurement.loggerFormat() + " : Error reading sensor - " + measurement.getSensorid() + " / " + measurement.getTitle();
-                    log.error(message);
-                    log.error(measurement.loggerFormat() + " : " + ex.getLocalizedMessage());
+                    String alertMessage = "The sensor returned an illegal value, this may be a transient fault or there may be a problem with the sensor. If this occurs twice verify the sensor is still attached and working.";
+                    String exceptionMessage = measurement.loggerFormat() + " : " + ex.getLocalizedMessage();
                     sensorList.remove(measurement);
-                    try {
-                        alertService.sendSystemAlert(message, "The sensor returned an illegal value, this may be a transient fault or there may be a problem with the sensor. If this occurs twice verify the sensor is still attached and working.");
-                        alertSystemCacheService.add("Sensor Measurement", message);
-                    } catch (MessagingException exM) {
-                        log.error(measurement.loggerFormat() + " : " + exM.getLocalizedMessage());
-                    }
+                    sendAlert(message,alertMessage,exceptionMessage);
+                }
+                catch (Exception ex) {
+                    String message = measurement.loggerFormat() + " : General error occurred - " + measurement.getSensorid() + " / " + measurement.getTitle();
+                    String alertMessage = "General error occurred - " + measurement.getSensorid() + " / " + measurement.getTitle();
+                    String exceptionMessage = measurement.loggerFormat() + " : " + ex.getLocalizedMessage();
+                    sensorList.remove(measurement);
+                    sendAlert(message,alertMessage,exceptionMessage);
                 }
             }
             log.info(measurement.loggerFormat() + " : Updated sensor measurement = " + measurement.getValue());
@@ -89,13 +88,19 @@ public class SensorMeasurementImpl implements SensorMeasurement {
         return measurements;
     }
 
-    private void readSensorValue(Measurement measurement) throws SensorNotFoundException, SensorValueException {
-        Sensor sensorReader = SensorFactory.getSensor(measurement.getSensorType());
+    private void readSensorValue(@NotNull Measurement measurement) throws SensorNotFoundException, SensorValueException {
+        Sensor sensorReader;
+        try {
+            sensorReader = SensorFactory.getSensor(measurement.getSensortype());
+        } catch (Exception ex) {
+            log.error("Unable to create a sensorReader for sensor :" + measurement.getSensorid() + " " + measurement.getSensortype());
+            throw ex;
+        }
         int counter = 1;
         int maxCounter = 3;
         measurement.setValue(0.0);
         while (counter <= maxCounter) {
-            measurement.setValue(Objects.requireNonNull(sensorReader).readSensorData(measurement));
+            measurement.setValue(sensorReader.readSensorData(measurement));
             if ((measurement.getValue().intValue() == 85) || (measurement.getValue().intValue() == 0) || (measurement.getValue().isNaN())) {
                 log.warn(measurement.loggerFormat() + " : Sensor returned " + measurement.getValue() + " which indicates a reading error. Retry (" + counter + " of " + maxCounter + ")");
                 measurement.setValue(0.0);
@@ -122,5 +127,18 @@ public class SensorMeasurementImpl implements SensorMeasurement {
 
     private LocalDateTime getTimeDateNowInUTC() {
         return LocalDateTime.now().atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime().truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    private void sendAlert(String message, String alertMessage, String exceptionMessage) {
+        log.error(message);
+        log.error(alertMessage);
+        log.error(exceptionMessage);
+
+        try {
+            alertService.sendSystemAlert(message, alertMessage);
+            alertSystemCacheService.add("Sensor Measurement", message);
+        } catch (MessagingException exM) {
+            log.error("Error sending Alert");
+        }
     }
 }

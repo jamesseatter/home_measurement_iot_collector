@@ -1,6 +1,8 @@
 package eu.seatter.homemeasurement.collector.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ErrorHandler;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * Created by IntelliJ IDEA.
@@ -70,8 +74,13 @@ public class RabbitMQConfig {
     }
     @Bean
     public MessageConverter jsonMessageConverter() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return new Jackson2JsonMessageConverter(objectMapper);
+        JsonMapper mapper = JsonMapper.builder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .serializationInclusion(NON_NULL)
+                .build();
+        return new Jackson2JsonMessageConverter(mapper);
     }
     @Bean
     public ConnectionFactory connectionFactory() {
