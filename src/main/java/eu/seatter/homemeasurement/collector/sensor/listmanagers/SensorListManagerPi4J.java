@@ -33,7 +33,7 @@ public class SensorListManagerPi4J implements SensorList {
             Measurement sensor = new Measurement();
             sensor.setSensorid(w1d.getId().trim());
             sensor.setFamilyid(w1d.getFamilyId());
-            sensor.setSensorType(SensorType.ONEWIRE);
+            sensor.setSensortype(SensorType.ONEWIRE);
             measurements.add(sensor);
             log.info("  Found sensor : " + sensor.loggerFormat());
         }

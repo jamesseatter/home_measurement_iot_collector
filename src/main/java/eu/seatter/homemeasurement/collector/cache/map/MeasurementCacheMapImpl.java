@@ -1,7 +1,9 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import eu.seatter.homemeasurement.collector.cache.MeasurementCache;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 /**
  * Created by IntelliJ IDEA.
@@ -139,6 +143,7 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     }
 
     @Override
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public boolean flushToFile() throws  IOException {
         File directory = new File(cachefile.getParent());
         log.debug("File = " + cachefile);
@@ -157,7 +162,12 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
 
         List<Measurement> measurements = getListOfMeasurements();
 
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = JsonMapper.builder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .serializationInclusion(NON_NULL)
+                .build();
         String jsonArray = mapper.writeValueAsString(measurements);
 
         //write to file
@@ -177,7 +187,12 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
             throw new FileNotFoundException("The file " + cachefile + " was not found");
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = JsonMapper.builder()
+                .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .serializationInclusion(NON_NULL)
+                .build();
         List<Measurement> measurements;
         try {
             measurements = mapper.readValue(new File(cachefile.getPath()), new TypeReference<List<Measurement>>() { });

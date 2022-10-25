@@ -37,7 +37,7 @@ public class Measurement implements Comparable<Measurement> {
 
     @Builder.Default
     private Double measurementadjustmentvalue = 0.0d;
-    private SensorType sensorType;
+    private SensorType sensortype;
     private int familyid;
 
     private Double low_threshold;
@@ -51,14 +51,14 @@ public class Measurement implements Comparable<Measurement> {
     private String alertdestination;
 
     public String loggerFormat() {
-        return "[" + sensorid + "/" + sensorType + "/" + familyid + "]";
+        return "[" + sensorid + "/" + sensortype + "/" + familyid + "]";
     }
 
     @Override
     public String toString() {
         return "measurement{" +
                 "sensorid='" + sensorid + '\'' +
-                ", sensorType=" + sensorType +
+                ", sensorType=" + sensortype +
                 ", measureTimeUTC=" + measureTimeUTC +
                 ", value=" + value + " " + measurementUnit +
                 '}';
