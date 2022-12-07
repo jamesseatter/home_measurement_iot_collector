@@ -1,0 +1,14 @@
+[Unit]
+Description = Home measurement collector service
+After = syslog.target
+
+[Service]
+WorkingDirectory=/home/iot/bin/collector_qa
+Type = simple
+User = iot
+ExecStart = /usr/bin/java -Dlogging.file.path=/home/iot/bin/collector_qa -Dspring.profiles.active=qa -Dpring.mail.username="" -Djasypt.encryptor.password=mattys_dev_password -jar collector.jar
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy = multi-user.target

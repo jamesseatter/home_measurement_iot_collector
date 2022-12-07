@@ -6,7 +6,7 @@ After = syslog.target
 WorkingDirectory=/home/iot/bin/collector_prod
 Type = simple
 User = iot
-ExecStart = /usr/bin/java -jar -Dspring.profiles.active=prod collector.jar
+ExecStart = /usr/bin/java -Dlogging.file.path=/home/iot/bin/collector_prod -Dlogging.level.root=INFO -Dspring.mail.username="" -Dspring.profiles.active=prod -Dpring.mail.username=james.seatter@gmail.com -Djasypt.encryptor.password=mattys_dev_password -jar collector.jar
 Restart=on-failure
 RestartSec=10
 
