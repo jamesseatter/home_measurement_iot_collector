@@ -143,6 +143,10 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     }
 
     @Override
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+>>>>>>> origin/master
     public boolean flushToFile() throws  IOException {
         File directory = new File(cachefile.getParent());
         log.debug("File = " + cachefile);

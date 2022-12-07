@@ -92,6 +92,10 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     }
 
     @Override
+<<<<<<< HEAD
+=======
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+>>>>>>> origin/master
     public boolean flushToFile() throws IOException {
         File directory = new File(cacheFile.getParent());
         log.debug("File = " + cacheFile);
