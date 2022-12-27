@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.alert.email;
 
-import eu.seatter.homemeasurement.collector.model.AlertDestination;
+import eu.seatter.homemeasurement.collector.model.enums.AlertDestination;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
 import lombok.extern.slf4j.Slf4j;

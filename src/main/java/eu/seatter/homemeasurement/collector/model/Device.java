@@ -1,5 +1,6 @@
 package eu.seatter.homemeasurement.collector.model;
 
+import eu.seatter.homemeasurement.collector.model.enums.RegistrationStatus;
 import lombok.*;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.SensorType;
+import eu.seatter.homemeasurement.collector.model.enums.SensorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;

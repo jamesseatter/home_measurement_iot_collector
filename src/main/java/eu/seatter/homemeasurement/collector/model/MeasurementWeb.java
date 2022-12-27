@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import eu.seatter.homemeasurement.collector.model.enums.MeasurementUnit;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class MeasurementWeb {
     private LocalDateTime measureTimeUTC;
     private Double value;
     private MeasurementUnit measurementUnit;
-
+    private Double measurementadjustmentvalue;
     private Double low_threshold;
     private Double high_threshold;
 

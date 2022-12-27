@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
+import eu.seatter.homemeasurement.collector.model.enums.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.utils.UtilDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;

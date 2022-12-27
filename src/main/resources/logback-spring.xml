@@ -15,17 +15,17 @@
         </layout>
     </appender>
 
-<!--    <appender name="MainLogFile" class="ch.qos.logback.core.FileAppender">-->
-<!--        <file>${LOG_PATH}/main.log</file>-->
-<!--        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
-<!--            <Pattern>-->
-<!--                %d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n-->
-<!--            </Pattern>-->
-<!--        </encoder>-->
-<!--    </appender>-->
+    <appender name="MainLogFile" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/main.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
 
     <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/main.log</file>
+        <file>${LOG_PATH}/main2.log</file>
         <encoder>
             <Pattern>
                 %d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
@@ -33,7 +33,7 @@
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>MyApp-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>collector-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>1MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>10MB</totalSizeCap>
@@ -49,6 +49,7 @@
 
     <!-- LOG "com.seatter*" at TRACE level -->
     <logger name="eu.seatter" level="trace" additivity="false">
+        <appender-ref ref="MainLogFile"/>
         <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console" />
     </logger>

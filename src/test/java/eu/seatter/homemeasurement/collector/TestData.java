@@ -1,8 +1,8 @@
 package eu.seatter.homemeasurement.collector;
 
 import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
-import eu.seatter.homemeasurement.collector.model.SensorType;
+import eu.seatter.homemeasurement.collector.model.enums.MeasurementUnit;
+import eu.seatter.homemeasurement.collector.model.enums.SensorType;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.utils.UtilDateTime;
 

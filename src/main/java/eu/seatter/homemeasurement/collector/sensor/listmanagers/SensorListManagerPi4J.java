@@ -3,7 +3,7 @@ package eu.seatter.homemeasurement.collector.sensor.listmanagers;
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
 import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.SensorType;
+import eu.seatter.homemeasurement.collector.model.enums.SensorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -5,7 +5,7 @@ import com.pi4j.component.temperature.impl.TmpDS18B20DeviceType;
 import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
 import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
-import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
+import eu.seatter.homemeasurement.collector.model.enums.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

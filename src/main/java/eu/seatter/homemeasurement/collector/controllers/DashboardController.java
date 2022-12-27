@@ -1,5 +1,6 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
+import eu.seatter.homemeasurement.collector.converter.ConvertMeasurement;
 import eu.seatter.homemeasurement.collector.model.Measurement;
 import eu.seatter.homemeasurement.collector.model.MeasurementWeb;
 import eu.seatter.homemeasurement.collector.services.MeasureNow;
@@ -26,9 +27,12 @@ public class DashboardController {
     private final MeasurementCacheService cacheService;
     private final MeasureNow measureNow;
 
-    public DashboardController(MeasurementCacheService cache, MeasureNow measureNow) {
+    private final ConvertMeasurement convertMeasurement;
+
+    public DashboardController(MeasurementCacheService cache, MeasureNow measureNow, ConvertMeasurement convertMeasurement) {
         this.cacheService = cache;
         this.measureNow = measureNow;
+        this.convertMeasurement = convertMeasurement;
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -39,9 +43,12 @@ public class DashboardController {
         for(String id : allSortedMeasurements.keySet()) {
             allSortedMeasurements.get(id).forEach(srec -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC()));
         }
+        Map<String, List<MeasurementWeb>> allSortedMeasurementsWeb = convertMeasurement.convertMeasurementToMeasurementWeb(allSortedMeasurements);
 
-        model.addAttribute("allMeasurements", allSortedMeasurements);
+        model.addAttribute("allMeasurements", allSortedMeasurementsWeb);
+
         model.addAttribute("view_days","");
+
         if(!activeProfile.equalsIgnoreCase("prod")) {
             model.addAttribute("title_postfix", "(" + activeProfile + ")");
         }

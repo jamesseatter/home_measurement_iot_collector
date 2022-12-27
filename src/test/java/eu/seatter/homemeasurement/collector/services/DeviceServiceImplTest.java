@@ -2,8 +2,8 @@
 //
 //import eu.seatter.homemeasurement.collector.commands.RegistrationCommand;
 //import eu.seatter.homemeasurement.collector.model.Device;
-//import eu.seatter.homemeasurement.collector.model.DeviceIdentification;
-//import eu.seatter.homemeasurement.collector.model.RegistrationStatus;
+//import eu.seatter.homemeasurement.collector.model.enums.DeviceIdentification;
+//import eu.seatter.homemeasurement.collector.model.enums.RegistrationStatus;
 //import eu.seatter.homemeasurement.collector.services.device.DeviceServiceImpl;
 //import eu.seatter.homemeasurement.collector.services.encryption.EncryptionService;
 //import eu.seatter.homemeasurement.collector.services.encryption.EncyptionServiceASE;

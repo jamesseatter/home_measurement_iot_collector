@@ -34,7 +34,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Scope("singleton")
 public class MeasurementCacheMapImpl implements MeasurementCache {
     private final Map<String,List<Measurement>> cache = new LinkedHashMap <>();
-
     private final int maxentriespersensor;
     private final int maxageofentriesindays;
     private final File cachefile;
@@ -143,10 +142,6 @@ public class MeasurementCacheMapImpl implements MeasurementCache {
     }
 
     @Override
-<<<<<<< HEAD
-=======
-    @SuppressWarnings("ResultOfMethodCallIgnored")
->>>>>>> origin/master
     public boolean flushToFile() throws  IOException {
         File directory = new File(cachefile.getParent());
         log.debug("File = " + cachefile);

@@ -1,8 +1,8 @@
 //package eu.seatter.homemeasurement.collector.controllers;
 //
-//import eu.seatter.homemeasurement.collector.model.MeasurementUnit;
+//import eu.seatter.homemeasurement.collector.model.enums.MeasurementUnit;
 //import eu.seatter.homemeasurement.collector.model.Measurement;
-//import eu.seatter.homemeasurement.collector.model.SensorType;
+//import eu.seatter.homemeasurement.collector.model.enums.SensorType;
 //import eu.seatter.homemeasurement.collector.services.cache.AlertCacheService;
 //import org.junit.Before;
 //import org.junit.Test;

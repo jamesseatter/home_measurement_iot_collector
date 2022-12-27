@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.model;
+package eu.seatter.homemeasurement.collector.model.enums;
 
 import lombok.Getter;
 

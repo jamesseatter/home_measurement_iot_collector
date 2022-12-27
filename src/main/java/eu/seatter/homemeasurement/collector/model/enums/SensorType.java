@@ -1,4 +1,4 @@
-package eu.seatter.homemeasurement.collector.model;
+package eu.seatter.homemeasurement.collector.model.enums;
 
 /**
  * Created by IntelliJ IDEA.
