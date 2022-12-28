@@ -3,7 +3,6 @@ package eu.seatter.homemeasurement.collector.controllers;
 import eu.seatter.homemeasurement.collector.model.MeasurementWeb;
 import eu.seatter.homemeasurement.collector.services.MeasureNow;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * Date: 08/02/2021
  * Time: 23:24
  */
-@Controller
+//@Controller
 public class LiveController {
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;

@@ -9,7 +9,7 @@
     <div id="page-content-wrapper">
         <div class="container-fluid">
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                <h1 th:text="'Heating System ' + ${title_postfix}">Heating System</h1>
+                <h1 th:text="${page_title}">Heating System</h1>
                 <!--Main content from host page-->
                 <div th:replace="~{fragments/livegauges}"></div>
                 <h4>Historical temperatures</h4>
