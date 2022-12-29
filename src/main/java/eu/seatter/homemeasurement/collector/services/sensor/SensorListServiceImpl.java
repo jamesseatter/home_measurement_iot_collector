@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorList;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerJSON;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerPi4J;
@@ -30,11 +30,11 @@ public class SensorListServiceImpl implements SensorListService {
     }
 
     @Override
-    public List<Measurement> getSensors() {
+    public List<Sensor> getSensors() {
         log.info("Getting sensor list");
-        List<Measurement> jsonSensors = new ArrayList<>();
-        List<Measurement> finalSensorList = new ArrayList<>();
-        List<Measurement> pi4jSensors;
+        List<Sensor> jsonSensors = new ArrayList<>();
+        List<Sensor> finalSensorList = new ArrayList<>();
+        List<Sensor> pi4jSensors;
 
         //The json file defines a list of non-discoverable sensors
         //and configuration information for discoverable sensors.
@@ -47,9 +47,9 @@ public class SensorListServiceImpl implements SensorListService {
         try {
             pi4jSensors = pi4j.getSensors();
             //for each 1-wire sensor found validate that it is in the configuration file and can be measured.
-            for (Measurement pi4jSensor : pi4jSensors) {
+            for (Sensor pi4jSensor : pi4jSensors) {
                 boolean sensorFound = false;
-                for (Measurement jsonSensor : jsonSensors) {
+                for (Sensor jsonSensor : jsonSensors) {
                     if (jsonSensor.getSensorid().trim().equals(pi4jSensor.getSensorid().trim())) {
                         sensorFound = true;
                         finalSensorList.add(jsonSensor);

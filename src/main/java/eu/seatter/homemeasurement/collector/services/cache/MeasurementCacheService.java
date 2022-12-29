@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.cache;
 
 import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheMapImpl;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,15 +22,15 @@ public class MeasurementCacheService {
         this.measurementCache = measurementCache;
     }
 
-    public void add(Measurement measurement) {
+    public void add(Sensor measurement) {
         measurementCache.add(measurement, false);
     }
 
-    public Map<String, List<Measurement>> getAll() {
+    public Map<String, List<Sensor>> getAll() {
         return measurementCache.getAll();
     }
 
-    public Map<String, List<Measurement>> getAllSorted() {
+    public Map<String, List<Sensor>> getAllSorted() {
         return measurementCache.getAllSorted();
     }
 

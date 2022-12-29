@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.sensor.listmanagers;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 
 import java.util.List;
 
@@ -11,5 +11,5 @@ import java.util.List;
  * Time: 12:34
  */
 public interface SensorList {
-    List<Measurement> getSensors();
+    List<Sensor> getSensors();
 }

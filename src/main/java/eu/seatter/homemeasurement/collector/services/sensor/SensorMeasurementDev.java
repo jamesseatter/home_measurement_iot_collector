@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.model.enums.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.utils.UtilDateTime;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +22,9 @@ import java.util.concurrent.ThreadLocalRandom;
 @Profile("dev")
 public class SensorMeasurementDev implements SensorMeasurement {
     @Override
-    public List<Measurement> collect(List<Measurement> sensorList) {
+    public List<Sensor> collect(List<Sensor> sensorList) {
         log.warn("Test measurement data in use");
-        for(Measurement srec : sensorList) {
+        for(Sensor srec : sensorList) {
             srec.setRecordUID(java.util.UUID.randomUUID());
             srec.setMeasurementUnit(MeasurementUnit.C);
             srec.setMeasureTimeUTC(UtilDateTime.getTimeDateNowNoSecondsInUTC());

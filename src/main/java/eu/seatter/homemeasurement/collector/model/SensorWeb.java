@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder=true)
-public class MeasurementWeb {
+public class SensorWeb {
     private String sensorid;
     private String title;
     private String shorttitle;

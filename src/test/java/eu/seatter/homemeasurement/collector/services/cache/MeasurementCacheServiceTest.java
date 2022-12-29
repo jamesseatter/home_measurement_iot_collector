@@ -3,7 +3,7 @@ package eu.seatter.homemeasurement.collector.services.cache;
 
 import eu.seatter.homemeasurement.collector.TestData;
 import eu.seatter.homemeasurement.collector.cache.map.MeasurementCacheMapImpl;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +27,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MeasurementCacheServiceTest {
     private final TestData testData = new TestData();
-    private Measurement measurement1;
-    private Measurement measurement2;
+    private Sensor measurement1;
+    private Sensor measurement2;
 
     @InjectMocks
     private MeasurementCacheService measurementCacheService;
@@ -51,7 +51,7 @@ class MeasurementCacheServiceTest {
     @Test
     void givenAdd1_whenGetall_thenCacheServiceGetallHas1(){
         //given
-        Map<String,List<Measurement>> measurementMap = new HashMap<>();
+        Map<String,List<Sensor>> measurementMap = new HashMap<>();
         measurementMap.putIfAbsent("SENSOR_1", Collections.singletonList(measurement1));
         measurementCacheService.add(measurement1);
 
@@ -60,14 +60,14 @@ class MeasurementCacheServiceTest {
 
         //then
         assertEquals(1,measurementCacheService.getAll().size());
-        verify(measurementCache).add(ArgumentMatchers.any(Measurement.class),ArgumentMatchers.anyBoolean());
+        verify(measurementCache).add(ArgumentMatchers.any(Sensor.class),ArgumentMatchers.anyBoolean());
         verify(measurementCache).getAll();
     }
 
     @Test
     void givenAdd2_when_getall_thenCacheServiceGetallHas2() {
         //given
-        Map<String,List<Measurement>> measurementMap = new HashMap<>();
+        Map<String,List<Sensor>> measurementMap = new HashMap<>();
         measurementMap.putIfAbsent("SENSOR_1", Collections.singletonList(measurement1));
         measurementMap.putIfAbsent("SENSOR_2", Collections.singletonList(measurement2));
 
@@ -78,20 +78,20 @@ class MeasurementCacheServiceTest {
 
         //then
         assertEquals(2, measurementCacheService.getAll().size());
-        verify(measurementCache).add(ArgumentMatchers.any(Measurement.class),ArgumentMatchers.anyBoolean());
+        verify(measurementCache).add(ArgumentMatchers.any(Sensor.class),ArgumentMatchers.anyBoolean());
         verify(measurementCache).getAll();
     }
 
     @Test
     void givenAdd2_whenGetallsorted_thenCacheServiceGetallsortedHas2() {
         //given
-        Map<String,List<Measurement>> measurementMap = new HashMap<>();
+        Map<String,List<Sensor>> measurementMap = new HashMap<>();
         measurementMap.putIfAbsent("SENSOR_1", Collections.singletonList(measurement1));
         measurementMap.putIfAbsent("SENSOR_2", Collections.singletonList(measurement2));
 
         measurementCacheService.add(measurement1);
 
-        Map<String,List<Measurement>> measurementMapSorted = new HashMap<>();
+        Map<String,List<Sensor>> measurementMapSorted = new HashMap<>();
         measurementMapSorted.putIfAbsent("SENSOR_1", Collections.singletonList(measurement1));
         measurementMapSorted.putIfAbsent("SENSOR_2", Collections.singletonList(measurement2));
 
@@ -100,7 +100,7 @@ class MeasurementCacheServiceTest {
 
         //then
         assertEquals(2,measurementCacheService.getAllSorted().size());
-        verify(measurementCache,times(1)).add(ArgumentMatchers.any(Measurement.class),ArgumentMatchers.anyBoolean());
+        verify(measurementCache,times(1)).add(ArgumentMatchers.any(Sensor.class),ArgumentMatchers.anyBoolean());
         verify(measurementCache, times(1)).getAllSorted();
     }
 

@@ -1,8 +1,8 @@
 package eu.seatter.homemeasurement.collector.controllers.api;
 
 import eu.seatter.homemeasurement.collector.converter.ConvertMeasurement;
-import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.MeasurementWeb;
+import eu.seatter.homemeasurement.collector.model.Sensor;
+import eu.seatter.homemeasurement.collector.model.SensorWeb;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,15 +30,15 @@ public class API_Measurements
     }
 
     @GetMapping("/measurements")
-    public Map<String, List<MeasurementWeb>> measurements(){
-        Map<String,List<Measurement>> measurements = cacheService.getAllSorted();
+    public Map<String, List<SensorWeb>> measurements(){
+        Map<String,List<Sensor>> measurements = cacheService.getAllSorted();
 
         return convertMeasurement.convertMeasurementToMeasurementWeb(measurements);
     }
 
     @GetMapping("/measurementsforchart")
-    public Map<String, List<Measurement>> measurementsForChart(){
-        Map<String,List<Measurement>> m = cacheService.getAllSorted();
+    public Map<String, List<Sensor>> measurementsForChart(){
+        Map<String,List<Sensor>> m = cacheService.getAllSorted();
 
 
 

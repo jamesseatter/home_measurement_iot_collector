@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder=true)
-public class Measurement implements Comparable<Measurement> {
+public class Sensor implements Comparable<Sensor> {
     private UUID recordUID;
     private String sensorid;
     private String title;
@@ -67,7 +67,7 @@ public class Measurement implements Comparable<Measurement> {
     }
 
     @Override
-    public int compareTo(Measurement that) {
+    public int compareTo(Sensor that) {
         return this.measureTimeUTC.compareTo(that.measureTimeUTC);
     }
 

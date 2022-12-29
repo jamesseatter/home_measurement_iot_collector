@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
 import eu.seatter.homemeasurement.collector.TestData;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerJSON;
 import eu.seatter.homemeasurement.collector.sensor.listmanagers.SensorListManagerPi4J;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ class SensorListServiceImplTest {
     @Test
     void whenSensorsDetectedThen2SensorsReturned() {
         //given
-        List<Measurement> sensorList;
+        List<Sensor> sensorList;
 
         //when
         when(jsonFile.getSensors()).thenReturn(testData.getTestSensorList());
@@ -60,7 +60,7 @@ class SensorListServiceImplTest {
     @Test
     void whenNoSensorsDetectedThenNoSensorsReturned() {
         //given
-        List<Measurement> sensorList;
+        List<Sensor> sensorList;
 
         //when
         when(jsonFile.getSensors()).thenReturn(testData.getTestSensorList());

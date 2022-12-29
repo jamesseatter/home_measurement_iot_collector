@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.services.cache.CacheLoad;
 import eu.seatter.homemeasurement.collector.services.messaging.SensorMessaging;
 import eu.seatter.homemeasurement.collector.services.messaging.rabbitmq.RabbitMQService;
@@ -55,7 +55,7 @@ public class CollectorService implements CommandLineRunner {
         cacheLoad.load();
 
         Runnable measurementTask = () -> {
-            List<Measurement> sensorList;
+            List<Sensor> sensorList;
             log.info("Start sensor measurement cycle");
             try {
                 sensorList = sensorListService.getSensors();

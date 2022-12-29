@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import eu.seatter.homemeasurement.collector.cache.AlertMeasurementCache;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -32,7 +32,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Component
 @Scope("singleton")
 public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
-    private Map<String,List<Measurement>> cache = new LinkedHashMap <>();
+    private Map<String,List<Sensor>> cache = new LinkedHashMap <>();
 
     private final int maxentriespersensor;
     private final File cachefile;
@@ -45,8 +45,8 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
     }
 
     @Override
-    public void add(Measurement measurement) {
-        Measurement toCache = measurement.toBuilder().build();
+    public void add(Sensor measurement) {
+        Sensor toCache = measurement.toBuilder().build();
 
         if(!cache.containsKey(toCache.getSensorid())) {
             // initialize new map entry for sensor
@@ -61,20 +61,20 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
     }
 
     @Override
-    public Map<String, List<Measurement>> getAll() {
+    public Map<String, List<Sensor>> getAll() {
         return cache;
     }
 
     @Override
-    public Map<String,List<Measurement>> getAllSorted() {
-        Map<String,List<Measurement>> cacheSorted = cache;
-        cacheSorted.keySet().forEach(id -> cacheSorted.get(id).sort(Comparator.comparing(Measurement::getMeasureTimeUTC).reversed()));
+    public Map<String,List<Sensor>> getAllSorted() {
+        Map<String,List<Sensor>> cacheSorted = cache;
+        cacheSorted.keySet().forEach(id -> cacheSorted.get(id).sort(Comparator.comparing(Sensor::getMeasureTimeUTC).reversed()));
 
         return cacheSorted;
     }
 
     @Override
-    public List<Measurement> getAllBySensorId(String sensorId) {
+    public List<Sensor> getAllBySensorId(String sensorId) {
         if(cache.containsKey(sensorId)) {
             return Collections.unmodifiableList(this.cache.get(sensorId));
         } else {
@@ -85,13 +85,13 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
 
 
     @Override
-    public List<Measurement> getLastBySensorId(String sensorId, int last) {
+    public List<Sensor> getLastBySensorId(String sensorId, int last) {
         if(cache.containsKey(sensorId)) {
             if(cache.get(sensorId).size() < last) {
                 throw new IllegalArgumentException("The number of values requested, " + last + ", is greater then the number of records cached for the sensor " + cache.get(sensorId).size());
             }
 
-            List<Measurement> temp = this.cache.get(sensorId);
+            List<Sensor> temp = this.cache.get(sensorId);
 
             return Collections.unmodifiableList(temp.subList(temp.size() - last, temp.size()));
         } else {
@@ -162,7 +162,7 @@ public class AlertMeasurementCacheMapImpl implements AlertMeasurementCache {
                 .serializationInclusion(NON_NULL)
                 .build();
         try {
-            cache = mapper.readValue(new File(cachefile.getPath()), new TypeReference<Map<String,List<Measurement>>>() { });
+            cache = mapper.readValue(new File(cachefile.getPath()), new TypeReference<Map<String,List<Sensor>>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

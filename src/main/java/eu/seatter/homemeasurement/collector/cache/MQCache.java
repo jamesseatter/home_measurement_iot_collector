@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.cache;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.List;
  * Time: 12:53
  */
 public interface MQCache {
-        int add(Measurement measurement);
-        int remove(Measurement measurement);
-        int removeAll(List<Measurement> measurement);
-        List<Measurement> getAll();
+        int add(Sensor measurement);
+        int remove(Sensor measurement);
+        int removeAll(List<Sensor> measurement);
+        List<Sensor> getAll();
         int getCacheSize();
         boolean flushToFile() throws IOException ;
         int readFromFile() throws IOException;

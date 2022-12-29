@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class SensorListManagerJSON implements SensorList {
     private String configPath;
 
     @Override
-    public List<Measurement> getSensors() {
+    public List<Sensor> getSensors() {
         log.info("Start JSON Sensor list import");
         File sensorFileLocation;
 
@@ -46,14 +46,14 @@ public class SensorListManagerJSON implements SensorList {
 
         log.info("Loading sensors");
 
-        List<Measurement> measurements;
+        List<Sensor> measurements;
         JsonMapper mapper = JsonMapper.builder()
                 .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
                 .serializationInclusion(NON_NULL)
                 .build();
-        TypeReference<List<Measurement>> typeReference = new TypeReference<List<Measurement>>() {};
+        TypeReference<List<Sensor>> typeReference = new TypeReference<List<Sensor>>() {};
 
         try {
             measurements = mapper.readValue(inputStream, typeReference);

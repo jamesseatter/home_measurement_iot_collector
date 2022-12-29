@@ -2,7 +2,7 @@ package eu.seatter.homemeasurement.collector.services.messaging.rabbitmq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.seatter.homemeasurement.collector.config.RabbitMQConfig;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.services.cache.AlertSystemCacheService;
@@ -57,7 +57,7 @@ public class RabbitMQService implements SensorMessaging {
     }
 
     @Override
-    public boolean sendMeasurement(Measurement measurement) {
+    public boolean sendMeasurement(Sensor measurement) {
 
         try {
             String messagesToEmit = converter.convertToJSONMessage(measurement);
@@ -97,11 +97,11 @@ public class RabbitMQService implements SensorMessaging {
     public boolean flushCache() {
         if(mqEnabled && mqMeasurementCacheService.getCacheSize() > 0) {
             log.warn("MQ cache has entries that must be sent to the MQ server.");
-            List<Measurement> mqmeasurements = mqMeasurementCacheService.getAll();
+            List<Sensor> mqmeasurements = mqMeasurementCacheService.getAll();
             log.warn("MQ cache has " + mqmeasurements.size() + " entries that must be sent to the MQ server.");
-            Iterator<Measurement> iter = mqmeasurements.iterator();
+            Iterator<Sensor> iter = mqmeasurements.iterator();
             while(iter.hasNext()) {
-                Measurement m = iter.next();
+                Sensor m = iter.next();
                 if(sendMeasurement(m)) {
                     iter.remove();
                     log.info("Record " +  m.getRecordUID() + " sent to MQ");
@@ -158,10 +158,10 @@ public class RabbitMQService implements SensorMessaging {
 
 
     private void messageSendFailed(String message) {
-        messageSendFailed(message,Measurement.builder().build());
+        messageSendFailed(message, Sensor.builder().build());
     }
 
-    private void messageSendFailed(String message, Measurement measurement) {
+    private void messageSendFailed(String message, Sensor measurement) {
         log.error(message);
         log.error("Failed measurement: " + measurement.toString());
         messageStatus.update(MessageStatusType.ERROR);

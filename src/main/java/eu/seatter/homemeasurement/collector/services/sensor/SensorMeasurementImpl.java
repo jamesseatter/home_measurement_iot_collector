@@ -2,9 +2,8 @@ package eu.seatter.homemeasurement.collector.services.sensor;
 
 import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
 import eu.seatter.homemeasurement.collector.exception.SensorValueException;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.sensor.SensorFactory;
-import eu.seatter.homemeasurement.collector.sensor.types.Sensor;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.cache.AlertSystemCacheService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,12 +39,12 @@ public class SensorMeasurementImpl implements SensorMeasurement {
     }
 
 
-    public List<Measurement> collect(@NotNull List<Measurement> sensorList) {
-        final List<Measurement> measurements = new ArrayList<>();
+    public List<Sensor> collect(@NotNull List<Sensor> sensorList) {
+        final List<Sensor> measurements = new ArrayList<>();
         log.info("Start measurement collection");
 
         LocalDateTime measurementTime = getTimeDateNowInUTC(); //all measurements will use the same time to make reporting easier.
-        for (Measurement measurement : sensorList) {
+        for (Sensor measurement : sensorList) {
             if(measurement.getSensorid() == null) {
                 log.error(measurement.loggerFormat() + " : SensorId not found");
             } else {
@@ -88,8 +87,8 @@ public class SensorMeasurementImpl implements SensorMeasurement {
         return measurements;
     }
 
-    private void readSensorValue(@NotNull Measurement measurement) throws SensorNotFoundException, SensorValueException {
-        Sensor sensorReader;
+    private void readSensorValue(@NotNull Sensor measurement) throws SensorNotFoundException, SensorValueException {
+        eu.seatter.homemeasurement.collector.sensor.types.Sensor sensorReader;
         try {
             sensorReader = SensorFactory.getSensor(measurement.getSensortype());
         } catch (Exception ex) {

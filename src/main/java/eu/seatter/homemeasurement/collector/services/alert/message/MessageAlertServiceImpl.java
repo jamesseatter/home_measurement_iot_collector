@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.alert.message;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.model.MeasurementAlert;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
@@ -33,7 +33,7 @@ public class MessageAlertServiceImpl implements MessageAlertService {
     }
 
     @Override
-    public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Measurement measurement) throws MessagingException {
+    public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Sensor measurement) throws MessagingException {
         if(alertType == AlertType.MEASUREMENT) {
             MeasurementAlert measurementAlert = convertmeasurementToMeasurementAlert(measurement);
             measurementAlert.setTitle(alertTitle);
@@ -53,7 +53,7 @@ public class MessageAlertServiceImpl implements MessageAlertService {
         }
     }
 
-    private MeasurementAlert convertmeasurementToMeasurementAlert(Measurement sr) {
+    private MeasurementAlert convertmeasurementToMeasurementAlert(Sensor sr) {
         MeasurementAlert ma = new MeasurementAlert();
         if(sr != null) {
             ma.setAlertTimeUTC(sr.getMeasureTimeUTC());

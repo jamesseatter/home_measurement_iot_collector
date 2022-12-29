@@ -1,8 +1,8 @@
 package eu.seatter.homemeasurement.collector.services;
 
 import eu.seatter.homemeasurement.collector.converter.ConvertMeasurement;
-import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.MeasurementWeb;
+import eu.seatter.homemeasurement.collector.model.Sensor;
+import eu.seatter.homemeasurement.collector.model.SensorWeb;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorListService;
 import eu.seatter.homemeasurement.collector.services.sensor.SensorMeasurement;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +31,12 @@ public class MeasureNow {
         this.convertMeasurement = convertMeasurement;
     }
 
-    public List<MeasurementWeb> collect() {
-        List<Measurement> sensorList = sensorListService.getSensors();
+    public List<SensorWeb> collect() {
+        List<Sensor> sensorList = sensorListService.getSensors();
 
         sensorList = sensorMeasurement.collect(sensorList);
 
-        List<MeasurementWeb>res =  convertMeasurement.convertMeasurementToMeasurementWeb(sensorList);
+        List<SensorWeb>res =  convertMeasurement.convertMeasurementToMeasurementWeb(sensorList);
         return convertMeasurement.convertMeasurementToMeasurementWeb(sensorList);
     }
 }

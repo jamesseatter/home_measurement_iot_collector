@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.model.enums.SensorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -22,10 +22,10 @@ import java.util.UUID;
 public class SensorListServiceDev implements SensorListService {
 
     @Override
-    public List<Measurement> getSensors() {
+    public List<Sensor> getSensors() {
         log.warn("Test sensor list in use");
-        List<Measurement> list = new ArrayList<>();
-        list.add(Measurement.builder()
+        List<Sensor> list = new ArrayList<>();
+        list.add(Sensor.builder()
                 .recordUID(UUID.randomUUID())
                 .sensorid("28-000000000001")
                 .title("Température de l'eau à l'arrivée")
@@ -39,7 +39,7 @@ public class SensorListServiceDev implements SensorListService {
                 .alertdestination("BORRY")
                 .build());
 
-        list.add(Measurement.builder()
+        list.add(Sensor.builder()
                 .recordUID(UUID.randomUUID())
                 .sensorid("28-000000000002")
                 .title("Température de l'eau de chaudière")

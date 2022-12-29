@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.model.enums.MeasurementUnit;
 import eu.seatter.homemeasurement.collector.model.enums.SensorType;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
@@ -20,9 +20,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * Time: 09:36
  */
 public class TestData {
-    public List<Measurement> getTestSensorList(){
-        List<Measurement> sensorList = new ArrayList<>();
-        sensorList.add(Measurement.builder()
+    public List<Sensor> getTestSensorList(){
+        List<Sensor> sensorList = new ArrayList<>();
+        sensorList.add(Sensor.builder()
                 .recordUID(UUID.randomUUID())
                 .sensorid("28-000008d2fdb9")
                 .title("Température de l'eau à l'arrivée")
@@ -35,7 +35,7 @@ public class TestData {
                 .alertdestination("BORRY")
                 .build());
 
-        sensorList.add(Measurement.builder()
+        sensorList.add(Sensor.builder()
                 .recordUID(UUID.randomUUID())
                 .sensorid("28-0000095fcafb")
                 .title("Température de l'eau de chaudière")
@@ -51,8 +51,8 @@ public class TestData {
         return sensorList;
     }
 
-    public List<Measurement> getTestMeasurements(List<Measurement> sensorList) {
-        for(Measurement srec : sensorList) {
+    public List<Sensor> getTestMeasurements(List<Sensor> sensorList) {
+        for(Sensor srec : sensorList) {
             srec.setMeasurementUnit(MeasurementUnit.C);
             srec.setMeasureTimeUTC(UtilDateTime.getTimeDateNowNoSecondsInUTC());
             int val = ThreadLocalRandom.current().nextInt(35, 75);
@@ -61,8 +61,8 @@ public class TestData {
         return Collections.unmodifiableList(sensorList);
     }
 
-    public Measurement getTestMeasurement(String sensorID, LocalDateTime localDateTime) {
-        return Measurement.builder()
+    public Sensor getTestMeasurement(String sensorID, LocalDateTime localDateTime) {
+        return Sensor.builder()
                 .recordUID(UUID.randomUUID())
                 .sensorid(sensorID)
                 .title("Température de l'eau à l'arrivée")

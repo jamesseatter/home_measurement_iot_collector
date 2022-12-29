@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.sensor.listmanagers;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -71,7 +71,7 @@ class SensorListManagerJSONTest {
         //given
         SensorListManagerJSON sensorListManagerJSON = new SensorListManagerJSON();
         ReflectionTestUtils.setField(sensorListManagerJSON, "configPath", sharedTempDir.toString());
-        List<Measurement> sensors = sensorListManagerJSON.getSensors();
+        List<Sensor> sensors = sensorListManagerJSON.getSensors();
 
         //then
         assertEquals(2,sensors.size());
@@ -83,7 +83,7 @@ class SensorListManagerJSONTest {
         SensorListManagerJSON sensorListManagerJSON = new SensorListManagerJSON();
         ReflectionTestUtils.setField(sensorListManagerJSON, "configPath", "BADFILEPATH");
 
-        List<Measurement> sensors = sensorListManagerJSON.getSensors();
+        List<Sensor> sensors = sensorListManagerJSON.getSensors();
 
         //then
         assertEquals(0,sensors.size());

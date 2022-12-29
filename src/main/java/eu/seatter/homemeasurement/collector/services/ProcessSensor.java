@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.services.alert.AlertService;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import eu.seatter.homemeasurement.collector.services.messaging.rabbitmq.RabbitMQService;
@@ -27,18 +27,18 @@ public class ProcessSensor {
         this.sensorMeasurement = sensorMeasurement;
     }
 
-    public void process(List<Measurement> sensorList) {
+    public void process(List<Sensor> sensorList) {
         log.debug("Perform sensor measurements");
-        List<Measurement> measurements  = sensorMeasurement.collect(sensorList);
+        List<Sensor> measurements  = sensorMeasurement.collect(sensorList);
 
-        for (Measurement sr : measurements) {
+        for (Sensor sr : measurements) {
             measurementCacheService.add(sr);
             mqService.sendMeasurement(sr);
             alertOnThresholdExceeded(sr);
         }
     }
 
-    private void alertOnThresholdExceeded(Measurement measurement) {
+    private void alertOnThresholdExceeded(Sensor measurement) {
         if(measurement.getLow_threshold() != null && measurement.getValue() <= measurement.getLow_threshold()) {
             log.debug("Sensor value below threshold. Measurement : " + measurement.getValue() + " / Threshold : " + measurement.getLow_threshold());
             try {

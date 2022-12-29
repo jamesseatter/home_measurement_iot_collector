@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
 import eu.seatter.homemeasurement.collector.cache.AlertSystemCache;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.model.SystemAlert;
 import eu.seatter.homemeasurement.collector.services.cache.AlertMeasurementCacheService;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +35,7 @@ public class AlertsController {
     @RequestMapping(value="/alert")
     public String index(final Model model) {
 
-        Map<String, List<Measurement>> allSortedMeasurementAlerts = alertCacheService.getAllSorted();
+        Map<String, List<Sensor>> allSortedMeasurementAlerts = alertCacheService.getAllSorted();
         allSortedMeasurementAlerts.keySet().forEach(id -> allSortedMeasurementAlerts.get(id).forEach(srec -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC())));
 
         List<SystemAlert> systemAlerts = alertSystemCache.getAllSorted();

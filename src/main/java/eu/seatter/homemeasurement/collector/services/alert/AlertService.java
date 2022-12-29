@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.alert;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertService;
 import eu.seatter.homemeasurement.collector.services.alert.email.EmailAlertServiceImpl;
 import eu.seatter.homemeasurement.collector.services.alert.message.MessageAlertService;
@@ -43,7 +43,7 @@ public class AlertService {
     }
 
 
-    public void sendMeasurementAlert(Measurement measurement, String alertTitle, String alertMessage) throws MessagingException {
+    public void sendMeasurementAlert(Sensor measurement, String alertTitle, String alertMessage) throws MessagingException {
         alertCacheService.add(measurement);
         if(alertEmailEnabled) {
             log.info("Email alerts enabled.");

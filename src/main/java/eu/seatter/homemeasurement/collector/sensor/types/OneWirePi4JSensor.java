@@ -6,7 +6,7 @@ import com.pi4j.io.w1.W1Device;
 import com.pi4j.io.w1.W1Master;
 import eu.seatter.homemeasurement.collector.exception.SensorNotFoundException;
 import eu.seatter.homemeasurement.collector.model.enums.MeasurementUnit;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -21,11 +21,11 @@ import java.util.Optional;
  */
 @Slf4j
 @Component
-public class OneWirePi4JSensor implements Sensor {
+public class OneWirePi4JSensor implements eu.seatter.homemeasurement.collector.sensor.types.Sensor {
     private final W1Master w1master = new W1Master();
 
     @Override
-    public Double readSensorData(Measurement measurement) {
+    public Double readSensorData(Sensor measurement) {
         log.info("Processing : " + measurement.loggerFormat());
         if(measurement.getSensorid().isEmpty()) {
             throw new SensorNotFoundException("Sensor is not defined correctlt", measurement.loggerFormat() + " : ID not set");

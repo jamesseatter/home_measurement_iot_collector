@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
 import eu.seatter.homemeasurement.collector.TestData;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,13 +22,13 @@ class SensorMeasurementDevTest {
     @Test
     void givenTestSensorsThanMeasuementsGreaterthanZeroReturned() {
         //given
-        List<Measurement> sensorList = testData.getTestSensorList();
-        List<Measurement> measurements = testData.getTestMeasurements(sensorList);
+        List<Sensor> sensorList = testData.getTestSensorList();
+        List<Sensor> measurements = testData.getTestMeasurements(sensorList);
 
         //when
 
         //than
-        for (Measurement m: measurements) {
+        for (Sensor m: measurements) {
             assertNotNull(m.getValue());
             assertTrue(m.getValue()>0.0);
         }

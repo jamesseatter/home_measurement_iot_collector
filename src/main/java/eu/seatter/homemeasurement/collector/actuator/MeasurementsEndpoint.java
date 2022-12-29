@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.actuator;
 
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.services.cache.AlertMeasurementCacheService;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -34,12 +34,12 @@ public class MeasurementsEndpoint {
     @ReadOperation
     public Map<String, List<String>> measurements() {
 
-        Map<String, List<Measurement>> data = cacheService.getAll();
+        Map<String, List<Sensor>> data = cacheService.getAll();
         Map<String, List<String>> dataout = new HashMap<>();
 
-        for (Map.Entry<String, List<Measurement>> entry : data.entrySet()) {
+        for (Map.Entry<String, List<Sensor>> entry : data.entrySet()) {
             dataout.putIfAbsent(entry.getKey(), new ArrayList<>());
-            for(Measurement sr : entry.getValue()) {
+            for(Sensor sr : entry.getValue()) {
                 dataout.get(entry.getKey()).add(formatMeasurements(sr));
             }
         }
@@ -47,7 +47,7 @@ public class MeasurementsEndpoint {
         return dataout;
     }
 
-    private String formatMeasurements(Measurement measurement) {
+    private String formatMeasurements(Sensor measurement) {
 
         return measurement.getMeasureTimeUTC().format(formatter) +
                 " UTC;" +

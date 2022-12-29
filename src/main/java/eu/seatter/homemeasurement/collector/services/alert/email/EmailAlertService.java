@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.alert.email;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
 
 import javax.mail.MessagingException;
@@ -12,5 +12,5 @@ import javax.mail.MessagingException;
  * Time: 16:24
  */
 public interface EmailAlertService {
-    void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Measurement measurement) throws MessagingException;
+    void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Sensor measurement) throws MessagingException;
 }

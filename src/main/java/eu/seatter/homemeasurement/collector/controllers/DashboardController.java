@@ -1,8 +1,8 @@
 package eu.seatter.homemeasurement.collector.controllers;
 
 import eu.seatter.homemeasurement.collector.converter.ConvertMeasurement;
-import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.MeasurementWeb;
+import eu.seatter.homemeasurement.collector.model.Sensor;
+import eu.seatter.homemeasurement.collector.model.SensorWeb;
 import eu.seatter.homemeasurement.collector.services.MeasureNow;
 import eu.seatter.homemeasurement.collector.services.cache.MeasurementCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,18 +50,18 @@ public class DashboardController {
     }
 
     private void setAllMeasurements(Model m) {
-        Map<String, List<Measurement>> allSortedMeasurements = cacheService.getAllSorted();
+        Map<String, List<Sensor>> allSortedMeasurements = cacheService.getAllSorted();
         for(String id : allSortedMeasurements.keySet()) {
             allSortedMeasurements.get(id).forEach(srec -> srec.setMeasureTimeUTC(srec.getMeasureTimeUTC()));
         }
-        Map<String, List<MeasurementWeb>> allSortedMeasurementsWeb = convertMeasurement.convertMeasurementToMeasurementWeb(allSortedMeasurements);
+        Map<String, List<SensorWeb>> allSortedMeasurementsWeb = convertMeasurement.convertMeasurementToMeasurementWeb(allSortedMeasurements);
 
         m.addAttribute("allMeasurements", allSortedMeasurementsWeb);
         m.addAttribute("view_days","");
     }
 
     private void setLiveMeasurements(Model m) {
-        List<MeasurementWeb> liveMeasurements = Collections.unmodifiableList(measureNow.collect());
+        List<SensorWeb> liveMeasurements = Collections.unmodifiableList(measureNow.collect());
 
         m.addAttribute("liveMeasurements", liveMeasurements);
     }

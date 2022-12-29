@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
 import eu.seatter.homemeasurement.collector.TestData;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class MQMeasurementCacheMapImplTest {
     private final TestData testData = new TestData();
-    private Measurement measurement1;
-    private Measurement measurement1_2;
-    private Measurement measurement2;
+    private Sensor measurement1;
+    private Sensor measurement1_2;
+    private Sensor measurement2;
 
     private final MQMeasurementCacheMapImpl mqMeasurementCacheMap = new MQMeasurementCacheMapImpl("test","test");
 
@@ -60,7 +60,7 @@ class MQMeasurementCacheMapImplTest {
     @Test
     void given3RecordsAdded_whenRemoveAllSensor1_then1RecordsInCache() {
         //given
-        List<Measurement> sensor1 = new ArrayList<>();
+        List<Sensor> sensor1 = new ArrayList<>();
         sensor1.add(measurement1);
         sensor1.add(measurement1_2);
 

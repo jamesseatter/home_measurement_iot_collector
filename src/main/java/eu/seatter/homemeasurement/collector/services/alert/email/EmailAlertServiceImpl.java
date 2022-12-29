@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.alert.email;
 
 import eu.seatter.homemeasurement.collector.model.enums.AlertDestination;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import eu.seatter.homemeasurement.collector.services.alert.AlertType;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
      * @throws MessagingException The exception message
      */
     @Override
-    public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Measurement measurement) throws MessagingException {
+    public void sendAlert(AlertType alertType, String environment, String alertTitle, String alertMessage, Sensor measurement) throws MessagingException {
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "utf-8");
@@ -91,7 +91,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
     }
 
 
-    private String getSubject(Measurement sr, @NotNull String alertTitle) {
+    private String getSubject(Sensor sr, @NotNull String alertTitle) {
         String subject = "Home Monitor Alert - " + sr.getTitle() + " - " + sr.getValue() + sr.getMeasurementUnit().toString();
         if(!alertTitle.equals("")) {
             subject = alertTitle;
@@ -100,7 +100,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
         return subject;
     }
 
-    private String getAlertDestination(Measurement sr) {
+    private String getAlertDestination(Sensor sr) {
         String alertDestination;
         try {
             alertDestination = AlertDestination.valueOf(sr.getAlertdestination()).getTemplate();
@@ -131,7 +131,7 @@ public class EmailAlertServiceImpl implements EmailAlertService {
 
     }
 
-    private String getContent(String alertTemplate, String environment, String title, Measurement sr, String alertMessage) {
+    private String getContent(String alertTemplate, String environment, String title, Sensor sr, String alertMessage) {
         Context context = new Context();
         context.setVariable("environment", formatSpringEnvironment(environment));
         context.setVariable("title", title);

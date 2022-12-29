@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.services.cache;
 
 import eu.seatter.homemeasurement.collector.cache.map.MQMeasurementCacheMapImpl;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,11 +21,11 @@ public class MQMeasurementCacheService {
         this.mqcache = mqcache;
     }
 
-    public void add(Measurement measurement) {
+    public void add(Sensor measurement) {
         mqcache.add(measurement);
     }
 
-    public List<Measurement> getAll() {
+    public List<Sensor> getAll() {
         return mqcache.getAll();
     }
 

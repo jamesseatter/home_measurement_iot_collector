@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.cache.map;
 
 import eu.seatter.homemeasurement.collector.TestData;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class AlertMeasurementCacheMapImplTest {
 
     private final TestData testData = new TestData();
-    private Measurement measurement1;
-    private Measurement measurement1_2;
-    private Measurement measurement2;
+    private Sensor measurement1;
+    private Sensor measurement1_2;
+    private Sensor measurement2;
 
     private final AlertMeasurementCacheMapImpl alertMeasurementCacheMap = new AlertMeasurementCacheMapImpl("test","test",24);
 

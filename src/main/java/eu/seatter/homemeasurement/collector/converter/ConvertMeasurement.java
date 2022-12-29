@@ -1,7 +1,7 @@
 package eu.seatter.homemeasurement.collector.converter;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
-import eu.seatter.homemeasurement.collector.model.MeasurementWeb;
+import eu.seatter.homemeasurement.collector.model.Sensor;
+import eu.seatter.homemeasurement.collector.model.SensorWeb;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -19,18 +19,18 @@ import java.util.Map;
 @Component
 public class ConvertMeasurement {
 
-    public List<MeasurementWeb> convertMeasurementToMeasurementWeb(@NotNull List<Measurement> measurement) {
+    public List<SensorWeb> convertMeasurementToMeasurementWeb(@NotNull List<Sensor> measurement) {
 
-        List<MeasurementWeb> measurementWeb = new ArrayList<>();
-        for (Measurement m : measurement) {
+        List<SensorWeb> measurementWeb = new ArrayList<>();
+        for (Sensor m : measurement) {
             measurementWeb.add(convertMeasurementToMeasurementWeb(m));
         }
         return measurementWeb;
     }
 
-    public Map<String,List<MeasurementWeb>> convertMeasurementToMeasurementWeb(@NotNull Map<String,List<Measurement>> measurement) {
+    public Map<String,List<SensorWeb>> convertMeasurementToMeasurementWeb(@NotNull Map<String,List<Sensor>> measurement) {
 
-        final Map<String,List<MeasurementWeb>> mweb = new LinkedHashMap<>();
+        final Map<String,List<SensorWeb>> mweb = new LinkedHashMap<>();
 
         for(String id : measurement.keySet()) {
             mweb.put(id,convertMeasurementToMeasurementWeb(measurement.get(id)));
@@ -38,8 +38,8 @@ public class ConvertMeasurement {
         return mweb;
     }
 
-    public MeasurementWeb convertMeasurementToMeasurementWeb(@NotNull Measurement m) {
-        return MeasurementWeb.builder()
+    public SensorWeb convertMeasurementToMeasurementWeb(@NotNull Sensor m) {
+        return SensorWeb.builder()
                 .sensorid(m.getSensorid())
                 .title(m.getTitle())
                 .shorttitle(m.getShortTitle())

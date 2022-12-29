@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.services.sensor;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SensorListServiceDevTest {
 
     final SensorListServiceDev sensorListServiceDev = new SensorListServiceDev();
-    List<Measurement> sensorList;
+    List<Sensor> sensorList;
 
     @Test
     void simplegetSensorsNotNull() {

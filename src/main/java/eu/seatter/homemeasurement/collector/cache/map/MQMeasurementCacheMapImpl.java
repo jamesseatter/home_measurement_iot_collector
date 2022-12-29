@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import eu.seatter.homemeasurement.collector.cache.MQCache;
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -33,7 +33,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Component
 @Scope("singleton")
 public class MQMeasurementCacheMapImpl implements MQCache {
-    private List<Measurement> cache = new ArrayList<>();
+    private List<Sensor> cache = new ArrayList<>();
 
     private final File cacheFile;
 
@@ -43,7 +43,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     }
 
     @Override
-    public int add(Measurement measurement) {
+    public int add(Sensor measurement) {
         if(!cache.contains(measurement)) {
             cache.add(measurement);
             try {
@@ -57,7 +57,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     }
 
     @Override
-    public int remove(Measurement measurement) {
+    public int remove(Sensor measurement) {
         if(cache.contains(measurement)) {
             cache.remove(measurement);
             try {
@@ -70,7 +70,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
         return getCacheSize();
     }
 
-    public int removeAll(List<Measurement> measurement) {
+    public int removeAll(List<Sensor> measurement) {
         cache.removeAll(measurement);
         try {
             flushToFile();
@@ -82,7 +82,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
     }
 
     @Override
-    public List<Measurement> getAll() {
+    public List<Sensor> getAll() {
         return cache;
     }
 
@@ -139,7 +139,7 @@ public class MQMeasurementCacheMapImpl implements MQCache {
                 .serializationInclusion(NON_NULL)
                 .build();
         try {
-            cache = mapper.readValue(new File(cacheFile.getPath()), new TypeReference<List<Measurement>>() { });
+            cache = mapper.readValue(new File(cacheFile.getPath()), new TypeReference<List<Sensor>>() { });
         } catch (IOException ex) {
             log.error("Unable to read from file : " + ex.getMessage());
             throw new IOException(ex);

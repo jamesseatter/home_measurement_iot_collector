@@ -1,6 +1,6 @@
 package eu.seatter.homemeasurement.collector.cache;
 
-import eu.seatter.homemeasurement.collector.model.Measurement;
+import eu.seatter.homemeasurement.collector.model.Sensor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import java.util.Map;
  * Time: 16:01
  */
 public interface AlertMeasurementCache {
-    void add(Measurement measurement);
-    Map<String, List<Measurement>> getAll();
-    Map<String,List<Measurement>> getAllSorted();
-    List<Measurement> getAllBySensorId(String sensorId);
-    List<Measurement> getLastBySensorId(String sensorId, int last);
+    void add(Sensor measurement);
+    Map<String, List<Sensor>> getAll();
+    Map<String,List<Sensor>> getAllSorted();
+    List<Sensor> getAllBySensorId(String sensorId);
+    List<Sensor> getLastBySensorId(String sensorId, int last);
 
 
     ArrayList<String> getSensorIds();
